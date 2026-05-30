@@ -1,127 +1,140 @@
-const supabase = require('../config/supabaseClient');
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const db = require('../services/localDb');
+const { parsePdfBuffer } = require('../services/pdfParserService');
+
+const UPLOADS_DIR = path.join(__dirname, '../uploads');
 
 /**
- * Controller: Save PDF upload metadata (cover page info)
+ * POST /api/pdf/upload
+ * Upload actual PDF file, parse it, extract voters, store everything locally.
  */
-exports.createPdfUpload = async (req, res, next) => {
+exports.uploadPdf = async (req, res, next) => {
   try {
-    const {
-      fileName, fileSize,
-      district, upazila, unionName, wardNo,
-      voterArea, voterAreaNo, totalVoters, totalFemaleVoters,
-      genderType, publicationDate, postCode, integrityHash
-    } = req.body;
-
-    if (!fileName || !district || !upazila) {
-      const err = new Error('File name, district, and upazila are required.');
-      err.status = 400;
-      throw err;
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'কোনো PDF ফাইল পাঠানো হয়নি।' });
     }
 
-    const { data, error } = await supabase
-      .from('pdf_uploads')
-      .insert([{
-        file_name: fileName,
-        file_size: fileSize,
-        district,
-        upazila,
-        union_name: unionName,
-        ward_no: wardNo,
-        voter_area: voterArea,
-        voter_area_no: voterAreaNo,
-        total_voters: totalVoters ? parseInt(totalVoters) : null,
-        total_female_voters: totalFemaleVoters ? parseInt(totalFemaleVoters) : null,
-        gender_type: genderType,
-        publication_date: publicationDate,
-        post_code: postCode,
-        integrity_hash: integrityHash,
-        voter_count: 0,
-        status: 'সফল'
-      }])
-      .select();
+    const pdfId = uuidv4();
+    const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
+    const safeFileName = `${pdfId}.pdf`;
+    const filePath = path.join(UPLOADS_DIR, safeFileName);
 
-    if (error) {
-      throw new Error(`Supabase PDF upload failed: ${error.message}`);
+    // Save the PDF file to disk
+    fs.writeFileSync(filePath, req.file.buffer);
+
+    const fileSizeMB = (req.file.size / (1024 * 1024)).toFixed(2);
+
+    // Parse PDF to extract cover metadata and voter records
+    let parseResult = { coverMeta: {}, voters: [], totalPages: 0 };
+    try {
+      parseResult = await parsePdfBuffer(req.file.buffer, pdfId, originalName);
+    } catch (parseErr) {
+      console.warn('PDF parse warning:', parseErr.message);
+      // Continue even if parsing fails partially
+    }
+
+    const { coverMeta, voters, totalPages } = parseResult;
+
+    // Build PDF metadata record
+    const pdfRecord = {
+      id: pdfId,
+      fileName: originalName,
+      safeFileName,
+      fileSize: `${fileSizeMB} MB`,
+      totalPages,
+      district: coverMeta.district || req.body.district || '',
+      upazila: coverMeta.upazila || req.body.upazila || '',
+      unionName: coverMeta.unionName || req.body.unionName || '',
+      wardNo: coverMeta.wardNo || req.body.wardNo || '',
+      voterArea: coverMeta.voterArea || req.body.voterArea || '',
+      voterAreaNo: coverMeta.voterAreaNo || req.body.voterAreaNo || '',
+      totalVoters: coverMeta.totalVoters || 0,
+      totalMaleVoters: coverMeta.totalMaleVoters || 0,
+      totalFemaleVoters: coverMeta.totalFemaleVoters || 0,
+      genderType: coverMeta.genderType || 'পুরুষ',
+      publicationDate: coverMeta.publicationDate || '',
+      postCode: coverMeta.postCode || '',
+      voterCount: voters.length,
+      status: 'সফল',
+      uploadedAt: new Date().toISOString(),
+    };
+
+    // Save PDF record
+    db.addPdf(pdfRecord);
+
+    // Save extracted voters
+    if (voters.length > 0) {
+      db.addVoters(voters);
     }
 
     return res.status(201).json({
       success: true,
-      message: 'PDF metadata saved successfully!',
-      pdf: data[0]
+      message: `PDF আপলোড সফল! ${voters.length} জন ভোটারের তথ্য extract করা হয়েছে।`,
+      pdf: pdfRecord,
+      votersExtracted: voters.length,
     });
+
   } catch (err) {
     next(err);
   }
 };
 
 /**
- * Controller: Get all PDF uploads list
+ * GET /api/pdf/list
+ * Returns list of all uploaded PDFs.
  */
-exports.getPdfList = async (req, res, next) => {
-  try {
-    const { data, error } = await supabase
-      .from('pdf_uploads')
-      .select('*')
-      .order('uploaded_at', { ascending: false });
-
-    if (error) {
-      throw new Error(`Supabase PDF list failed: ${error.message}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      pdfs: data
-    });
-  } catch (err) {
-    next(err);
-  }
+exports.getPdfList = (req, res) => {
+  const pdfs = db.getPdfs();
+  res.json({ success: true, count: pdfs.length, pdfs });
 };
 
 /**
- * Controller: Update PDF voter_count
+ * GET /api/pdf/:id/file
+ * Serves the actual PDF file for viewing in browser.
  */
-exports.updatePdfVoterCount = async (req, res, next) => {
+exports.servePdfFile = (req, res, next) => {
   try {
     const { id } = req.params;
-    const { voterCount } = req.body;
+    const pdf = db.getPdfById(id);
+    if (!pdf) return res.status(404).json({ success: false, message: 'PDF পাওয়া যায়নি।' });
 
-    const { data, error } = await supabase
-      .from('pdf_uploads')
-      .update({ voter_count: voterCount })
-      .eq('id', id)
-      .select();
-
-    if (error) {
-      throw new Error(`Update failed: ${error.message}`);
+    const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ success: false, message: 'PDF ফাইল সার্ভারে পাওয়া যায়নি।' });
     }
 
-    return res.status(200).json({ success: true, pdf: data[0] });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.sendFile(filePath);
   } catch (err) {
     next(err);
   }
 };
 
 /**
- * Controller: Delete PDF upload metadata
+ * DELETE /api/pdf/:id
+ * Delete PDF record and its file and associated voters.
  */
-exports.deletePdfUpload = async (req, res, next) => {
+exports.deletePdf = (req, res, next) => {
   try {
     const { id } = req.params;
+    const pdf = db.getPdfById(id);
 
-    const { error } = await supabase
-      .from('pdf_uploads')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      throw new Error(`Supabase PDF delete failed: ${error.message}`);
+    if (pdf) {
+      // Delete actual file
+      const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      // Delete associated voters
+      const deletedVoters = db.deleteVotersByPdf(id);
+      // Delete PDF record
+      db.deletePdf(id);
+      return res.json({ success: true, message: `PDF এবং ${deletedVoters} জন ভোটার মুছে ফেলা হয়েছে।` });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'PDF record deleted successfully.'
-    });
+    res.status(404).json({ success: false, message: 'PDF পাওয়া যায়নি।' });
   } catch (err) {
     next(err);
   }

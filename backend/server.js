@@ -1,50 +1,35 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-// --- Middlewares Configuration ---
-
-// Enable Cross-Origin Resource Sharing (CORS) for frontend interaction
+// Middlewares
 app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Built-in JSON parser middleware (no external body-parser required)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Serve uploaded PDFs as static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Custom Request Logger middleware
+// Request logger
 app.use((req, res, next) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${req.method} ${req.url} - Client IP: ${req.ip}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
-// --- API Router Endpoints ---
-
-// Live Server Health Check Endpoint
+// Health check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    databaseSetup: {
-      provider: 'Supabase',
-      configured: !!process.env.SUPABASE_URL
-    }
-  });
+  res.json({ status: 'healthy', timestamp: new Date().toISOString(), uptime: process.uptime() });
 });
 
-// Initial greeting route
-app.get('/', (req, res) => {
-  res.send('Live Voter Search API Backend Server is operational.');
-});
+app.get('/', (req, res) => res.send('Live Voter Search API - Local Storage Mode'));
 
-// --- Import & Mount Controllers/Routes ---
+// Routes
 const voterRoutes = require('./routes/voterRoutes');
 const authRoutes = require('./routes/authRoutes');
 const pdfRoutes = require('./routes/pdfRoutes');
@@ -53,22 +38,17 @@ app.use('/api/voters', voterRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/pdf', pdfRoutes);
 
-// --- Global Centralized Error Fallback ---
+// Error handler
 app.use((err, req, res, next) => {
-  console.error('💥 Server Error Intercepted:', err.stack || err);
-  const responseCode = err.status || 500;
-  res.status(responseCode).json({
+  console.error('Server Error:', err.message);
+  res.status(err.status || 500).json({
     success: false,
-    error: {
-      message: err.message || 'An unexpected error occurred in backend operations.',
-      code: responseCode,
-      ...(process.env.NODE_ENV === 'development' && { details: err.stack })
-    }
+    error: { message: err.message || 'Server error', code: err.status || 500 }
   });
 });
 
-// Start API Server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Express Application running on port ${PORT}`);
-  console.log(`🩺 Health check URI ready at: http://localhost:${PORT}/api/health`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📁 PDF uploads directory: ${path.join(__dirname, 'uploads')}`);
+  console.log(`🗄️  Local database: ${path.join(__dirname, 'data/db.json')}`);
 });

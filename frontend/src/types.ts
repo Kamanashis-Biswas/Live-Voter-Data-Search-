@@ -34,6 +34,9 @@ export interface VoterRecord {
   postCode?: string;       // পোস্টকোড
   publicationDate?: string; // প্রকাশের তারিখ
   pdfUploadId?: string;    // linked PDF upload
+  pdfPageNumber?: number;  // which PDF page this voter is on
+  serialNum?: number;      // numeric serial (for highlight position calc)
+  serialOnPage?: number;   // position within the page (1-15)
   address?: {
     village: string;
     postOffice: string;
@@ -56,13 +59,15 @@ export interface UploadedPdf {
   voterAreaNo: string;        // ভোটার এলাকার নম্বর
   totalVoters: number;        // সর্বমোট ভোটার সংখ্যা
   totalFemaleVoters?: number; // মোট মহিলা ভোটার সংখ্যা
-  genderType: 'মহিলা' | 'পুরুষ' | 'উভয়'; // ভোটার তালিকার ধরন
-  publicationDate: string;    // প্রকাশের তারিখ
-  postCode?: string;          // পোস্টকোড
-  voterCount: number;         // সিস্টেমে যুক্ত voter count
+  totalMaleVoters?: number;   // মোট পুরুষ ভোটার সংখ্যা
+  genderType: 'মহিলা' | 'পুরুষ' | 'উভয়';
+  publicationDate: string;
+  postCode?: string;
+  voterCount: number;
+  totalPages?: number;
   status: 'সফল' | 'প্রক্রিয়াধীন' | 'ত্রুটি';
   integrityHash?: string;
-  // Legacy — kept for backward compat
+  uploadedAt?: string;
   pageNumber?: string;
   detectedArea?: string;
   voterIds?: string[];
