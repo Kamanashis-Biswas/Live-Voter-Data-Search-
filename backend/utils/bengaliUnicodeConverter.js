@@ -1,30 +1,43 @@
 'use strict';
 
 /**
- * Bengali Unicode Converter
- *
- * Core pipeline that converts raw legacy-font Bengali text (SutonnyMJ / Bijoy)
- * into correct Unicode Bengali:
- *
- *  Step 1 — Glyph substitution  : replace Latin Extended codepoints with Bengali
- *  Step 2 — Pre-matra reordering: move ি ে ৈ from BEFORE to AFTER their consonant
- *  Step 3 — Reph normalization  : ensure র্ (reph) is placed correctly
- *  Step 4 — Complex matra merge : ে + া → ো,  ে + ৗ → ৌ
- *  Step 5 — NFC normalization   : canonical Unicode form
- *  Step 6 — Garbage cleanup     : strip remaining stray Latin chars
+ * @file BENGALI UNICODE CONVERTER PIPELINE
+ * @description Core conversion service that translates raw, legacy-font encoded text 
+ * (SutonnyMJ or Bijoy ASCII/Latin mappings) into standardized Unicode Bengali.
+ * 
+ * THE BENGALI RENDERING CONUNDRUM & PIPELINE ARCHITECTURE:
+ *   - Legacy ASCII fonts map visual shapes to keyboard characters. 
+ *   - In visual typing (e.g. SutonnyMJ), vowel marks called "pre-matras" (ি, ে, ৈ)
+ *     are typed BEFORE the consonant they modify (e.g., ে + শ + খ = শেখ).
+ *   - Unicode, however, requires logical ordering: Consonant first, then Matra (শ + ে + খ = শেখ).
+ *   - Directly replacing glyphs yields logically broken strings.
+ *   - To solve this, our pipeline performs the following steps:
+ * 
+ *     Step 1: Glyph Substitution — Swap Latin Extended characters with their Bengali counterparts.
+ *             Misplaced pre-matras are tagged with a SENTINEL character (\u0002).
+ *     Step 2: Pre-Matra Reordering — Shift sentinel-tagged pre-matras AFTER their consonants.
+ *             Naturally correctly placed Unicode matras are left untouched.
+ *     Step 3: Complex Matra Merge — Combine adjacent split marks (ে + া ➔ ো; ে + ৗ ➔ ৌ).
+ *     Step 4: Unicode Normalization — Convert to standard Canonical Normalization Form (NFC).
+ *     Step 5: Spelling Fixes & Artifact Corrections — Correct OCR typos and font-level artifacts.
+ *     Step 6: Garbage Cleanup — Strip remaining stray Latin characters to preserve clean Bengali.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
  */
 
 const { SUTONNY_MAP, PRE_MATRAS } = require('./sutonnyMJMap');
 const { BIJOY_MAP } = require('./bijoyMap');
 
-// ── Bengali Unicode ranges used in detection / cleanup ──────────────────────
+// Unicode ranges to detect Bengali text and Latin Extended blocks
 const BENGALI_RANGE = /[\u0980-\u09FF]/;
 const LATIN_EXT_RANGE = /[\u00C0-\u00FF\u0100-\u017F\u0180-\u024F]/;
 
-// Unicode codepoints that ARE pre-matras
-const PRE_MATRA_CP = new Set([0x09BF, 0x09C7, 0x09C8]); // ি ে ৈ
+// Set of Unicode pre-matra code points: ি (U+09BF), ে (U+09C7), ৈ (U+09C8)
+const PRE_MATRA_CP = new Set([0x09BF, 0x09C7, 0x09C8]);
 
-// Latin Extended codepoints that map TO pre-matras (so we know which substitutions need reordering)
+// Pre-calculate sets of legacy characters that map directly to pre-matras.
+// This allows the substitution pass to identify and tag them instantly.
 const SUTONNY_PRE_MATRA_SOURCES = new Set(
   Object.entries(SUTONNY_MAP)
     .filter(([, v]) => PRE_MATRA_CP.has(v.codePointAt(0)))
@@ -36,37 +49,39 @@ const BIJOY_PRE_MATRA_SOURCES = new Set(
     .map(([k]) => k.codePointAt(0))
 );
 
+// Sentinel character used to track visually-ordered pre-matras.
+// We use the non-printable ASCII control character "Start of Text" (STX, \u0002).
+const SENTINEL = '\u0002';
 
-// A sentinel that cannot appear in real Bengali text — used to mark
-// pre-matras that need reordering AFTER glyph substitution.
-const SENTINEL = '\u0002'; // STX control char
-
-// Consonant cluster pattern (one or more consonants joined by hasanta)
-// Using actual Unicode chars directly instead of escape sequences in template literals
+// Regular expression components to identify Bengali consonant clusters.
+// Consonants range from ক to হ, plus flapped Rs (ড়, ঢ়), khanda-ta, and Y-phala.
+// Clusters can consist of multiple consonants linked by hasanta (্) (e.g., শ + ্ + র = শ্র).
 const CONSONANT_RE = '[\u0995-\u09B9\u09DC-\u09DF\u09CE\u09F0-\u09F1]';
 const HASANTA = '\u09CD';
 
-// Build the sentinel reorder regex using RegExp constructor with actual Unicode chars
-// Pattern: SENTINEL + pre-matra + consonant cluster (consonant optionally followed by hasanta+consonant)
+// Regex to capture tagged pre-matras followed by a consonant cluster.
+// Pattern: [SENTINEL] + [pre-matra] + [consonant cluster]
+// Matching group 1 = pre-matra, group 2 = full consonant cluster.
 const SENTINEL_CLUSTER_RE = new RegExp(
   SENTINEL + '([\u09BF\u09C7\u09C8])(' + CONSONANT_RE + '(?:' + HASANTA + CONSONANT_RE + ')*)',
   'gu'
 );
 
 /**
- * Apply a glyph map to a string.
- * Tags pre-matra substitutions with SENTINEL so only those get reordered later.
+ * Maps legacy ASCII font glyph characters to their Unicode equivalents.
+ * Tag-pre-matra substitutions with the SENTINEL prefix to denote they require reordering.
  *
- * @param {string}  str        - Raw legacy-encoded string
- * @param {object}  map        - Glyph map (SUTONNY_MAP or BIJOY_MAP)
- * @param {Set}     preSources - Set of source codepoints whose targets are pre-matras
+ * @param {string} str - Raw legacy string.
+ * @param {object} map - Font glyph translation dictionary (Sutonny or Bijoy).
+ * @param {Set<number>} preSources - Set of legacy character code points mapping to pre-matras.
+ * @returns {string} Converted string with sentinel-tagged pre-matras.
  */
 function applyGlyphMap(str, map, preSources) {
   let result = '';
   for (const char of str) {
     const cp = char.codePointAt(0);
     if (map[char] !== undefined) {
-      // If this source char maps to a pre-matra, tag it with a sentinel
+      // If the glyph maps to a pre-matra, prepend the sentinel marker
       result += (preSources && preSources.has(cp) ? SENTINEL : '') + map[char];
     } else {
       result += char;
@@ -76,42 +91,45 @@ function applyGlyphMap(str, map, preSources) {
 }
 
 /**
- * Reorder ONLY sentinel-tagged pre-matras: [SENTINEL + matra][consonant_cluster]
- * → [consonant_cluster][matra]   (sentinel is removed in the process)
+ * Scan raw strings for pre-existing Unicode pre-matras that might be visually misaligned.
+ * Tags them with the sentinel if they are not preceded by a consonant or hasanta.
  *
- * Correctly-placed matras (no sentinel) are LEFT UNTOUCHED.
- *
- * In SutonnyMJ / Bijoy:
- *   Input (after map):  [SENTINEL+ে][শ][খ]
- *   After reorder:      [শ][ে][খ]  = শেখ ✓
- *
- *   Already correct:    [ত][ে][ম][া]
- *   Not touched:        [ত][ে][ম][া] = তেমা ✓
+ * @param {string} str - Converted string.
+ * @returns {string} String with tagged misaligned pre-matras.
  */
 function tagRawUnicodePreMatras(str) {
   if (!str) return '';
-  // Tag already-Unicode pre-matras with a sentinel only if NOT preceded by a consonant or hasanta
+  // Tag pre-matras that are NOT preceded by a valid consonant or hasanta
   const TAG_REGEX = /(?<![\u0995-\u09B9\u09DC-\u09DF\u09CE\u09F0-\u09F1\u09CD])([\u09BF\u09C7\u09C8])/g;
   return str.replace(TAG_REGEX, SENTINEL + '$1');
 }
 
 /**
- * Reorder ONLY sentinel-tagged pre-matras: [SENTINEL + matra][consonant_cluster]
- * → [consonant_cluster][matra]   (sentinel is removed in the process)
+ * Shifts sentinel-tagged pre-matras AFTER their associated consonant clusters.
+ * Strips out the sentinel markers in the process.
+ * 
+ * EXAMPLES:
+ *   - Tagged text: \u0002ে + শ + খ (ে is tagged because it was visually ordered)
+ *     Reordered:  শ + ে + খ ➔ শেখ (Correct Unicode order)
+ *   - Correct text: ত + ে + ম + া (no sentinel because ে was already after ত)
+ *     Reordered:  ত + ে + ম + া ➔ তেমা (Left untouched)
  *
- * Correctly-placed matras (no sentinel) are LEFT UNTOUCHED.
+ * @param {string} str - Tagged string.
+ * @returns {string} Reordered Unicode string.
  */
 function reorderPreMatras(str) {
-  // 1. Replace sentinel-tagged pre-matras: move matra after the following consonant cluster
+  // Swap matches: [SENTINEL][matra][consonant_cluster] ➔ [consonant_cluster][matra]
   let result = str.replace(SENTINEL_CLUSTER_RE, (_match, matra, cluster) => cluster + matra);
-  // Clean up any remaining sentinels (safety net)
+  // Clean up any stray, unused sentinel marks as a safety fallback
   return result.replace(/\u0002/g, '');
 }
 
-
 /**
- * Heuristic: count Latin Extended chars (U+00C0–U+024F) vs total.
- * Returns a ratio in [0, 1].
+ * Computes the ratio of Latin Extended characters to the overall string length.
+ * Used as a heuristic to detect if a PDF utilizes legacy encoding (SutonnyMJ).
+ *
+ * @param {string} str - Input text.
+ * @returns {number} Ratio of legacy characters in the range [0.0, 1.0].
  */
 function legacyRatio(str) {
   if (!str || str.length === 0) return 0;
@@ -124,68 +142,78 @@ function legacyRatio(str) {
 }
 
 /**
- * Detect which legacy encoding a string uses.
- * Returns 'sutonny' | 'bijoy' | 'unicode' | 'unknown'
+ * Heuristically detects the text encoding of an extracted PDF text stream.
+ *
+ * @param {string} str - Extracted text sample.
+ * @returns {'sutonny'|'bijoy'|'unicode'|'unknown'} The detected encoding classification.
  */
 function detectEncoding(str) {
   if (!str || str.length < 4) return 'unicode';
 
-  // Check for typical Bijoy markers: lowercase a-z mapped to Bengali consonants
-  // Bijoy text tends to have many lowercase Latin letters mixed with Bengali
+  // Bijoy typing outputs lowercase ASCII letters for consonants.
+  // We count common Bijoy consonant keys to detect Bijoy encoding.
   const bijoyMarkers = ['a', 'b', 'c', 'g', 'j', 'k', 'n', 'p', 'r', 's', 't'];
   let bijoyScore = 0;
   for (const ch of str) {
     if (bijoyMarkers.includes(ch)) bijoyScore++;
   }
 
-  // Check for SutonnyMJ: mostly Bengali Unicode consonants + Latin Extended matras
   const hasBengaliConsonants = BENGALI_RANGE.test(str);
   const hasLatinExt = LATIN_EXT_RANGE.test(str);
   const ratio = legacyRatio(str);
 
   if (ratio === 0) return 'unicode';
-  if (hasBengaliConsonants && hasLatinExt) return 'sutonny'; // most common EC PDF type
+  // Sutonny lists contain raw Bengali letters mixed with Latin Extended matra shapes
+  if (hasBengaliConsonants && hasLatinExt) return 'sutonny';
   if (!hasBengaliConsonants && bijoyScore > str.length * 0.3) return 'bijoy';
-  if (hasLatinExt) return 'sutonny'; // fallback
+  if (hasLatinExt) return 'sutonny'; // Fallback
 
   return 'unicode';
 }
 
 /**
- * Strip remaining non-Bengali, non-digit, non-punctuation Latin garbage.
- * This runs AFTER glyph substitution so only truly unmapped chars are removed.
- * Preserves: Bengali range, Bengali digits, ASCII digits, space, common punctuation,
- * colon (:), and Bengali-specific marks.
+ * Removes non-Bengali, non-digit, and non-punctuation characters from converted text.
+ * Runs AFTER glyph substitution so we only clean up stray, unmapped legacy bytes.
+ * Preserves Bengali letters, digits, spaces, and standard punctuation marks.
+ *
+ * @param {string} str - Unicode string.
+ * @returns {string} Stripped, clean string.
  */
 function stripGarbage(str) {
-  // Keep: Bengali range (U+0980-U+09FF), ASCII digits, space, slash, dot, dash,
-  //       comma, parens, colon, semicolon, Bengali danda (U+0964-U+0965)
+  // Keep: Bengali (U+0980-U+09FF), dandas (U+0964-U+0965), ASCII digits, space, slash, dot, dash, comma, parens, colon, semicolon
   return str.replace(/[^\u0980-\u09FF\u0964-\u0965\u0030-\u0039\u0020\u002F\u002E\u002D\u002C\u0028\u0029\u003A\u003B]/g, '');
 }
 
 /**
- * Merge adjacent split matras into their correct single Unicode codepoint.
- * e.g., \u09C7 (ে) + \u09BE (া) -> \u09CB (ো)
+ * Combines adjacent split matras into single unified Unicode vowel signs.
+ * E.g., ে (U+09C7) + া (U+09BE) ➔ ো (U+09CB).
+ * Also deduplicates repeated adjacent vowel marks or hasantas caused by extraction glitches.
+ *
+ * @param {string} str - Unicode string.
+ * @returns {string} Unified matra string.
  */
 function normalizeComplexMatras(str) {
   if (!str) return '';
   return str
-    .replace(/\u09C7\u09BE/g, '\u09CB') // ে + া = ো
-    .replace(/\u09C7\u09D7/g, '\u09CC') // ে + ৗ = ৌ
-    .replace(/\u09C7\u09C7/g, '\u09C7') // double ে = ে (dedup)
-    .replace(/\u09BF\u09BF/g, '\u09BF') // double ি = ি (dedup)
-    .replace(/\u09CD\u09CD/g, '\u09CD'); // double hasanta = hasanta (dedup)
+    .replace(/\u09C7\u09BE/g, '\u09CB') // ে + া = ো (O-matra)
+    .replace(/\u09C7\u09D7/g, '\u09CC') // ে + ৗ = ৌ (OU-matra)
+    .replace(/\u09C7\u09C7/g, '\u09C7') // deduplicate double ে
+    .replace(/\u09BF\u09BF/g, '\u09BF') // deduplicate double ি
+    .replace(/\u09CD\u09CD/g, '\u09CD'); // deduplicate double hasanta
 }
 
 /**
- * Fix common EC PDF extraction artifacts in already-converted text.
- * These are patterns that result from font-specific quirks.
+ * Fixes common Bengali OCR corruptions, font mapping glitches, and election commission spelling bugs.
+ * These patches restore broken ligatures or garbled translations.
+ *
+ * @param {string} str - Converted Bengali string.
+ * @returns {string} Normalised and corrected string.
  */
 function fixECExtractionArtifacts(str) {
   if (!str) return '';
   let s = str;
 
-  // Fix "জহ্ল" → "জন্ম" (common EC artifact in DOB fields)
+  // ── Standard EC OCR & Title Fixes ──
   s = s.replace(/জহ্ল/g, 'জন্ম');
   s = s.replace(/জম্ভ/g, 'জন্ম');
   s = s.replace(/নণ্ডর/g, 'নম্বর');
@@ -196,7 +224,8 @@ function fixECExtractionArtifacts(str) {
   s = s.replace(/উন্নিন/g, 'উদ্দিন');
   s = s.replace(/বিছর/g, 'বছির');
 
-  // Fix custom legacy font extraction corruptions
+  // ── Legacy Font Spelling Normalization Maps ──
+  // Corrects corrupted conjuncts and glyph overlaps from Sutonny/Bijoy PDF exports.
   s = s.replace(/সিবতা/g, 'সবিতা');
   s = s.replace(/রী বীরেন/g, 'শ্রী বীরেন');
   s = s.replace(/বিজ্ঞজিৎ/g, 'বিশ্বজিৎ');
@@ -215,7 +244,7 @@ function fixECExtractionArtifacts(str) {
   s = s.replace(/জ্ঞমানহ্ন/g, 'প্রদ্যুন্ম');
   s = s.replace(/জ্ঞদীপ/g, 'প্রদীপ');
   s = s.replace(/শিল/g, 'শীল');
-  s = s.replace(/লিক্ষকান্ত/g, 'লক্ষ্মীকান্ত');
+  s = s.replace(/lিক্ষকান্ত/g, 'লক্ষ্মীকান্ত').replace(/লিক্ষকান্ত/g, 'লক্ষ্মীকান্ত');
   s = s.replace(/রিশক/g, 'রসিক');
   s = s.replace(/সেন্তাষ/g, 'সন্তোষ');
   s = s.replace(/সেরাজ/g, 'সিরাজ');
@@ -232,21 +261,17 @@ function fixECExtractionArtifacts(str) {
   s = s.replace(/সুত্নত/g, 'সুব্রত');
   s = s.replace(/প্রদ্যুন্ম/g, 'প্রদ্যুম্ন');
 
-  // Fix doubled spaces
+  // Collapse multiple spaces
   s = s.replace(/\s{2,}/g, ' ');
-
-  // Fix "িরখ" → "রিখ" (residual pre-matra issue — ি before র)
-  // This is a safety net for any pre-matras the sentinel regex missed
 
   return s.trim();
 }
 
-// ── Main API ─────────────────────────────────────────────────────────────────
-
 /**
- * Convert a SutonnyMJ-encoded string to Unicode Bengali.
- * @param {string} raw - Raw string extracted from legacy-font PDF
- * @returns {string} Clean Unicode Bengali
+ * Converts a SutonnyMJ legacy-encoded string to standard Unicode Bengali.
+ * 
+ * @param {string} raw - Raw string.
+ * @returns {string} Clean Unicode Bengali.
  */
 function convertSutonnyMJ(raw) {
   if (!raw) return '';
@@ -261,9 +286,10 @@ function convertSutonnyMJ(raw) {
 }
 
 /**
- * Convert a Bijoy-encoded string to Unicode Bengali.
- * @param {string} raw - Raw string extracted from Bijoy-font PDF
- * @returns {string} Clean Unicode Bengali
+ * Converts a Bijoy legacy-encoded string to standard Unicode Bengali.
+ * 
+ * @param {string} raw - Raw string.
+ * @returns {string} Clean Unicode Bengali.
  */
 function convertBijoy(raw) {
   if (!raw) return '';
@@ -278,10 +304,11 @@ function convertBijoy(raw) {
 }
 
 /**
- * Auto-detect encoding and convert to Unicode Bengali.
- * @param {string} raw - Raw string from PDF extraction
- * @param {string} [hintEncoding] - Optional hint: 'sutonny' | 'bijoy' | 'unicode'
- * @returns {{ text: string, encoding: string }}
+ * Auto-detects legacy string encoding and performs safe Unicode translation.
+ *
+ * @param {string} raw - Raw string extracted from PDF.
+ * @param {string|null} [hintEncoding=null] - Optional manual encoding hint ('sutonny'|'bijoy'|'unicode').
+ * @returns {{ text: string, encoding: string }} The converted text and the encoding applied.
  */
 function autoConvert(raw, hintEncoding = null) {
   if (!raw) return { text: '', encoding: 'unknown' };
@@ -294,14 +321,14 @@ function autoConvert(raw, hintEncoding = null) {
       text = convertBijoy(raw);
       break;
     case 'unicode':
-      // Already Unicode — only clean up extraction artifacts and normalize
+      // Text is already Unicode, normalize matras and clean font artifacts
       text = fixECExtractionArtifacts(raw);
       text = normalizeComplexMatras(text);
       text = text.normalize('NFC');
-      // Don't strip all non-Bengali — preserve digits, spaces, punctuation
+      // Strip legacy Latin Extended characters
       text = text.replace(/[\u00C0-\u024F]/g, '').trim();
       break;
-    default: // 'sutonny' or any legacy
+    default:
       text = convertSutonnyMJ(raw);
   }
 
@@ -309,27 +336,36 @@ function autoConvert(raw, hintEncoding = null) {
 }
 
 /**
- * Normalize Bengali text for fuzzy search.
- * Strips all vowel marks so that "শেখ" and "শখ" still match.
+ * Normalizes Bengali text to support robust fuzzy matches and search query phonetic routing.
+ * Extends phonetic match reliability by removing all vowel marks, hasantas, and grouping homophones:
+ * 
+ *   - Standardizes sibilants (ষ, স, শ) to a unified শ skeleton.
+ *   - Normalizes flapped R (ড়, ঢ়) to standard র.
+ *   - Maps ণ to standard ন.
+ *   - Standardizes double-formed vowels (ঈ ➔ ই, ঊ ➔ উ).
+ *   - Strips all visual vowel matras, hasantas, and sound marks.
+ * 
+ * Example: "শেখ মোহাম্মদ" ➔ consonant skeleton: "শখ মহমমদ"
+ * Search: "শখ" matching "শেখ" yields a positive match despite vowel variances.
  *
- * @param {string} str - Unicode Bengali text
- * @returns {string} Normalized string (consonant skeleton only)
+ * @param {string} str - Unicode Bengali text.
+ * @returns {string} Stripped consonant skeleton.
  */
 function normalizeForSearch(str) {
   if (!str) return '';
   let s = str;
   
-  // 1. Common transposition typos
+  // 1. Correct common typographical errors
   s = s.replace(/বিল্পব/g, 'বিপ্লব');
   
-  // 2. Sibilant & consonant homophone normalization for robust phonetic matching
-  s = s.replace(/[ষস]/g, 'শ'); // normalize all sibilants to শ
-  s = s.replace(/[ড়ঢ়]/g, 'র'); // normalize flapped Rs to র
-  s = s.replace(/ণ/g, 'ন');    // normalize ণ to ন
-  s = s.replace(/ঈ/g, 'ই');    // normalize ঈ to ই
-  s = s.replace(/ঊ/g, 'উ');    // normalize ঊ to উ
+  // 2. Map homophones to unified consonant classes
+  s = s.replace(/[ষস]/g, 'শ');
+  s = s.replace(/[ড়ঢ়]/g, 'র');
+  s = s.replace(/ণ/g, 'ন');
+  s = s.replace(/ঈ/g, 'ই');
+  s = s.replace(/ঊ/g, 'উ');
   
-  // 3. Remove all Bengali vowel matras, hasanta, nukta, anusvara, visarga
+  // 3. Strip all Bengali matras (vowel signs), hasantas, nuktas, and modifiers
   return s
     .replace(/[\u09BE-\u09CC\u09CD\u09BC\u0981-\u0983]/gu, '')
     .replace(/\s+/g, ' ')

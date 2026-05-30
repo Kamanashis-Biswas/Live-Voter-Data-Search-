@@ -2,23 +2,43 @@ const fs = require('fs');
 const path = require('path');
 const { normalizeForSearch } = require('../utils/bengaliUnicodeConverter');
 
+/**
+ * @file localDb.js
+ * @description In-memory flat-file database engine with transactional atomic writes,
+ * background thread debouncing, cache-recovery mechanisms, and fast phonetic-indexed search.
+ * 
+ * DESIGN DECISIONS:
+ *   - Direct disk reads/writes on every query cause severe bottlenecks for large voter lists.
+ *     We implement a persistent in-memory `_cache` of all PDF assets and voter records.
+ *   - During bootstrap or write actions, we pre-calculate "consonant skeletons" (`rebuildIndexes`)
+ *     so that filter searches evaluate in sub-millisecond ranges instead of recalculating
+ *     phonetic skeletons on every request.
+ *   - Sudden power cuts or app crashes can corrupt db.json if written directly. We write to a
+ *     temporary file (`.tmp`) and perform atomic renames (`fs.renameSync`) to ensure transactions
+ *     succeed completely or fail cleanly. We also maintain a automatic `.bak` copy for recovery.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
+
 const DB_PATH = path.join(__dirname, '../data/db.json');
-
-// ── In-memory cache & indexing ──────────────────────────────────────────────
-// Avoids reading/parsing 1.6MB+ JSON file on every request
-// Pre-calculates normalized consonant skeletons for high-speed indexing
-let _cache = null;
-let _writeTimer = null;
-const WRITE_DEBOUNCE_MS = 500;
-
 const BACKUP_PATH = DB_PATH + '.bak';
 const TEMP_PATH = DB_PATH + '.tmp';
 
+// ── In-Memory Cache and Background Write State ──────────────────────────────
+let _cache = null;
+let _writeTimer = null;
+const WRITE_DEBOUNCE_MS = 500; // Debounce write operations to aggregate burst writes
+
+/**
+ * Pre-calculates and caches visual consonant skeletons directly on the cached voter models.
+ * Bypasses redundant phonetic normalization during incoming search filters.
+ */
 function rebuildIndexes() {
   if (!_cache || !_cache.voters) return;
   const voters = _cache.voters;
   
-  // Attach pre-normalized consonant skeletons directly to voter objects in memory
+  // Attach pre-calculated consonant skeletons for fast indexing
   for (let i = 0; i < voters.length; i++) {
     const v = voters[i];
     v.normalName = v.nameBn ? normalizeBengali(v.nameBn) : '';
@@ -32,6 +52,12 @@ function rebuildIndexes() {
   }
 }
 
+/**
+ * Reads and parses the flat JSON database file.
+ * Automatically recovers from corruption or file absences using the backup (.bak) repository.
+ * 
+ * @returns {object} The parsed database cache object holding `{ voters: [], pdfs: [] }`.
+ */
 function readDb() {
   if (_cache) return _cache;
   
@@ -44,12 +70,12 @@ function readDb() {
     }
   } catch (err) {
     console.error('[DB] Database read error, attempting backup recovery:', err.message);
-    // Corruption recovery: attempt to load from automatic backup file
+    // CORRUPTION RECOVERY: Attempt to load from the automatic .bak backup file
     try {
       if (fs.existsSync(BACKUP_PATH)) {
         const raw = fs.readFileSync(BACKUP_PATH, { encoding: 'utf8' });
         _cache = JSON.parse(raw);
-        // Recover main database file
+        // Repair the primary database file instantly
         fs.writeFileSync(DB_PATH, raw, { encoding: 'utf8' });
         console.log('[DB] Database recovery successful: restored from db.json.bak');
         rebuildIndexes();
@@ -60,25 +86,31 @@ function readDb() {
     }
   }
 
-  // Fallback to fresh database state if both files are missing/corrupted
+  // Fallback to fresh database state if both files are missing or unreadable
   _cache = { voters: [], pdfs: [] };
   rebuildIndexes();
   return _cache;
 }
 
+/**
+ * Commits the database state to disk using a debounced, atomic transaction.
+ * 
+ * @param {object} data - Complete database object to write.
+ */
 function writeDb(data) {
   _cache = data;
-  rebuildIndexes(); // update in-memory pre-calculated fields immediately
+  rebuildIndexes(); // Refresh cache indexes instantly in memory
 
-  // Debounce writes to avoid hammering disk during batch operations
+  // Clear pending write timers and configure a debounced save
   if (_writeTimer) clearTimeout(_writeTimer);
   _writeTimer = setTimeout(() => {
     try {
-      // 1. Write atomically using a temporary file
+      // 1. Transactional atomic write: Save to a temporary file
       fs.writeFileSync(TEMP_PATH, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+      // 2. Perform atomic rename (guarantees transaction integrity on POSIX and Windows filesystems)
       fs.renameSync(TEMP_PATH, DB_PATH);
       
-      // 2. Refresh the backup file
+      // 3. Keep the backup file synchronized
       fs.copyFileSync(DB_PATH, BACKUP_PATH);
     } catch (err) {
       console.error('[DB] Atomic write error:', err.message);
@@ -87,8 +119,11 @@ function writeDb(data) {
   }, WRITE_DEBOUNCE_MS);
 }
 
+/**
+ * Flushes any pending write tasks immediately to disk.
+ * Used during graceful shutdowns or process interruptions.
+ */
 function flushDb() {
-  // Force immediate write (e.g., before process exit)
   if (_writeTimer) {
     clearTimeout(_writeTimer);
     _writeTimer = null;
@@ -104,40 +139,42 @@ function flushDb() {
   }
 }
 
-// Flush on process exit
+// Graceful shutdown hooks: Ensure database is completely committed before exit
 process.on('beforeExit', flushDb);
 process.on('SIGINT', () => { flushDb(); process.exit(0); });
 process.on('SIGTERM', () => { flushDb(); process.exit(0); });
 
 /**
- * Normalize Bengali text for fuzzy search.
+ * Translates a Bengali string into its consonant search skeleton.
  *
- * Strips all vowel matras, hasanta, nukta so that consonant skeletons are compared.
- * Example: "শেখ মোহাম্মদ" → "শখ মহমমদ"
- *
- * This means a user searching "শেখ" will match "শেখ", "শেখ্", "শখ" variants.
- * Requires database to store clean Unicode Bengali (done by the new converter pipeline).
+ * @param {string} str - Raw Bengali Unicode.
+ * @returns {string} Lowercased consonant search skeleton.
  */
 function normalizeBengali(str) {
   if (!str) return '';
-  // Use the shared utility from bengaliUnicodeConverter
   return normalizeForSearch(str).toLowerCase();
 }
 
 /**
- * High-performance matching using pre-normalized consonant skeletons.
- * Extremely fast as it avoids calling normalizeBengali on database entries inside filter loops.
+ * High-performance matching evaluating search entries against cached records.
+ * Optimized to bypass execution loops.
+ *
+ * @param {string} stored - Original Bengali Unicode field inside database.
+ * @param {string} normalStored - Pre-calculated cached consonant skeleton.
+ * @param {string} query - Raw search query input.
+ * @param {string} normalQuery - Phonetic normalized search query input.
+ * @returns {boolean} True if matching, false otherwise.
  */
 function bengaliMatchFast(stored, normalStored, query, normalQuery) {
   if (!stored || !query) return false;
   
-  // 1. Direct substring match (handles exact Unicode matches instantly)
+  // 1. Direct substring match (handles exact Unicode queries instantly)
   if (stored.includes(query)) return true;
 
-  // 2. Pre-normalized match — checks against cached consonant skeletons
+  // 2. Pre-calculated phonetic match comparing cached consonant skeletons
   if (normalQuery && normalStored && normalStored.includes(normalQuery)) return true;
 
-  // 3. Word-level partial match (all query words must be present)
+  // 3. Multi-word search (every queried word must appear in the stored skeleton)
   const queryWords = normalQuery.split(/\s+/).filter(w => w.length >= 2);
   if (queryWords.length > 1) {
     return queryWords.every(word => normalStored && normalStored.includes(word));
@@ -147,10 +184,19 @@ function bengaliMatchFast(stored, normalStored, query, normalQuery) {
 }
 
 const db = {
-  // ── Voters ──────────────────────────────────────────────────────────────
+  // ── Voters Collection Actions ──────────────────────────────────────────────
 
+  /**
+   * Retrieves all voters in database cache.
+   * @returns {object[]} Array of voters.
+   */
   getVoters() { return readDb().voters; },
 
+  /**
+   * Inserts list of parsed voters to cache and triggers disk write.
+   * @param {object[]} newVoters - Voters list.
+   * @returns {number} Inserted record count.
+   */
   addVoters(newVoters) {
     const data = readDb();
     data.voters = [...data.voters, ...newVoters];
@@ -158,6 +204,11 @@ const db = {
     return newVoters.length;
   },
 
+  /**
+   * Removes all voters associated with a specific PDF identifier.
+   * @param {string} pdfId - The PDF UUID.
+   * @returns {number} Removed record count.
+   */
   deleteVotersByPdf(pdfId) {
     const data = readDb();
     const before = data.voters.length;
@@ -166,6 +217,11 @@ const db = {
     return before - data.voters.length;
   },
 
+  /**
+   * Deletes a single voter by database identifier.
+   * @param {string} id - The voter's UUID.
+   * @returns {number} Removed record count.
+   */
   deleteVoterById(id) {
     const data = readDb();
     const before = data.voters.length;
@@ -174,12 +230,20 @@ const db = {
     return before - data.voters.length;
   },
 
+  /**
+   * High-speed, layout-optimized multi-field search engine.
+   * Leverages pre-calculated cached skeletons to support real-time sub-millisecond filtering.
+   *
+   * @param {object} searchParams - Search fields and pagination criteria.
+   * @returns {{ results: object[], total: number, page: number, limit: number }} Evaluated page.
+   */
   searchVoters({ name, fatherName, motherName, village, voterArea, upazila, district, voterNo, nid, occupation, gender, page = 1, limit = 100 }) {
-    // Trigger lazy DB load
+    // Force cache initialization if empty
     readDb();
     
     let voters = _cache.voters;
 
+    // Apply filters based on input fields, translating query terms to normal forms once on entry
     if (name && name.trim()) {
       const q = name.trim();
       const nq = normalizeBengali(q);
@@ -239,7 +303,7 @@ const db = {
       }
     }
 
-    // Pagination
+    // Apply pagination rules
     const total = voters.length;
     const pageNum = Math.max(1, parseInt(page) || 1);
     const pageSize = Math.min(200, Math.max(1, parseInt(limit) || 100));
@@ -249,10 +313,19 @@ const db = {
     return { results: paged, total, page: pageNum, limit: pageSize };
   },
 
-  // ── PDFs ────────────────────────────────────────────────────────────────
+  // ── PDF Metadata Collection Actions ────────────────────────────────────────
 
+  /**
+   * Retrieves all PDFs loaded in cache.
+   * @returns {object[]} PDFs list.
+   */
   getPdfs() { return readDb().pdfs; },
 
+  /**
+   * Saves metadata for a new uploaded PDF.
+   * @param {object} pdf - PDF metadata.
+   * @returns {object} The saved object.
+   */
   addPdf(pdf) {
     const data = readDb();
     data.pdfs = [pdf, ...data.pdfs];
@@ -260,22 +333,37 @@ const db = {
     return pdf;
   },
 
+  /**
+   * Searches PDF metadata using a UUID.
+   * @param {string} id - The PDF UUID.
+   * @returns {object|null} Found PDF record or null.
+   */
   getPdfById(id) { return readDb().pdfs.find(p => p.id === id) || null; },
 
+  /**
+   * Modifies the recorded extracted voter count on a PDF.
+   */
   updatePdfVoterCount(id, count) {
     const data = readDb();
     const pdf = data.pdfs.find(p => p.id === id);
     if (pdf) { pdf.voterCount = count; writeDb(data); }
   },
 
+  /**
+   * Deletes PDF record from registry.
+   * @param {string} id - PDF UUID.
+   */
   deletePdf(id) {
     const data = readDb();
     data.pdfs = data.pdfs.filter(p => p.id !== id);
     writeDb(data);
   },
 
-  // ── Cache management ──────────────────────────────────────────────────
+  // ── Cache Operational Hooks ────────────────────────────────────────────────
 
+  /**
+   * Clears in-memory references to trigger disk reload on the next call.
+   */
   invalidateCache() {
     _cache = null;
   },

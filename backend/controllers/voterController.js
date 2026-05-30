@@ -1,8 +1,20 @@
 const db = require('../services/localDb');
 
 /**
- * GET /api/voters/search
- * Search voter records from local JSON database.
+ * @file voterController.js
+ * @description Controller handling Express voter query routes, removal endpoints, 
+ * and search parameter parsing to query the flat-file database.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
+
+/**
+ * Performs a fuzzy phonetic search on voter records.
+ * 
+ * @param {object} req - Express request holding query parameters.
+ * @param {object} res - Express response containing paginated result sets.
+ * @param {function} next - Express next callback.
  */
 exports.searchVoters = (req, res, next) => {
   try {
@@ -12,6 +24,7 @@ exports.searchVoters = (req, res, next) => {
       page, limit
     } = req.query;
 
+    // Invoke the high-speed phonetic indexed search engine
     const { results, total, page: currentPage, limit: currentLimit } = db.searchVoters({
       name, fatherName, motherName, village, voterArea,
       upazila, district, nid, voterNo, occupation, gender,
@@ -32,8 +45,11 @@ exports.searchVoters = (req, res, next) => {
 };
 
 /**
- * DELETE /api/voters/by-pdf/:pdfUploadId
- * Delete all voters associated with a PDF.
+ * Purges all voters uploaded from a specific PDF identifier.
+ * 
+ * @param {object} req - Express request holding `pdfUploadId` in params.
+ * @param {object} res - Express response.
+ * @param {function} next - Express next callback.
  */
 exports.deleteVotersByPdf = (req, res, next) => {
   try {
@@ -46,8 +62,11 @@ exports.deleteVotersByPdf = (req, res, next) => {
 };
 
 /**
- * DELETE /api/voters/:id
- * Delete a single voter record by ID.
+ * Purges a single voter record by its database identifier.
+ * 
+ * @param {object} req - Express request holding voter UUID in params.
+ * @param {object} res - Express response.
+ * @param {function} next - Express next callback.
  */
 exports.deleteVoter = (req, res, next) => {
   try {

@@ -8,13 +8,36 @@ import {
   Loader2
 } from 'lucide-react';
 
+/**
+ * @file VoterResultCard.tsx
+ * @description Renders searched voter records, details cards, and embeds an interactive
+ * PDF canvas verification viewer.
+ * 
+ * CORE ARCHITECTURAL & MATHEMATICAL NOTES:
+ *   - Native worker configuration: Integrates PDF.js workers cleanly in Vite environments using
+ *     native `?url` imports to avoid cross-origin thread termination errors.
+ *   - React 18 Mounting Safeguard: React 18 mounts and immediately unmounts hooks in strict mode.
+ *     We implement strict cleanup refs (`isMountedRef`, `renderTaskRef`) to prevent "Worker was destroyed" errors.
+ *   - Spatial Coordinate Calculations:
+ *     - PDF documents use a bottom-up Cartesian grid (origin y=0 at bottom).
+ *     - Web viewports use a top-down Raster grid (origin y=0 at top).
+ *     - The backend stores `voter.boundingBox` (representing the visual bounds of the voter's serial line).
+ *     - An election commission (EC) voter card is approximately 245 points wide and 80 points tall.
+ *     - The card begins at `x - 5` horizontally and extends 80 points downwards.
+ *     - We map these boundaries via `viewport.convertToViewportPoint` to render a responsive overlay `<div>`.
+ *     - If visual coordinates are missing, a mathematical grid-fallback (3 cols x 5 rows) is computed instead.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
+
 // Configure pdfjs worker natively using Vite URL import
 // This avoids "Worker was destroyed" cross-origin errors
 // @ts-ignore (TypeScript doesn't know about Vite's ?url query suffix)
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-// API base URL — matches backend port defined in backend/.env
+// API base URL — matches backend port
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 interface Props {
@@ -22,18 +45,19 @@ interface Props {
   searchPerformed: boolean;
 }
 
-// -----------------------------------------------------------------------
-// PDF Viewer Component with voter highlight overlay
-// Fixed: proper lifecycle management, no "Worker was destroyed" errors
-// -----------------------------------------------------------------------
 interface PdfViewerProps {
   voter: VoterRecord;
   onClose: () => void;
 }
 
+/**
+ * Premium PDF Viewer Overlay that loads the PDF buffer, jumps to the target page,
+ * and renders a precise highlighted red marker over the voter's entry card.
+ */
 const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Use refs for mutable state that shouldn't trigger re-renders
+  
+  // Use references to track running asynchronous handles that span duplicate React mount lifecycles
   const pdfRef = useRef<pdfjs.PDFDocumentProxy | null>(null);
   const renderTaskRef = useRef<pdfjs.RenderTask | null>(null);
   const isMountedRef = useRef(true);
@@ -49,7 +73,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
 
   const pdfUrl = voter.pdfUploadId ? `${API_BASE}/api/pdf/${voter.pdfUploadId}/file` : '';
 
-  // Cleanup function for render task
+  /**
+   * Safe cancellation of running PDF.js rendering threads to prevent thread collision during page flips.
+   */
   const cancelRender = useCallback(() => {
     if (renderTaskRef.current) {
       try { renderTaskRef.current.cancel(); } catch {}
@@ -57,7 +83,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     }
   }, []);
 
-  // Cleanup function for entire PDF lifecycle
+  /**
+   * Destroys active documents and releases thread allocations.
+   */
   const cleanupPdf = useCallback(async () => {
     cancelRender();
     if (pdfRef.current) {
@@ -70,7 +98,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     setPdfReady(false);
   }, [cancelRender]);
 
-  // Load PDF document
+  /**
+   * Asynchronously loads the target PDF document from the backend server.
+   */
   useEffect(() => {
     if (!pdfUrl) { setError('PDF URL পাওয়া যায়নি।'); setLoading(false); return; }
 
@@ -79,10 +109,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     setError('');
     setPdfReady(false);
 
-    // Clean up any previous PDF before loading new one
     const load = async () => {
+      // Clean up previous documents
       await cleanupPdf();
 
+      // Configure character maps and standard font resources to display Bengali text cleanly
       const task = pdfjs.getDocument({
         url: pdfUrl,
         cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
@@ -119,7 +150,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfUrl]);
 
-  // Render page to canvas
+  /**
+   * Handles visual canvas page rendering and calculates coordinates for the highlight overlay.
+   */
   useEffect(() => {
     if (!pdfReady || !pdfRef.current || !canvasRef.current) return;
 
@@ -140,18 +173,19 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         const ctx = canvas.getContext('2d')!;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Render the page buffer on the 2D canvas context
         const task = page.render({ canvasContext: ctx, viewport });
         renderTaskRef.current = task;
 
         await task.promise;
         if (cancelled) return;
 
-        // Compute coordinate-based highlight or grid fallback
+        // ── Highlight Position Coordinate Processing ──
         const voterPageNumber = voter.pdfPageNumber || 3;
         if (currentPage === voterPageNumber) {
           if (voter.boundingBox) {
             const bbox = voter.boundingBox;
-            // The bbox coordinates represent the first line (serial/name) of the voter's cell.
+            // The visual coordinates represent the first line (serial/name) of the voter's cell.
             // A standard voter card cell in the EC list layout is about 245 points wide and 80 points tall.
             // Since the serial line is at the top left, the cell starts at bbox.x - 5 and extends 245 points wide.
             // The top of the cell is at bbox.y + 12, and the cell extends 80 points downwards (so bottom is bbox.y - 68).
@@ -160,10 +194,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             const cellPdfW = 245;
             const cellPdfH = 80;
 
-            // Convert PDF Cartesian coordinates (y bottom-up) to viewport canvas pixel coordinates (y top-down)
+            // Convert bottom-up Cartesian PDF points into top-down viewport canvas pixels
             const [left, top] = viewport.convertToViewportPoint(cellPdfX, cellPdfY + cellPdfH);
             const [right, bottom] = viewport.convertToViewportPoint(cellPdfX + cellPdfW, cellPdfY);
 
+            // Establish overlay dimensions
             setOverlayStyle({
               position: 'absolute',
               left: `${left}px`,
@@ -177,7 +212,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
               borderRadius: '6px',
             });
           } else {
-            // Fallback: mathematical grid layout
+            // FALLBACK SCHEME: Mathematical grid calculations (3 columns x 5 rows)
             const serialNum = voter.serialNum || 0;
             const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
 
@@ -190,6 +225,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             const W = viewport.width;
             const H = viewport.height;
 
+            // Static margins based on layout sheets
             const GRID_TOP = H * 0.22;
             const GRID_BOTTOM = H * 0.93;
             const GRID_LEFT = W * 0.01;
@@ -232,7 +268,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfReady, currentPage, zoom]);
 
-  // Close on Escape key
+  /**
+   * Maps navigation events to standard keyboard shortcuts.
+   */
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -244,8 +282,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose, totalPages]);
-
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-900/70 backdrop-blur-sm">
@@ -265,7 +301,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Zoom controls */}
+            {/* Zoom Controls */}
             <div className="hidden sm:flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-0.5 text-xs mr-2">
               <button onClick={()=>setZoom(z=>Math.max(0.5,z-0.1))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomOut className="w-4 h-4"/></button>
               <span className="font-mono px-1.5 w-12 text-center">{Math.round(zoom*100)}%</span>
@@ -275,7 +311,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           </div>
         </div>
 
-        {/* Voter info strip */}
+        {/* Voter Details Bar */}
         <div className="bg-amber-50 border-b border-amber-200 px-5 py-2.5 flex flex-wrap gap-4 text-xs">
           <div><span className="text-amber-600 font-bold">নাম:</span> <span className="font-semibold text-slate-800">{voter.nameBn}</span></div>
           <div><span className="text-amber-600 font-bold">পিতা:</span> <span className="font-semibold text-slate-800">{voter.fatherName}</span></div>
@@ -299,7 +335,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             <div className="flex flex-col items-center justify-center h-64 text-rose-600 text-center max-w-sm">
               <XOctagon className="w-10 h-10 mb-3"/>
               <p className="text-sm font-semibold">{error}</p>
-              <p className="text-xs text-slate-500 mt-2">Backend server চালু আছে কিনা নিশ্চিত করুন।</p>
+              <p className="text-xs text-slate-500 mt-2">Backend server चालू আছে কিনা নিশ্চিত করুন।</p>
             </div>
           )}
           {!loading && !error && (
@@ -307,7 +343,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
               <canvas ref={canvasRef} className="block bg-white"/>
               {overlayStyle && (
                 <div style={overlayStyle} className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]">
-                  {/* Premium floating check icon */}
+                  {/* Floating Name Badge */}
                   <div className="absolute -top-7 left-0 bg-red-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded shadow-md flex items-center gap-1 font-serif whitespace-nowrap pointer-events-none">
                     <Check className="w-3 h-3 text-white" /> {voter.nameBn}
                   </div>
@@ -317,7 +353,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           )}
         </div>
 
-        {/* Page navigation footer */}
+        {/* Page Navigation Footer */}
         <div className="bg-slate-50 border-t border-slate-200 px-6 py-3.5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <button
@@ -355,13 +391,15 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   );
 };
 
-// -----------------------------------------------------------------------
-// Main VoterResultCard Component
-// -----------------------------------------------------------------------
+// ── Main VoterResultCard ─────────────────────────────────────────────────────
+
 export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed }) => {
   const [selectedVoter, setSelectedVoter] = useState<VoterRecord | null>(null);
   const [pdfViewVoter, setPdfViewVoter] = useState<VoterRecord | null>(null);
 
+  /**
+   * Generates formatted visual badges detailing the active operational registry status.
+   */
   const getStatusBadge = (status: VoterRecord['status']) => {
     switch (status) {
       case 'সক্রিয়': return <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><CheckCircle className="w-3.5 h-3.5"/>সক্রিয়</span>;
@@ -386,7 +424,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed }) =>
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Search statistics header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 text-white p-5 rounded-2xl shadow-xs">
         <div>
           <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider font-mono">অনুসন্ধান ফলাফল</p>
@@ -417,6 +455,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed }) =>
                 </div>
               </div>
 
+              {/* National Identity Visual Card Layout */}
               <div className="p-5 bg-emerald-800 text-white relative overflow-hidden shrink-0" style={{minHeight:'200px'}}>
                 <div className="absolute right-[-10px] top-[-10px] w-32 h-32 bg-emerald-700/25 rounded-full border border-emerald-500/20 flex items-center justify-center text-emerald-500/10 text-6xl font-bold">BD</div>
                 <div className="relative z-10 space-y-2">
@@ -436,6 +475,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed }) =>
                 </div>
               </div>
 
+              {/* Voter metadata table */}
               <div className="p-4 bg-slate-50 text-xs flex flex-col justify-between flex-1 gap-4">
                 <div className="bg-white p-3 rounded-xl border border-slate-200">
                   <p className="font-semibold mb-1 flex items-center gap-1 text-slate-700"><MapPin className="w-3.5 h-3.5 text-blue-500"/>ঠিকানা</p>
@@ -466,7 +506,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed }) =>
         </div>
       )}
 
-      {/* PDF Viewer Modal */}
+      {/* Embedded PDF Canvas modal popup viewer */}
       {pdfViewVoter && <PdfViewer voter={pdfViewVoter} onClose={()=>setPdfViewVoter(null)}/>}
     </div>
   );

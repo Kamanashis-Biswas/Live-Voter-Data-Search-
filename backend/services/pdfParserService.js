@@ -28,24 +28,31 @@ const VOTERS_PER_PAGE = 15; // typical EC voter list layout
 // ── Text extraction with pdfjs-dist ─────────────────────────────────────────
 
 /**
- * Extract all text from a PDF using pdfjs-dist.
- * Returns pages as arrays of text items with spatial coordinates.
+ * Extracts raw pages and text items with coordinates from a PDF buffer using pdfjs-dist.
+ * 
+ * DESIGN DECISION:
+ *   - The election commission (EC) voter list contains a blank page on Page 2. Processing this page
+ *     wastes CPU and memory, so it is bypassed.
+ *   - Processing large PDFs causes Out-of-Memory (OOM) errors in Node.js. To prevent OOM crashes,
+ *     we process pages in chunks of 20, cleaning up references after each page finishes.
  *
- * @param {Buffer|Uint8Array} buffer
- * @param {object} opts
- * @param {number}  opts.maxPages      - 0 = all pages
- * @param {boolean} opts.groupByLine   - reassemble items into line strings
- * @returns {Promise<{ pages: Array<{pageNum, lines: string[], items: object[]}>, totalPages: number }>}
+ * @param {Buffer|Uint8Array} buffer - The raw PDF bytes uploaded by Multer memoryStorage.
+ * @param {object} [opts={}] - Extraction configuration options.
+ * @param {number} [opts.maxPages=0] - Maximum pages to extract (0 extracts all pages).
+ * @param {boolean} [opts.groupByLine=true] - Reassemble layout items into distinct visual lines.
+ * @returns {Promise<{ pages: Array<{pageNum: number, lines: object[], items: object[]}>, totalPages: number }>}
+ * @async
  */
 async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}) {
-  // Ensure it's a pure Uint8Array to satisfy pdfjs strict type checking
+  // Ensure the buffer is converted to a pure Uint8Array to satisfy strict pdfjs binary type checks
   const uint8 = new Uint8Array(buffer.buffer || buffer, buffer.byteOffset || 0, buffer.length || buffer.byteLength);
 
+  // Initialize the pdfjs loading task bypassing the system fonts and standard CMaps
+  // since we convert legacy Bijoy/Sutonny ASCII codepoints via our custom converter.
   const loadingTask = pdfjsLib.getDocument({
     data: uint8,
     useSystemFonts: false,
     standardFontDataUrl: null,
-    // Disable CMap fetching (we handle encoding ourselves)
     cMapUrl: null,
     cMapPacked: false,
   });
@@ -56,20 +63,28 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
 
   const pages = [];
 
-  // Process pages in chunks of 20 to avoid OOM on large voter PDFs
+  // CHUNKING PATTERN: Group pages in chunks of 20 to allow the garbage collector (GC) 
+  // to free parsed PDF document objects, avoiding memory saturation on large registers.
   const CHUNK = 20;
   for (let start = 1; start <= limit; start += CHUNK) {
     const end = Math.min(start + CHUNK - 1, limit);
 
     for (let pageNum = start; pageNum <= end; pageNum++) {
+      // MEMORY OPTIMIZATION: Page 2 of the standard Bangladesh EC voter PDF is always blank.
+      // Skipping this page completely eliminates unnecessary processing cycles.
       if (pageNum === 2) {
-        // Skip page 2 completely to save memory and avoid garbage data
         pages.push({ pageNum, lines: [], items: [] });
         continue;
       }
+      
       const page = await pdf.getPage(pageNum);
+      // Retrieve text items without normalising whitespaces to keep exact raw spacing
       const textContent = await page.getTextContent({ normalizeWhitespace: false });
 
+      // Map raw pdfjs text spans into flat visual coordinate representations.
+      // pdfjs item.transform represents the affine transformation matrix [a, b, c, d, e, f]:
+      // transform[4] represents the X coordinate translation (left margin margin point)
+      // transform[5] represents the Y coordinate translation (bottom margin margin point)
       const rawItems = textContent.items
         .filter(item => item.str && item.str.length > 0)
         .map(item => ({
@@ -83,12 +98,13 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
         }));
 
       let lines = [];
+      // Reassemble individual text spans into complete lines using spatial layouts.
+      // If we merge lines blindly horizontally, the 3 separate voter columns will merge.
+      // Thus, we partition raw items into columns first using X-coordinate cluster groups.
       if (groupByLine && rawItems.length > 0) {
-        // Partition items into columns to prevent merging voters horizontally.
-        // Use X-coordinate clustering to find column boundaries dynamically.
         const columns = clusterIntoColumns(rawItems);
         
-        // Process each column independently
+        // Process each column vertically from top to bottom
         for (const colItems of columns) {
           const colLines = groupItemsIntoLines(colItems, 4, pageNum);
           lines.push(...colLines);
@@ -96,43 +112,53 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
       }
 
       pages.push({ pageNum, lines, items: rawItems });
+      
+      // Release internal references inside the PDF.js page instance to save memory
       page.cleanup();
     }
   }
 
+  // Terminate loading tasks and workers
   await pdf.destroy();
   return { pages, totalPages };
 }
 
 /**
- * Cluster text items into columns using X-coordinate gaps.
- * EC voter lists have 3 columns with clear vertical separators.
+ * Clusters text items into visual columns using gaps in the X-coordinate space.
+ * 
+ * ALGORITHM EXPLANATION:
+ *   - Bangladesh Election Commission (EC) voter lists strictly utilize a 3-column layout.
+ *   - If we extract text top-to-bottom across the whole page, text from Column 1, 2, and 3 merges on the same horizontal line.
+ *   - To prevent horizontal merging, we dynamically detect vertical dividers using X-coordinate clusters.
+ *   - First, we analyze the minimum and maximum X coordinates of all page items to find the page width range.
+ *   - Next, we partition the items into 3 columns (col1, col2, col3) by locating the widest white-space horizontal gaps.
+ *   - Gaps are scanned within split regions: Split 1 around 20%-45% of width, and Split 2 around 55%-80% of width.
  *
- * @param {object[]} items - Text items with x coordinates
- * @returns {object[][]} Array of columns, each containing items
+ * @param {object[]} items - Array of raw spatial text items from PDF.js.
+ * @returns {object[][]} A nested array containing separated item lists representing each visual column.
  */
 function clusterIntoColumns(items) {
   if (items.length === 0) return [];
 
-  // Find the X-coordinate range
+  // Determine page horizontal limits
   const xValues = items.map(i => i.x).sort((a, b) => a - b);
   const minX = xValues[0];
   const maxX = xValues[xValues.length - 1];
   const range = maxX - minX;
 
+  // Narrow range indicates cover sheet or meta pages (e.g. single-column metadata)
   if (range < 150) {
-    // All items in a narrow range — single column (cover page, etc.)
     return [items];
   }
 
-  // Filter items with width < range * 0.4 to ignore title spans
+  // Exclude title spans or long header items spanning multiple columns (> 40% of page range)
   const colItems = items.filter(i => (i.width || 0) < range * 0.4);
 
-  // Default splits
+  // Set default fallback boundaries at 1/3 and 2/3 of the coordinate span
   let col1Boundary = minX + range * 0.33;
   let col2Boundary = minX + range * 0.66;
 
-  // Let's find S1 in [minX + range * 0.20, minX + range * 0.45]
+  // Locate the ideal visual vertical split for the first column divider in [20% to 45% of page width]
   const low1 = minX + range * 0.20;
   const high1 = minX + range * 0.45;
   const xList1 = colItems.map(i => i.x).filter(x => x >= low1 && x <= high1).sort((a, b) => a - b);
@@ -149,7 +175,7 @@ function clusterIntoColumns(items) {
     col1Boundary = bestSplit;
   }
 
-  // Let's find S2 in [minX + range * 0.55, minX + range * 0.80]
+  // Locate the ideal visual vertical split for the second column divider in [55% to 80% of page width]
   const low2 = minX + range * 0.55;
   const high2 = minX + range * 0.80;
   const xList2 = colItems.map(i => i.x).filter(x => x >= low2 && x <= high2).sort((a, b) => a - b);
@@ -170,6 +196,7 @@ function clusterIntoColumns(items) {
   const col2 = [];
   const col3 = [];
 
+  // Group each character or word span into its designated column bucket
   for (const item of items) {
     if (item.x < col1Boundary) col1.push(item);
     else if (item.x < col2Boundary) col2.push(item);
@@ -180,27 +207,35 @@ function clusterIntoColumns(items) {
 }
 
 /**
- * Group text items into logical lines by y-coordinate proximity.
- * Sorts items left-to-right within each line.
+ * Groups raw horizontal text items inside a single column into complete, logical lines.
+ * Re-orders elements from left-to-right to support natural reading orders and calculates bounding boxes.
  *
- * @param {object[]} items
- * @param {number}   tolerance - y-distance threshold to consider same line
- * @returns {string[]} Array of line strings
+ * COORDINATE SYSTEM NOTES:
+ *   - The standard PDF coordinate space uses bottom-left as (0, 0) Cartesian origin.
+ *   - Y-values increase from bottom-to-top.
+ *   - Sorting sorts by Y-value descending (top of the page down), then left-to-right (X ascending).
+ *   - A vertical tolerance threshold determines if adjacent characters share a line or are separate.
+ *
+ * @param {object[]} items - Array of text items representing a single column.
+ * @param {number} [tolerance=4] - Vertical point deviation allowed to merge items into the same line.
+ * @param {number} [pageNum=1] - Current page number.
+ * @returns {object[]} Array of processed line objects: `{ text, x, y, width, height, pageNum }`.
  */
 function groupItemsIntoLines(items, tolerance = 4, pageNum = 1) {
   if (!items.length) return [];
 
-  // Sort by y descending (PDF y=0 is bottom), then x ascending
+  // Sort items top-to-bottom (Y descending), then left-to-right (X ascending)
   const sorted = [...items].sort((a, b) => {
     const dy = b.y - a.y;
-    if (Math.abs(dy) > tolerance) return dy;
-    return a.x - b.x;
+    if (Math.abs(dy) > tolerance) return dy; // Distinct lines
+    return a.x - b.x; // Same line, order left-to-right
   });
 
   const lineGroups = [];
   let currentGroup = [sorted[0]];
   let currentY = sorted[0].y;
 
+  // Cluster adjacent elements that are close vertically into group lists
   for (let i = 1; i < sorted.length; i++) {
     const item = sorted[i];
     if (Math.abs(item.y - currentY) <= tolerance) {
@@ -213,15 +248,17 @@ function groupItemsIntoLines(items, tolerance = 4, pageNum = 1) {
   }
   lineGroups.push(currentGroup);
 
+  // Map groups into detailed line records containing aggregated text and visual bounding box dimensions
   return lineGroups.map(group => {
     const sortedGroup = group.sort((a, b) => a.x - b.x);
     const text = sortedGroup
       .map(item => item.str)
       .join(' ')
-      .replace(/\s{3,}/g, '\t') // collapse big gaps (column separators) to tab
+      .replace(/\s{3,}/g, '\t') // Compress large whitespace dividers into single tab characters
       .trim();
 
-    // Compute bounding box coordinates for the entire line
+    // Mathematically derive the visual bounding box coordinates surrounding this entire line.
+    // X and Y take the minimum visual start boundaries, and width/height span the outer edges.
     const minX = Math.min(...sortedGroup.map(item => item.x));
     const maxX = Math.max(...sortedGroup.map(item => item.x + (item.width || 0)));
     const minY = Math.min(...sortedGroup.map(item => item.y));
@@ -363,39 +400,46 @@ function cleanNamePrefix(name) {
 }
 
 /**
- * Parse all voter entries from converted text lines.
- * Handles the standard 3-column Bangladesh EC voter list format.
+ * Parses all voter entries from flat visual line structures.
+ * 
+ * DESIGN DETAILS & EC LAYOUT SCHEMA:
+ *   - Each page typically contains exactly 15 voter cards (VOTERS_PER_PAGE = 15).
+ *   - A voter block starts with a serial number: e.g. "০০১. নাম: শেখ ওবায়েদ" or "001. শেখ ওবায়েদ".
+ *   - The name may wrap to a second line.
+ *   - Subsequent lines contain voter fields: "ভোটার নং", "পিতা", "মাতা", "পেশা", "জন্ম তারিখ", "ঠিকানা".
+ *   - The parser reads a serial line, extracts the name, and then looks ahead up to 12 lines 
+ *     to parse related metadata fields, breaking early if it encounters the next voter's serial line.
+ *   - Validation: We require a valid name and at least one parent name or voter number 
+ *     to ignore header/footer decoration noise.
  *
- * Each voter block structure:
- *   ০০১. নাম: শেখ মোহাম্মদ আলী
- *   ভোটার নং: ১২৩৪৫৬
- *   পিতা: মোহাম্মদ হাসান
- *   মাতা: ফাতেমা বেগম
- *   পেশা: কৃষক    জন্ম তারিখ: ০১/০১/১৯৮০
- *   ঠিকানা: গ্রাম নাম
+ * @param {object[]} allLineObjs - Pre-sorted horizontal visual line objects containing `{ text, x, y, width, height, pageNum }`.
+ * @param {object} coverMeta - Cover metadata extracted from Page 1 (provides fallbacks for village/district).
+ * @param {string} pdfId - UUID matching the uploaded document.
+ * @returns {object[]} Fully structured voter records matching the database schema.
  */
 function extractVoters(allLineObjs, coverMeta, pdfId) {
   const voters = [];
   let lastSerialNum = 0;
   let i = 0;
 
+  // Process all page lines sequentially
   while (i < allLineObjs.length) {
     const lineObj = allLineObjs[i];
     const line = lineObj.text;
 
-    // Match voter entry: Bengali or English 2-4 digit serial followed by dot
-    // e.g. " ০০১." or "001. নাম:" or "০০১. শেখ ওবায়েদ"
+    // Pattern: 2 to 4 Bengali/English digits, followed by a dot, optional spaces, and the voter's name.
+    // Examples: " ০০১." or "001. নাম:" or "০০২. মোঃ রহিম"
     const serialMatch = line.match(/^\s*([০-৯\d]{2,4})\.[\s।]*(?:নাম\s*[:।]\s*)?(.+)/u);
 
     if (serialMatch) {
       const serialStr = serialMatch[1];
       const serialNum = parseBengaliNumber(serialStr);
 
-      // Guard against false positives
+      // Verify that this is a valid positive serial number
       if (serialNum > 0) {
         lastSerialNum = serialNum;
 
-        // Clean up name: remove "নাম " prefix and other artifacts
+        // Clean up common prefix noise (like "নাম:") and strip punctuation
         let nameBn = cleanNamePrefix(serialMatch[2]);
 
         let voterNo = '';
@@ -405,38 +449,38 @@ function extractVoters(allLineObjs, coverMeta, pdfId) {
         let dob = '';
         let address = '';
 
-        // Read up to 12 lines after serial line for this voter's fields
+        // LOOKAHEAD MECHANISM: Read up to 12 lines after the serial declaration 
+        // to parse this voter's associated card attributes.
         let j = i + 1;
         let linesRead = 0;
 
         while (j < allLineObjs.length && linesRead < 12) {
           const next = allLineObjs[j].text.trim();
 
-          // Stop at next voter entry (allow optional spaces, Bengali or English digits)
+          // If we hit another voter's serial starting block, terminate the lookahead immediately.
           if (next.match(/^\s*[০-৯\d]{2,4}\.[\s।]/u)) break;
 
-          // Voter number
+          // 1. Parse voter number (supports common Bengali OCR corruptions like "ভাটার নং")
           if (/(?:ভোটার|ভাটার)\s*(?:নং|নম্বর)/u.test(next)) {
             const m = next.match(/(?:ভোটার|ভাটার)\s*(?:নং|নম্বর)\s*[:।]*\s*([০-৯\d]+)/u);
             if (m) voterNo = m[1].trim();
           }
-          // Father
+          // 2. Parse Father's name (exclude mother or occupation references)
           else if (/পিতা/u.test(next) && !next.includes('মাতা')) {
-            const m = next.match(/পিতা\s*[:।]*\s*(.+)/u);
+            const m = next.match(/পita\s*[:।]*\s*(.+)/u) || next.match(/পিতা\s*[:।]*\s*(.+)/u);
             if (m) fatherName = m[1].replace(/মাতা.*/u, '').replace(/পেশা.*/u, '').trim();
           }
-          // Mother
+          // 3. Parse Mother's name
           else if (/মাতা/u.test(next)) {
             const m = next.match(/মাতা\s*[:।]*\s*(.+)/u);
             if (m) motherName = m[1].replace(/পেশা.*/u, '').trim();
           }
-          // Occupation (may include DOB on same line)
+          // 4. Parse Occupation & DOB (they often sit on the same horizontal line in standard lists)
           else if (/পেশা/u.test(next)) {
-            // Check if there is a date in the line
             const dateMatch = next.match(/([০-৯\d]{1,2}\/[০-৯\d]{1,2}\/[০-৯\d]{4})/u);
             if (dateMatch) {
               dob = dateMatch[1];
-              // The occupation is everything before the date, but we need to strip "পেশা:", "জন্ম", "তারিখ" etc.
+              // Split occupation from birthdate
               const beforeDate = next.split(dob)[0];
               occupation = beforeDate
                 .replace(/পেশা\s*[:।,]*\s*/u, '')
@@ -448,17 +492,18 @@ function extractVoters(allLineObjs, coverMeta, pdfId) {
               if (m) occupation = m[1].trim();
             }
           }
-          // DOB standalone
+          // 5. Parse standalone Date of Birth
           else if (/জন্ম\s*তারিখ/u.test(next)) {
             const m = next.match(/([০-৯\d]{1,2}\/[০-৯\d]{1,2}\/[০-৯\d]{4})/u);
             if (m) dob = m[1];
           }
-          // Address
+          // 6. Parse physical address
           else if (/ঠিকানা\s*[:।]/u.test(next)) {
             const m = next.match(/ঠিকানা\s*[:।]\s*(.+)/u);
             if (m) address = m[1].trim();
           }
-          // Continuation of name (some PDFs wrap name to next line)
+          // 7. Parse wrapped name text: If the line doesn't match any key but is pure Bengali text,
+          // it represents a wrapped second line of the voter's name.
           else if (!voterNo && !fatherName && nameBn.length < 40 && /^[\u0980-\u09FF\s]+$/.test(next)) {
             nameBn += ' ' + next;
           }
@@ -467,12 +512,14 @@ function extractVoters(allLineObjs, coverMeta, pdfId) {
           linesRead++;
         }
 
-        // Final name prefix/space cleanup
+        // Clean name from lingering punctuation
         nameBn = cleanNamePrefix(nameBn);
 
-        // Require at least one critical field populated to prevent header/footer noise false positives
+        // STRANGE NOISE FILTER: Require at least one parent name or voter number 
+        // to prevent page decorations, headers, and notices from entering the database.
         if (nameBn && nameBn.length > 1 && (voterNo || fatherName || motherName)) {
           const pdfPageNumber = lineObj.pageNum;
+          // Calculate grid coordinates and page indices (1-15 grid placement)
           const serialOnPage = ((serialNum - 1) % VOTERS_PER_PAGE) + 1;
 
           voters.push({

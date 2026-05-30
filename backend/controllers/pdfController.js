@@ -4,17 +4,35 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('../services/localDb');
 const { parsePdfBuffer } = require('../services/pdfParserService');
 
+/**
+ * @file pdfController.js
+ * @description Controller managing uploaded PDF records, invoking the extraction parser service, 
+ * writing parsed datasets to the database, and serving PDF buffers inline.
+ * 
+ * DESIGN DECISIONS:
+ *   - Serves files inline (`Content-Disposition: inline`) to allow the React PDF canvas overlay
+ *     to render documents without prompting file downloads.
+ *   - Cascade deletion: Deleting a PDF record deletes the static file from the uploads directory
+ *     and deletes all associated voters from `db.json` in a single transaction.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
+
 const UPLOADS_DIR = path.join(__dirname, '../uploads');
 
-// Auto-create uploads directory
+// Automatically create uploads directory if missing
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   console.log(`📁 Created uploads directory: ${UPLOADS_DIR}`);
 }
 
 /**
- * POST /api/pdf/upload
- * Upload actual PDF file, parse it, extract voters, store everything locally.
+ * Handles PDF uploads, invokes the extraction pipeline, and saves results.
+ * 
+ * @param {object} req - Express request holding file bytes in `req.file`.
+ * @param {object} res - Express response.
+ * @param {function} next - Express next callback.
  */
 exports.uploadPdf = async (req, res, next) => {
   let filePath = null;
@@ -25,6 +43,7 @@ exports.uploadPdf = async (req, res, next) => {
     }
 
     const pdfId = uuidv4();
+    // Re-encode original filenames to support UTF-8 Bengali characters
     const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
     const safeFileName = `${pdfId}.pdf`;
     filePath = path.join(UPLOADS_DIR, safeFileName);
@@ -39,18 +58,18 @@ exports.uploadPdf = async (req, res, next) => {
 
     const fileSizeMB = (req.file.size / (1024 * 1024)).toFixed(2);
 
-    // Parse PDF to extract cover metadata and voter records
+    // Parse the PDF buffer to extract cover page metadata and voter records
     let parseResult = { coverMeta: {}, voters: [], totalPages: 0 };
     try {
       parseResult = await parsePdfBuffer(req.file.buffer, pdfId, originalName);
     } catch (parseErr) {
       console.warn('PDF parse warning:', parseErr.message);
-      // Continue even if parsing fails partially
+      // Continue processing even if layout extraction encounters minor warning anomalies
     }
 
     const { coverMeta, voters, totalPages } = parseResult;
 
-    // Build PDF metadata record
+    // Create the PDF metadata record
     const pdfRecord = {
       id: pdfId,
       fileName: originalName,
@@ -90,7 +109,7 @@ exports.uploadPdf = async (req, res, next) => {
     });
 
   } catch (err) {
-    // Clean up uploaded file on error
+    // Clean up uploaded file on error to prevent stray files
     if (filePath && fs.existsSync(filePath)) {
       try { fs.unlinkSync(filePath); } catch (_) {}
     }
@@ -99,8 +118,10 @@ exports.uploadPdf = async (req, res, next) => {
 };
 
 /**
- * GET /api/pdf/list
- * Returns list of all uploaded PDFs.
+ * Returns a list of all uploaded PDFs.
+ * 
+ * @param {object} req - Express request.
+ * @param {object} res - Express response.
  */
 exports.getPdfList = (req, res) => {
   const pdfs = db.getPdfs();
@@ -108,8 +129,11 @@ exports.getPdfList = (req, res) => {
 };
 
 /**
- * GET /api/pdf/:id/file
- * Serves the actual PDF file for viewing in browser.
+ * Serves raw PDF file streams for display in the frontend PDF.js canvas viewer.
+ * 
+ * @param {object} req - Express request with the target PDF ID in parameters.
+ * @param {object} res - Express response.
+ * @param {function} next - Express next callback.
  */
 exports.servePdfFile = (req, res, next) => {
   try {
@@ -122,6 +146,7 @@ exports.servePdfFile = (req, res, next) => {
       return res.status(404).json({ success: false, message: 'PDF ফাইল সার্ভারে পাওয়া যায়নি।' });
     }
 
+    // Set inline content-disposition and content-type to allow the canvas to view the PDF directly
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -132,8 +157,11 @@ exports.servePdfFile = (req, res, next) => {
 };
 
 /**
- * DELETE /api/pdf/:id
- * Delete PDF record and its file and associated voters.
+ * Cascade deletion: Removes PDF metadata, deletes physical file, and purges all associated voters.
+ * 
+ * @param {object} req - Express request holding PDF target ID.
+ * @param {object} res - Express response.
+ * @param {function} next - Express next callback.
  */
 exports.deletePdf = (req, res, next) => {
   try {
@@ -141,14 +169,14 @@ exports.deletePdf = (req, res, next) => {
     const pdf = db.getPdfById(id);
 
     if (pdf) {
-      // Delete actual file
+      // Delete the physical file
       const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
       if (fs.existsSync(filePath)) {
         try { fs.unlinkSync(filePath); } catch (_) {}
       }
-      // Delete associated voters
+      // Purge associated voters from local db
       const deletedVoters = db.deleteVotersByPdf(id);
-      // Delete PDF record
+      // Purge the PDF metadata record
       db.deletePdf(id);
       return res.json({ success: true, message: `PDF এবং ${deletedVoters} জন ভোটার মুছে ফেলা হয়েছে।` });
     }

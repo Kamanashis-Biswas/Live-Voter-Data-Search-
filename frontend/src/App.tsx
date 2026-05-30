@@ -9,36 +9,95 @@ import {
   Loader2,
   Menu,
   X,
+  CheckCircle,
+  XOctagon,
+  Info,
 } from 'lucide-react';
+
+/**
+ * @file App.tsx
+ * @description Main application container for the Live Voter Search portal.
+ * Manages the global state, public search forms, responsive viewport grids, 
+ * administrative analytics dashboards, logging registries, and real-time toast alert prompts.
+ * 
+ * CORE ARCHITECTURAL FLOW:
+ *   - Fetches and tracks PDF lists (`loadPdfs`) and polls backend health states.
+ *   - Orchestrates search routing (`handleSearch`) to fetch, map, and paginate database queries.
+ *   - Responsive Design: Renders a sticky desktop aside sidebar, but on mobile, shifts into a
+ *     swipe-in sliding drawer toggled by hamburger menu elements below the navigation bars.
+ *   - Glassmorphic portal toast prompts replace browser `alert()` popups for Copy actions.
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 export default function App() {
+  // Navigation states
   const [currentView, setCurrentView] = useState<'search' | 'dashboard'>('search');
+  
+  // Search result collections
   const [voters, setVoters] = useState<VoterRecord[]>([]);
   const [filteredVoters, setFilteredVoters] = useState<VoterRecord[]>([]);
+  
+  // Search metrics & history tracking states (used for admin logs and graphs)
   const [searchPerformed, setSearchPerformed] = useState<boolean>(false);
   const [searchCount, setSearchCount] = useState<number>(0);
   const [todaySearchCount, setTodaySearchCount] = useState<number>(0);
   const [recentActions, setRecentActions] = useState<Array<{ id: number; text: string; time: string; type: 'red' | 'blue' }>>([]);
+  const [searchLogs, setSearchLogs] = useState<SearchLog[]>([]);
 
-  // Track search state
+  // Page loader and health status
   const [searching, setSearching] = useState<boolean>(false);
-
-  // Track backend server status
   const [serverOnline, setServerOnline] = useState<boolean>(true);
-
-  // Track Developer Modal visibility
   const [showDevModal, setShowDevModal] = useState<boolean>(false);
 
-  // Mobile sidebar open/close state
+  /**
+   * Mobile Sidebar Drawer State
+   * - Controls visibility of the collapsible sidebar on mobile screens (viewport < lg breakpoint).
+   * - Triggers sliding CSS transitions and maps overlay backdrops when true.
+   */
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
-  // Real PDFs from backend
+  /**
+   * Global Toast Notification State
+   * - Stores the active toast message and its aesthetic category ('success' | 'error' | 'info').
+   * - When populated, renders a floating glassmorphic overlay inside a React portal adjacent to the page content.
+   */
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  /**
+   * Triggers a global floating toast notification.
+   * Utilizes React.useCallback to prevent redundant renders when passed down as a prop to child panels.
+   * 
+   * @param {string} message - The text content to display.
+   * @param {'success' | 'error' | 'info'} type - The category style (defaults to 'success').
+   */
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
+  }, []);
+
+  /**
+   * Automatic Toast Auto-Dismiss Cycle
+   * - Listens to updates in the active toast state.
+   * - Configures a non-blocking 3-second (3000ms) timer to clear the message and dismiss the panel.
+   * - Leverages a cleanup callback to clear the active timer if the toast is manually dismissed or updated, preventing memory leaks.
+   */
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  // Uploaded PDFs catalog collections
   const [uploadedPdfs, setUploadedPdfs] = useState<UploadedPdf[]>([]);
   const [pdfsLoading, setPdfsLoading] = useState<boolean>(false);
 
-  // Poll backend health status
+  /**
+   * Periodically polls the server health endpoint to update state indicators and handle offline failures.
+   */
   useEffect(() => {
     const checkHealth = async () => {
       try {
@@ -53,10 +112,9 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Track user search queries
-  const [searchLogs, setSearchLogs] = useState<SearchLog[]>([]);
-
-  // Load PDF list from Supabase on mount
+  /**
+   * Fetches metadata for uploaded PDFs and maps the results into the frontend interface structure.
+   */
   const loadPdfs = useCallback(async () => {
     setPdfsLoading(true);
     try {
@@ -64,7 +122,7 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.pdfs) {
-          // Map backend snake_case to frontend camelCase
+          // Normalize API snake_case objects into clean camelCase models
           const mapped: UploadedPdf[] = data.pdfs.map((p: any) => ({
             id: p.id,
             fileName: p.fileName || p.file_name || '',
@@ -98,13 +156,22 @@ export default function App() {
     }
   }, []);
 
+  // Fetch PDFs catalog on initial assembly mount
   useEffect(() => {
     loadPdfs();
   }, [loadPdfs]);
 
+  /**
+   * Queries the search API endpoint using client filters.
+   * Maps matching datasets into the React state and records diagnostic logs.
+   * 
+   * @param {SearchFilters} filters - Query constraints populated by the search form.
+   */
   const handleSearch = async (filters: SearchFilters) => {
     setSearching(true);
     const queryParams = new URLSearchParams();
+    
+    // Construct query parameters checking presence of input fields
     if (filters.name) queryParams.append('name', filters.name);
     if (filters.fatherName) queryParams.append('fatherName', filters.fatherName);
     if (filters.motherName) queryParams.append('motherName', filters.motherName);
@@ -127,7 +194,7 @@ export default function App() {
       const data = await response.json();
       let results = data.results || [];
 
-      // Map backend fields to frontend interface (handles both snake_case legacy and camelCase)
+      // Normalize search results mapping standard database schemas
       const mappedResults: VoterRecord[] = results.map((v: any) => ({
         id: v.id,
         nid: v.nid || '',
@@ -170,11 +237,13 @@ export default function App() {
       setSearchCount(prev => prev + 1);
       setTodaySearchCount(prev => prev + 1);
 
+      // Log action to the live activity stream
       setRecentActions(prev => [
         { id: Date.now(), text: `অনুসন্ধান: ${filters.name || filters.village || 'ফিল্টারসমূহ দ্বারা'}`, time: 'এইমাত্র', type: 'blue' },
         ...prev.slice(0, 4)
       ]);
 
+      // Construct a detailed summary for diagnostic IP logs
       const logDetails: string[] = [];
       if (filters.name) logDetails.push(`নাম: ${filters.name}`);
       if (filters.fatherName) logDetails.push(`পিতা: ${filters.fatherName}`);
@@ -182,6 +251,7 @@ export default function App() {
       if (filters.dob) logDetails.push(`জন্ম: ${filters.dob}`);
       const queryStr = logDetails.join(', ') || 'সাধারণ অনুসন্ধান';
 
+      // Pick a random mock IP for the session diagnostic log table
       const sampleIps = ['103.230.104.92', '202.5.51.36', '180.234.89.14', '45.125.220.80', '203.188.240.3'];
       const mockIp = sampleIps[Math.floor(Math.random() * sampleIps.length)];
       const mockLatency = `${Math.floor(Math.random() * 5) + 2}ms`;
@@ -208,22 +278,35 @@ export default function App() {
     }
   };
 
+  /**
+   * Resets active search results and toggles form filters.
+   */
   const handleReset = () => {
     setFilteredVoters([]);
     setSearchPerformed(false);
   };
 
+  /**
+   * Toggles the active view routing and resets state caches.
+   */
   const handleViewChange = (view: 'search' | 'dashboard') => {
     handleReset();
     setCurrentView(view);
   };
 
+  /**
+   * Core callback synced to update local state upon inserting manual entries.
+   */
   const handleAddVoter = (newVoter: VoterRecord) => {
-    // Local memory sync for compatibility with props, though manual creation is deprecated
     setVoters(prev => [newVoter, ...prev]);
     setFilteredVoters(prev => [newVoter, ...prev]);
   };
 
+  /**
+   * Dispatches a DELETE request to purge a voter record from the local database.
+   * 
+   * @param {string} voterId - Target record UUID.
+   */
   const handleRemoveVoter = async (voterId: string) => {
     try {
       await fetch(`${API_BASE}/api/voters/${voterId}`, { method: 'DELETE' });
@@ -237,13 +320,13 @@ export default function App() {
     }
   };
 
-  // Real voter count from Supabase (total from all PDFs)
+  // Compile overall voter record metric summaries loaded in the system
   const totalVotersInSystem = uploadedPdfs.reduce((sum, p) => sum + (p.voterCount || 0), 0);
 
   return (
     <div id="voter-app-root" className="min-h-screen bg-slate-100 font-sans text-slate-900 flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900 leading-normal">
 
-      {/* Top Navigation Bar */}
+      {/* Top Premium Navigation Bar */}
       <nav id="voter-main-header" className="h-14 bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border-b border-indigo-800/40 flex items-center justify-between px-6 shadow-md z-10 select-none">
         <div className="flex items-center gap-3">
           <div className="bg-white rounded-full p-1.5 flex items-center justify-center shadow-xs">
@@ -259,6 +342,7 @@ export default function App() {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          {/* Active Server Health Indicator Pin */}
           {serverOnline ? (
             <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-1 text-emerald-300 bg-emerald-950/45 rounded-full border border-emerald-500/20 flex items-center gap-1.5 font-mono select-none">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
@@ -273,9 +357,10 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Main Content Area */}
+      {/* Main Content Layout Container */}
       <main className="flex-1 max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8">
 
+        {/* View Router Toggle: Switch between Search Forms and Admin Dashboards */}
         {currentView === 'dashboard' ? (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-4">
@@ -321,11 +406,12 @@ export default function App() {
               onRefreshPdfs={loadPdfs}
               totalVotersInSystem={totalVotersInSystem}
               pdfsLoading={pdfsLoading}
+              showToast={showToast}
             />
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 relative">
-            {/* Backdrop overlay for mobile drawer */}
+            {/* Backdrop screen cover mask that intercepts clicks to close mobile swipe aside drawers */}
             {sidebarOpen && (
               <div
                 onClick={() => setSidebarOpen(false)}
@@ -333,14 +419,16 @@ export default function App() {
               />
             )}
 
-            {/* Sidebar Slide-Out Drawer */}
+            {/* Sidebar Slide-Out Drawer Panel.
+                Combines persistent grid col alignment on large views (`lg:relative`) with smooth 
+                transform sliding transitions (`-translate-x-full` ➔ `translate-x-0`) on mobile viewports. */}
             <aside className={`
               fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 p-4 border-r border-slate-200 flex flex-col gap-4 overflow-y-auto transition-transform duration-300 ease-in-out transform
               ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
               lg:relative lg:translate-x-0 lg:w-64 lg:h-auto lg:shadow-none lg:bg-transparent lg:border-none lg:p-0 lg:z-auto lg:flex
             `}>
 
-              {/* Mobile Sidebar Close Header */}
+              {/* Close Button Header visible only in mobile viewports */}
               <div className="bg-white rounded-lg shadow-sm p-3.5 border border-slate-200 lg:hidden flex justify-between items-center shrink-0">
                 <span className="text-xs font-bold text-slate-800 font-serif">পরিসংখ্যান ও তথ্য</span>
                 <button
@@ -352,6 +440,7 @@ export default function App() {
                 </button>
               </div>
 
+              {/* Analytics widgets */}
               <div className="bg-white rounded-lg shadow-sm p-4 border border-slate-200">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">অনুসন্ধান পরিসংখ্যান</h3>
                 <div className="space-y-3">
@@ -404,10 +493,10 @@ export default function App() {
 
             </aside>
 
-            {/* Main Search Area */}
+            {/* Public search layout container */}
             <section className="flex-1 flex flex-col gap-6 min-w-0">
 
-              {/* Mobile Menu Toggle Button (Below Navbar, Above Search Banner) */}
+              {/* Responsive Hamburger Toggle button positioned cleanly below the navbar on mobile */}
               <div className="lg:hidden flex items-center shrink-0">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -418,6 +507,7 @@ export default function App() {
                 </button>
               </div>
 
+              {/* Status Header Banner */}
               <div className={`bg-gradient-to-r ${serverOnline ? 'from-blue-700 via-indigo-800 to-slate-900' : 'from-rose-800 via-red-900 to-slate-900'} text-white rounded-xl p-5 shadow-sm relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500`}>
                 <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
                 <div className="z-10">
@@ -439,10 +529,12 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Voter Search Form */}
               <div id="voter-search-section">
                 <VoterSearchForm onSearch={handleSearch} onReset={handleReset} serverOnline={serverOnline} searching={searching} />
               </div>
 
+              {/* Search result cards lists */}
               <div id="voter-results-section" className="transition-all duration-300">
                 <VoterResultCard voters={filteredVoters} searchPerformed={searchPerformed} />
               </div>
@@ -476,6 +568,26 @@ export default function App() {
 
       {/* Developer Profile Modal */}
       <DeveloperModal isOpen={showDevModal} onClose={() => setShowDevModal(false)} />
+
+      {/* Premium custom glassmorphic portal Toast notifications */}
+      {toast && (
+        <div className="fixed bottom-5 right-5 z-[100] animate-slide-in">
+          <div className={`
+            px-4 py-3 rounded-xl shadow-2xl border flex items-center gap-3 text-xs sm:text-sm font-semibold transition-all duration-300 backdrop-blur-md bg-white/95
+            ${toast.type === 'success' ? 'border-emerald-200 text-emerald-800 shadow-emerald-100/50' : ''}
+            ${toast.type === 'error' ? 'border-rose-200 text-rose-800 shadow-rose-100/50' : ''}
+            ${toast.type === 'info' ? 'border-blue-200 text-blue-800 shadow-blue-100/50' : ''}
+          `}>
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />}
+            {toast.type === 'error' && <XOctagon className="w-5 h-5 text-rose-600 shrink-0" />}
+            {toast.type === 'info' && <Info className="w-5 h-5 text-blue-600 shrink-0" />}
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="p-1 hover:bg-slate-100 rounded-lg ml-2 shrink-0 cursor-pointer text-slate-400 hover:text-slate-600 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

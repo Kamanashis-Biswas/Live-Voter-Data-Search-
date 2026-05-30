@@ -7,9 +7,33 @@ import {
   MapPin, RefreshCw, UserCheck, Eye, EyeOff, Copy, Loader2
 } from 'lucide-react';
 
-// API base URL — matches backend port defined in backend/.env
+/**
+ * @file AdminDashboard.tsx
+ * @description Administrative control center for the Live Voter Search portal.
+ * Features secure credentials access (login, signup, OTP bypass resets), Overview metrics,
+ * PDF uploaded document lists, deletion triggers, and real-time search logging registries.
+ * 
+ * CORE FEATURES:
+ *   - Custom Clipboard Copy: Evaluates `generatedToken` and exposes copy mechanisms utilizing
+ *     the premium glassmorphic toast notification portal instead of legacy browser alerts.
+ *   - Form file upload handles: Wraps raw files in standard FormData objects sending binaries to
+ *     be parsed inside backend streams.
+ *   - Number Translation: Utilizes `toBangla` to format English numerals to Bengali digits (০-৯).
+ * 
+ * @author Kamanashis Biswas
+ * @version 5.0.0
+ */
+
+// API base URL — matches backend configurations
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
+/**
+ * Utility helper that translates English digits to Bengali digits.
+ * E.g., 1025 ➔ "১০২৫"
+ * 
+ * @param {number|string} n - English number or string to convert.
+ * @returns {string} Converted Bengali number representation.
+ */
 const toBangla = (n: number | string): string => {
   const d = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
   return String(n).split('').map(c => { const i = parseInt(c); return isNaN(i) ? c : d[i]; }).join('');
@@ -25,13 +49,15 @@ interface AdminDashboardProps {
   onRefreshPdfs: () => void;
   totalVotersInSystem: number;
   pdfsLoading: boolean;
+  showToast?: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   voters, uploadedPdfs, setUploadedPdfs, searchLogs,
-  onAddVoter, onRemoveVoter, onRefreshPdfs, totalVotersInSystem, pdfsLoading
+  onAddVoter, onRemoveVoter, onRefreshPdfs, totalVotersInSystem, pdfsLoading,
+  showToast
 }) => {
-  // Auth
+  // Authentication states
   const [isAuth, setIsAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login'|'signup'|'forgot_password'|'reset_password'>('login');
   const [email, setEmail] = useState('');
@@ -43,10 +69,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [generatedToken, setGeneratedToken] = useState('');
 
-  // Tabs
+  // Active dashboard tabs
   const [tab, setTab] = useState<'overview'|'pdf-list'|'ip-logs'>('overview');
 
-  // Upload
+  // Document upload modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -55,7 +81,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [uploadErr, setUploadErr] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Auth submit
+  /**
+   * Submits auth credential requests (signups, logins, token generating, and pass resetting).
+   * 
+   * @param {React.FormEvent} e - React form submit event.
+   */
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthErr(''); setAuthOk(''); setAuthBusy(true);
@@ -91,7 +121,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setAuthBusy(false);
   };
 
-  // File upload — actual PDF sent to backend
+  /**
+   * Wraps uploaded file buffers in standard FormData sending the payload to the PDF upload endpoint.
+   * 
+   * @param {React.FormEvent} e - Submit event.
+   */
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) { setUploadErr('PDF ফাইল সিলেক্ট করুন।'); return; }
@@ -114,6 +148,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setUploading(false);
   };
 
+  /**
+   * Submits a deletion request for a target PDF record and cascade purges its static buffer and voters.
+   * 
+   * @param {UploadedPdf} pdf - PDF object to delete.
+   */
   const handleDeletePdf = async (pdf: UploadedPdf) => {
     if (!confirm(`"${pdf.fileName}" এবং এর ভোটার ডাটা মুছে ফেলবেন?`)) return;
     setDeletingId(pdf.id);
@@ -127,6 +166,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // Render Authentication Modal if user session is unestablished
   if (!isAuth) return (
     <div className="max-w-md mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 shadow-xl text-center">
       <div className="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
@@ -134,6 +174,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
       <h2 className="text-xl font-bold text-slate-800 font-serif">অ্যাডমিন অ্যাক্সেস</h2>
       
+      {/* Dynamic Password Reset Token copyable widget */}
       {generatedToken && (
         <div className="mt-6 mb-2 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-left">
           <div>
@@ -142,7 +183,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
           <button 
             type="button"
-            onClick={() => { navigator.clipboard.writeText(generatedToken); alert('টোকেন কপি করা হয়েছে!'); }}
+            onClick={() => { 
+              navigator.clipboard.writeText(generatedToken); 
+              // COPY HOOK FEEDBACK: Invokes modern portal toast alerts replacing standard browser alert() boxes
+              if (showToast) showToast('টোকেন কপি করা হয়েছে!', 'success');
+            }}
             className="p-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg flex flex-col items-center gap-1 transition-colors"
             title="Copy Token"
           >
@@ -152,6 +197,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
+      {/* Access credentials inputs */}
       <form onSubmit={handleAuth} className="mt-6 space-y-4 text-left">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Email</label>
@@ -209,7 +255,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   return (
     <div className="space-y-6 text-slate-800">
-      {/* Tabs */}
+      {/* Horizontal navigation tabs */}
       <div className="flex border-b border-slate-200 overflow-x-auto no-scrollbar">
         {[{k:'overview',l:'ওভারভিউ',i:<Activity className="w-4 h-4"/>},{k:'pdf-list',l:'PDF আপলোড',i:<UploadCloud className="w-4 h-4"/>},{k:'ip-logs',l:'সার্চ লগ',i:<Globe className="w-4 h-4"/>}].map(t=>(
           <button key={t.k} onClick={()=>setTab(t.k as any)} className={`px-5 py-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 whitespace-nowrap transition-all cursor-pointer ${tab===t.k?'border-blue-700 text-blue-700 bg-blue-50/10':'border-transparent text-slate-500 hover:text-slate-800'}`}>
@@ -218,7 +264,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         ))}
       </div>
 
-      {/* OVERVIEW */}
+      {/* OVERVIEW PANEL */}
       {tab==='overview' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -242,6 +288,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             ))}
           </div>
 
+          {/* Area Summary Panels */}
           {uploadedPdfs.length > 0 && (
             <div className="bg-white rounded-xl border border-slate-200/80 p-6">
               <h3 className="font-bold text-slate-800 font-serif flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-blue-700"/>আপলোডকৃত এলাকার সারসংক্ষেপ</h3>
@@ -262,6 +309,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           )}
 
+          {/* Setup Informational Strip */}
           <div className="p-6 bg-white rounded-xl border border-slate-200/80 flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 max-w-2xl">
               <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><Unlock className="w-5 h-5 text-blue-700"/>Local Storage Mode — কোনো Supabase Setup লাগবে না</h3>
@@ -276,7 +324,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* PDF LIST */}
+      {/* PDF LIST TABLE */}
       {tab==='pdf-list' && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
@@ -360,7 +408,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* IP LOGS */}
+      {/* SEARCH LOGS */}
       {tab==='ip-logs' && (
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-xl border border-slate-200/80 flex items-center justify-between">
