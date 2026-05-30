@@ -6,11 +6,19 @@ const { parsePdfBuffer } = require('../services/pdfParserService');
 
 const UPLOADS_DIR = path.join(__dirname, '../uploads');
 
+// Auto-create uploads directory
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  console.log(`📁 Created uploads directory: ${UPLOADS_DIR}`);
+}
+
 /**
  * POST /api/pdf/upload
  * Upload actual PDF file, parse it, extract voters, store everything locally.
  */
 exports.uploadPdf = async (req, res, next) => {
+  let filePath = null;
+
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'কোনো PDF ফাইল পাঠানো হয়নি।' });
@@ -19,10 +27,15 @@ exports.uploadPdf = async (req, res, next) => {
     const pdfId = uuidv4();
     const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
     const safeFileName = `${pdfId}.pdf`;
-    const filePath = path.join(UPLOADS_DIR, safeFileName);
+    filePath = path.join(UPLOADS_DIR, safeFileName);
 
     // Save the PDF file to disk
-    fs.writeFileSync(filePath, req.file.buffer);
+    try {
+      fs.writeFileSync(filePath, req.file.buffer);
+    } catch (writeErr) {
+      console.error('Failed to save PDF file:', writeErr.message);
+      return res.status(500).json({ success: false, message: 'PDF ফাইল সেভ করতে সমস্যা হয়েছে।' });
+    }
 
     const fileSizeMB = (req.file.size / (1024 * 1024)).toFixed(2);
 
@@ -77,6 +90,10 @@ exports.uploadPdf = async (req, res, next) => {
     });
 
   } catch (err) {
+    // Clean up uploaded file on error
+    if (filePath && fs.existsSync(filePath)) {
+      try { fs.unlinkSync(filePath); } catch (_) {}
+    }
     next(err);
   }
 };
@@ -126,7 +143,9 @@ exports.deletePdf = (req, res, next) => {
     if (pdf) {
       // Delete actual file
       const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch (_) {}
+      }
       // Delete associated voters
       const deletedVoters = db.deleteVotersByPdf(id);
       // Delete PDF record

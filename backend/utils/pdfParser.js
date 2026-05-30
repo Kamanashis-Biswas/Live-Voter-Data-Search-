@@ -1,23 +1,33 @@
-const pdf = require('pdf-parse');
+'use strict';
 
 /**
- * Utility: Converts uploaded PDF binary buffers into clean string text.
- * @param {Buffer} pdfBuffer - The uploaded PDF file buffer from multer memoryStorage.
- * @returns {Promise<string>} Resolves with plain text parsed from the document.
+ * pdfParser utility — lightweight wrapper over pdfParserService.
+ * Maintained for backward compatibility with any code that imports this module.
+ */
+
+const { parsePdfBuffer } = require('../services/pdfParserService');
+
+/**
+ * Parse a voter PDF buffer and return text + metadata.
+ *
+ * @param {Buffer} pdfBuffer - multer memory buffer
+ * @returns {Promise<{ text: string, totalPages: number, metadata: object }>}
  */
 const parseVoterPdfBuffer = async (pdfBuffer) => {
   try {
-    const options = {
-      // Optional: Add custom layout mapping or page filters if needed
-      max: 0, // Get all pages
-    };
-    
-    const parsedData = await pdf(pdfBuffer, options);
-    
+    const result = await parsePdfBuffer(pdfBuffer, 'temp-id', 'unnamed.pdf');
+    // Build flat text from result for compatibility
+    const text = [
+      result.coverMeta ? JSON.stringify(result.coverMeta) : '',
+      ...(result.voters || []).map(v => `${v.serialNo}. ${v.nameBn} ${v.fatherName} ${v.motherName}`),
+    ].join('\n');
+
     return {
-      text: parsedData.text || '',
-      totalPages: parsedData.numpaged || 0,
-      metadata: parsedData.info || {}
+      text,
+      totalPages: result.totalPages || 0,
+      metadata: result.coverMeta || {},
+      pdfType: result.pdfType,
+      encoding: result.encoding,
     };
   } catch (error) {
     console.error('❌ Error parsing voter PDF document:', error.message);
@@ -25,6 +35,4 @@ const parseVoterPdfBuffer = async (pdfBuffer) => {
   }
 };
 
-module.exports = {
-  parseVoterPdfBuffer
-};
+module.exports = { parseVoterPdfBuffer };

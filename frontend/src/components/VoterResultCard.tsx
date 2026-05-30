@@ -8,11 +8,14 @@ import {
   Loader2
 } from 'lucide-react';
 
-// Configure pdfjs worker using a stable CDN matching the installed version (5.7.284)
-// This avoids "Worker was destroyed" errors that occur with Vite dynamic imports in React StrictMode
-pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/build/pdf.worker.min.mjs';
+// Configure pdfjs worker natively using Vite URL import
+// This avoids "Worker was destroyed" cross-origin errors
+// @ts-ignore (TypeScript doesn't know about Vite's ?url query suffix)
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-const API_BASE = 'http://localhost:3000';
+// API base URL — matches backend port defined in backend/.env
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 interface Props {
   voters: VoterRecord[];
@@ -21,6 +24,7 @@ interface Props {
 
 // -----------------------------------------------------------------------
 // PDF Viewer Component with voter highlight overlay
+// Fixed: proper lifecycle management, no "Worker was destroyed" errors
 // -----------------------------------------------------------------------
 interface PdfViewerProps {
   voter: VoterRecord;
@@ -29,106 +33,286 @@ interface PdfViewerProps {
 
 const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [pdf, setPdf] = useState<pdfjs.PDFDocumentProxy | null>(null);
+  // Use refs for mutable state that shouldn't trigger re-renders
+  const pdfRef = useRef<pdfjs.PDFDocumentProxy | null>(null);
+  const renderTaskRef = useRef<pdfjs.RenderTask | null>(null);
+  const isMountedRef = useRef(true);
+  const loadingTaskRef = useRef<pdfjs.PDFDocumentLoadingTask | null>(null);
+
   const [currentPage, setCurrentPage] = useState<number>(voter.pdfPageNumber || 2);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [zoom, setZoom] = useState(1.2);
-  const [renderTask, setRenderTask] = useState<pdfjs.RenderTask | null>(null);
+  const [pdfReady, setPdfReady] = useState(false);
 
   const pdfUrl = voter.pdfUploadId ? `${API_BASE}/api/pdf/${voter.pdfUploadId}/file` : '';
 
-  // Load PDF
+  // Cleanup function for render task
+  const cancelRender = useCallback(() => {
+    if (renderTaskRef.current) {
+      try { renderTaskRef.current.cancel(); } catch {}
+      renderTaskRef.current = null;
+    }
+  }, []);
+
+  // Cleanup function for entire PDF lifecycle
+  const cleanupPdf = useCallback(async () => {
+    cancelRender();
+    if (pdfRef.current) {
+      try { await pdfRef.current.destroy(); } catch {}
+      pdfRef.current = null;
+    }
+    if (loadingTaskRef.current) {
+      try { await loadingTaskRef.current.destroy(); } catch {}
+      loadingTaskRef.current = null;
+    }
+    setPdfReady(false);
+  }, [cancelRender]);
+
+  // Load PDF document
   useEffect(() => {
     if (!pdfUrl) { setError('PDF URL পাওয়া যায়নি।'); setLoading(false); return; }
+
+    isMountedRef.current = true;
     setLoading(true);
     setError('');
+    setPdfReady(false);
 
-    const loadingTask = pdfjs.getDocument({
-      url: pdfUrl,
-      cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/cmaps/',
-      cMapPacked: true,
-    });
+    // Clean up any previous PDF before loading new one
+    const load = async () => {
+      await cleanupPdf();
 
-    loadingTask.promise.then(doc => {
-      setPdf(doc);
-      setTotalPages(doc.numPages);
-      setLoading(false);
-    }).catch(err => {
-      setError('PDF লোড করতে সমস্যা: ' + err.message);
-      setLoading(false);
-    });
+      const task = pdfjs.getDocument({
+        url: pdfUrl,
+        cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/cmaps/',
+        cMapPacked: true,
+      });
+      loadingTaskRef.current = task;
 
-    return () => { loadingTask.destroy().catch(()=>{}); };
+      try {
+        const doc = await task.promise;
+        if (!isMountedRef.current) {
+          doc.destroy().catch(() => {});
+          return;
+        }
+        pdfRef.current = doc;
+        setTotalPages(doc.numPages);
+        setPdfReady(true);
+        setLoading(false);
+      } catch (err: any) {
+        if (!isMountedRef.current) return;
+        if (err?.name !== 'MissingPDFException') {
+          setError('PDF লোড করতে সমস্যা: ' + (err?.message || 'Unknown error'));
+        }
+        setLoading(false);
+      }
+    };
+
+    load();
+
+    return () => {
+      isMountedRef.current = false;
+      cleanupPdf();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfUrl]);
 
   // Render page to canvas
-  const renderPage = useCallback(async (pageNum: number) => {
-    if (!pdf || !canvasRef.current) return;
+  useEffect(() => {
+    if (!pdfReady || !pdfRef.current || !canvasRef.current) return;
 
-    // Cancel previous render
-    if (renderTask) { try { renderTask.cancel(); } catch {} }
+    const pdf = pdfRef.current;
+    let cancelled = false;
 
-    try {
-      const page = await pdf.getPage(pageNum);
-      const viewport = page.getViewport({ scale: zoom });
-      const canvas = canvasRef.current;
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext('2d')!;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const render = async () => {
+      cancelRender();
 
-      const task = page.render({ canvasContext: ctx, viewport });
-      setRenderTask(task);
-      await task.promise;
+      try {
+        const page = await pdf.getPage(currentPage);
+        if (cancelled || !canvasRef.current) { page.cleanup(); return; }
 
-      // Draw voter highlight overlay
-      drawVoterHighlight(ctx, voter, viewport, pageNum);
-    } catch (e: any) {
-      if (e?.name !== 'RenderingCancelledException') {
-        console.error('Render error:', e);
+        const viewport = page.getViewport({ scale: zoom });
+        const canvas = canvasRef.current;
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const task = page.render({ canvasContext: ctx, viewport });
+        renderTaskRef.current = task;
+
+        await task.promise;
+        if (cancelled) return;
+
+        // Try to find voter position on the page using text search
+        let highlightBox: HighlightBox | null = null;
+        try {
+          const textContent = await page.getTextContent();
+          highlightBox = findVoterHighlightBox(voter, textContent, viewport);
+        } catch (err) {
+          console.warn('Text search highlight failed:', err);
+        }
+
+        // Draw voter highlight overlay
+        drawVoterHighlight(ctx, voter, viewport, currentPage, highlightBox);
+      } catch (e: any) {
+        if (e?.name !== 'RenderingCancelledException' && !cancelled) {
+          console.error('Render error:', e);
+        }
+      }
+    };
+
+    render();
+
+    return () => {
+      cancelled = true;
+      cancelRender();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pdfReady, currentPage, zoom]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') setCurrentPage(p => Math.max(1, p - 1));
+      if (e.key === 'ArrowRight') setCurrentPage(p => Math.min(totalPages, p + 1));
+      if (e.key === '+' || e.key === '=') setZoom(z => Math.min(2.5, z + 0.1));
+      if (e.key === '-') setZoom(z => Math.max(0.5, z - 0.1));
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onClose, totalPages]);
+
+  interface HighlightBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  // Find exact voter cell location using text coordinate search on the PDF page
+  function findVoterHighlightBox(voter: VoterRecord, textContent: any, viewport: any): HighlightBox | null {
+    const serialBn = voter.serialNo || '';
+    if (!serialBn) return null;
+
+    const bnToEnMap: any = { '০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9' };
+    const serialEn = serialBn.split('').map(c => bnToEnMap[c] || c).join('');
+    const serialEnInt = parseInt(serialEn).toString();
+
+    let foundItem: any = null;
+
+    // Search items for serial number patterns
+    for (const item of textContent.items) {
+      const text = (item.str || '').trim();
+      if (!text) continue;
+
+      const isMatch = 
+        text === `${serialBn}.` || 
+        text === serialBn || 
+        text === `${serialEn}.` || 
+        text === serialEn ||
+        text === `${serialEnInt}.` ||
+        text.startsWith(`${serialBn}.`) ||
+        text.startsWith(`${serialEn}.`);
+
+      if (isMatch) {
+        foundItem = item;
+        break;
       }
     }
-  }, [pdf, zoom, voter, renderTask]);
 
-  useEffect(() => {
-    if (pdf) renderPage(currentPage);
-  }, [pdf, currentPage, zoom]);
+    // Fallback: search for voterNo if serial isn't found
+    if (!foundItem && voter.voterNo) {
+      const voterNoBn = voter.voterNo;
+      const voterNoEn = voterNoBn.split('').map(c => bnToEnMap[c] || c).join('');
 
-  // Calculate voter cell position on the page and draw a highlight box
-  function drawVoterHighlight(ctx: CanvasRenderingContext2D, voter: VoterRecord, viewport: pdfjs.PageViewport, pageNum: number) {
-    const serialNum = voter.serialNum || 0;
+      for (const item of textContent.items) {
+        const text = (item.str || '').trim();
+        if (text.includes(voterNoBn) || text.includes(voterNoEn)) {
+          foundItem = item;
+          break;
+        }
+      }
+    }
+
+    if (!foundItem) return null;
+
+    const tx = foundItem.transform[4];
+    const ty = foundItem.transform[5];
+
+    const pageW = viewport.width;
+    const pageH = viewport.height;
+    
+    // Convert PDF coordinates (y is bottom-up) to viewport canvas coordinates (y is top-down)
+    const [vx, vy] = viewport.convertToViewportPoint(tx, ty);
+
+    const cellW = pageW * 0.325;
+    const cellH = pageH * 0.138;
+
+    // Align highlight box nicely around the cell starting from the serial number
+    const x = vx - 10;
+    const y = vy - 20;
+
+    return { x, y, width: cellW, height: cellH };
+  }
+
+  // Draw voter cell position highlight
+  function drawVoterHighlight(
+    ctx: CanvasRenderingContext2D, 
+    voter: VoterRecord, 
+    viewport: pdfjs.PageViewport, 
+    pageNum: number,
+    highlightBox: HighlightBox | null
+  ) {
     const voterPageNumber = voter.pdfPageNumber || 2;
     
     // Only highlight if we're on the voter's page
     if (pageNum !== voterPageNumber) return;
 
-    const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
+    let x = 0;
+    let y = 0;
+    let cellW = 0;
+    let cellH = 0;
 
-    // 3-column grid layout (standard NEC voter list format)
-    const COLS = 3;
-    const ROWS_PER_PAGE = 5;
+    if (highlightBox) {
+      x = highlightBox.x;
+      y = highlightBox.y;
+      cellW = highlightBox.width;
+      cellH = highlightBox.height;
+    } else {
+      // Fallback: mathematical grid layout
+      const serialNum = voter.serialNum || 0;
+      const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
 
-    const col = ((serialOnPage - 1) % COLS); // 0, 1, or 2
-    const row = Math.floor((serialOnPage - 1) / COLS); // 0 to 4
+      const COLS = 3;
+      const ROWS_PER_PAGE = 5;
 
-    const W = viewport.width;
-    const H = viewport.height;
+      const col = ((serialOnPage - 1) % COLS);
+      const row = Math.floor((serialOnPage - 1) / COLS);
 
-    // Grid occupies roughly:
-    // Y: from 22% to 92% of page height
-    // X: full width with small margins
-    const GRID_TOP = H * 0.22;
-    const GRID_BOTTOM = H * 0.93;
-    const GRID_LEFT = W * 0.01;
-    const GRID_RIGHT = W * 0.99;
+      const W = viewport.width;
+      const H = viewport.height;
 
-    const cellW = (GRID_RIGHT - GRID_LEFT) / COLS;
-    const cellH = (GRID_BOTTOM - GRID_TOP) / ROWS_PER_PAGE;
+      const GRID_TOP = H * 0.22;
+      const GRID_BOTTOM = H * 0.93;
+      const GRID_LEFT = W * 0.01;
+      const GRID_RIGHT = W * 0.99;
 
-    const x = GRID_LEFT + col * cellW;
-    const y = GRID_TOP + row * cellH;
+      cellW = (GRID_RIGHT - GRID_LEFT) / COLS;
+      cellH = (GRID_BOTTOM - GRID_TOP) / ROWS_PER_PAGE;
+
+      x = GRID_LEFT + col * cellW;
+      y = GRID_TOP + row * cellH;
+    }
+
+    const pageW = viewport.width;
+    const pageH = viewport.height;
+
+    // Keep highlight box within canvas boundaries
+    x = Math.max(0, Math.min(x, pageW - cellW));
+    y = Math.max(0, Math.min(y, pageH - cellH));
 
     // Draw highlight border
     ctx.save();
@@ -150,7 +334,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     ctx.fill();
 
     ctx.fillStyle = 'white';
-    ctx.font = `bold ${Math.max(10, W * 0.018)}px sans-serif`;
+    ctx.font = `bold ${Math.max(10, pageW * 0.018)}px sans-serif`;
     ctx.fillText(`✓ ${voter.nameBn}`, lx + 6, ly - 5);
     ctx.restore();
   }
@@ -175,11 +359,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           <div className="flex items-center gap-2">
             {/* Zoom controls */}
             <div className="hidden sm:flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-0.5 text-xs mr-2">
-              <button onClick={()=>setZoom(z=>Math.max(0.7,z-0.1))} className="p-1 hover:text-blue-400"><ZoomOut className="w-4 h-4"/></button>
+              <button onClick={()=>setZoom(z=>Math.max(0.5,z-0.1))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomOut className="w-4 h-4"/></button>
               <span className="font-mono px-1.5 w-12 text-center">{Math.round(zoom*100)}%</span>
-              <button onClick={()=>setZoom(z=>Math.min(2.5,z+0.1))} className="p-1 hover:text-blue-400"><ZoomIn className="w-4 h-4"/></button>
+              <button onClick={()=>setZoom(z=>Math.min(2.5,z+0.1))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomIn className="w-4 h-4"/></button>
             </div>
-            <button onClick={onClose} className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg"><X className="w-5 h-5"/></button>
+            <button onClick={onClose} className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg cursor-pointer"><X className="w-5 h-5"/></button>
           </div>
         </div>
 

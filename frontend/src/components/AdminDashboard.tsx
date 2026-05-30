@@ -4,10 +4,11 @@ import {
   Activity, CheckCircle2, XCircle, AlertCircle, Globe, 
   UploadCloud, Database, Lock, Unlock, FileText, Trash2, 
   X, Plus, FileCheck, Check, Info, ChevronLeft, ChevronRight,
-  MapPin, RefreshCw, UserCheck
+  MapPin, RefreshCw, UserCheck, Eye, EyeOff, Copy
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:3000';
+// API base URL — matches backend port defined in backend/.env
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 const toBangla = (n: number | string): string => {
   const d = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
@@ -39,6 +40,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [authErr, setAuthErr] = useState('');
   const [authOk, setAuthOk] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [generatedToken, setGeneratedToken] = useState('');
 
   // Tabs
   const [tab, setTab] = useState<'overview'|'pdf-list'|'ip-logs'>('overview');
@@ -67,11 +70,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       } else if (authMode === 'forgot_password') {
         const r = await fetch(`${API_BASE}/api/auth/forgot-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email}) });
         const d = await r.json();
-        if (d.success) { setAuthOk('Token sent.'); setAuthMode('reset_password'); } else setAuthErr(d.message || 'Failed');
+        if (d.success) { 
+          if (d.token) {
+            setGeneratedToken(d.token);
+            setAuthOk('টোকেন জেনারেট হয়েছে।');
+          } else {
+            setAuthOk('Token sent/generated.'); 
+          }
+          setAuthMode('reset_password'); 
+        } else {
+          setAuthErr(d.message || 'Failed');
+        }
       } else {
         const r = await fetch(`${API_BASE}/api/auth/reset-password`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, token, newPassword: password}) });
         const d = await r.json();
-        if (d.success) { setAuthOk('Password reset. Login now.'); setAuthMode('login'); } else setAuthErr(d.message || 'Failed');
+        if (d.success) { setAuthOk('Password reset. Login now.'); setAuthMode('login'); setGeneratedToken(''); setToken(''); } else setAuthErr(d.message || 'Failed');
       }
     } catch { setAuthErr('Network error.'); }
     setAuthBusy(false);
@@ -112,6 +125,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <Lock className="w-7 h-7" />
       </div>
       <h2 className="text-xl font-bold text-slate-800 font-serif">অ্যাডমিন অ্যাক্সেস</h2>
+      
+      {generatedToken && (
+        <div className="mt-6 mb-2 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-left">
+          <div>
+            <p className="text-xs font-bold text-emerald-800 mb-1">আপনার টোকেন:</p>
+            <p className="text-xl font-mono font-bold text-emerald-600 tracking-widest">{generatedToken}</p>
+          </div>
+          <button 
+            type="button"
+            onClick={() => { navigator.clipboard.writeText(generatedToken); alert('টোকেন কপি করা হয়েছে!'); }}
+            className="p-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg flex flex-col items-center gap-1 transition-colors"
+            title="Copy Token"
+          >
+            <Copy className="w-5 h-5" />
+            <span className="text-[9px] font-bold">কপি করুন</span>
+          </button>
+        </div>
+      )}
+
       <form onSubmit={handleAuth} className="mt-6 space-y-4 text-left">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Email</label>
@@ -127,9 +159,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest font-mono">{authMode==='reset_password'?'New Password':'Password'}</label>
-              {authMode==='login' && <button type="button" onClick={()=>setAuthMode('forgot_password')} className="text-[10px] text-blue-600 hover:underline">Forgot?</button>}
+              {authMode==='login' && <button type="button" onClick={()=>{setAuthMode('forgot_password'); setGeneratedToken(''); setAuthOk(''); setAuthErr('');}} className="text-[10px] text-blue-600 hover:underline">Forgot?</button>}
             </div>
-            <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"/>
+            <div className="relative">
+              <input 
+                type={showPassword ? 'text' : 'password'} 
+                value={password} 
+                onChange={e=>setPassword(e.target.value)} 
+                placeholder="••••••••" 
+                required 
+                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         )}
         {authErr && <p className="text-xs text-rose-600 flex items-center gap-1.5 bg-rose-50 p-2.5 rounded-lg border border-rose-100"><AlertCircle className="w-4 h-4 shrink-0"/>{authErr}</p>}
@@ -167,7 +215,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div key={i} className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-xs relative overflow-hidden hover:shadow-md transition-all">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{c.label}</span>
-                  <div className={`w-10 h-10 rounded-lg bg-${c.color}-50 text-${c.color}-600 flex items-center justify-center`}>{c.icon}</div>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    c.color === 'blue' ? 'bg-blue-50 text-blue-600' :
+                    c.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
+                    'bg-amber-50 text-amber-600'
+                  }`}>{c.icon}</div>
                 </div>
                 <h4 className="text-3xl font-black text-slate-900 mt-4">{pdfsLoading ? '...' : c.val}</h4>
                 <p className="text-[11px] text-slate-400 mt-1">{c.sub}</p>

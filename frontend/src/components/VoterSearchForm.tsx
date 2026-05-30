@@ -14,6 +14,9 @@ const initialFilters: SearchFilters = {
   village: '',
   dob: '',
   gender: 'all',
+  upazila: '',
+  district: '',
+  voterNo: '',
 };
 
 export const VoterSearchForm: React.FC<VoterSearchFormProps> = ({ onSearch, onReset }) => {
@@ -152,6 +155,54 @@ export const VoterSearchForm: React.FC<VoterSearchFormProps> = ({ onSearch, onRe
               <option value="male">পুরুষ</option>
               <option value="female">মহিলা</option>
             </select>
+          </div>
+
+          {/* District Input */}
+          <div className="col-span-1">
+            <label htmlFor="district-input" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase">
+              জেলা (District)
+            </label>
+            <input
+              type="text"
+              id="district-input"
+              name="district"
+              value={filters.district}
+              onChange={handleInputChange}
+              placeholder="জেলার নাম"
+              className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-slate-900 placeholder:text-slate-400"
+            />
+          </div>
+
+          {/* Upazila Input */}
+          <div className="col-span-1">
+            <label htmlFor="upazila-input" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase">
+              উপজেলা (Upazila)
+            </label>
+            <input
+              type="text"
+              id="upazila-input"
+              name="upazila"
+              value={filters.upazila}
+              onChange={handleInputChange}
+              placeholder="উপজেলার নাম"
+              className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-slate-900 placeholder:text-slate-400"
+            />
+          </div>
+
+          {/* Voter No Input */}
+          <div className="col-span-1">
+            <label htmlFor="voterNo-input" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase">
+              ভোটার নং (Voter No)
+            </label>
+            <input
+              type="text"
+              id="voterNo-input"
+              name="voterNo"
+              value={filters.voterNo}
+              onChange={handleInputChange}
+              placeholder="ভোটার নম্বর লিখুন"
+              className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-slate-900 placeholder:text-slate-400"
+            />
           </div>
 
           {/* Form Actions Section with exact visual specifications from design */}

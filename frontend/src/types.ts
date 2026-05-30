@@ -5,6 +5,9 @@ export interface SearchFilters {
   village: string;
   dob: string;
   gender: 'all' | 'male' | 'female';
+  upazila?: string;
+  district?: string;
+  voterNo?: string;
 }
 
 export interface VoterRecord {
