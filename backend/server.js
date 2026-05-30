@@ -47,9 +47,11 @@ app.get('/', (req, res) => {
 // --- Import & Mount Controllers/Routes ---
 const voterRoutes = require('./routes/voterRoutes');
 const authRoutes = require('./routes/authRoutes');
+const pdfRoutes = require('./routes/pdfRoutes');
 
 app.use('/api/voters', voterRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/pdf', pdfRoutes);
 
 // --- Global Centralized Error Fallback ---
 app.use((err, req, res, next) => {
