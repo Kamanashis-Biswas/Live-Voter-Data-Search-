@@ -7,6 +7,8 @@ import { DeveloperModal } from './components/DeveloperModal';
 import {
   Lock,
   Loader2,
+  Menu,
+  X,
 } from 'lucide-react';
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
@@ -28,6 +30,9 @@ export default function App() {
 
   // Track Developer Modal visibility
   const [showDevModal, setShowDevModal] = useState<boolean>(false);
+
+  // Mobile sidebar open/close state
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   // Real PDFs from backend
   const [uploadedPdfs, setUploadedPdfs] = useState<UploadedPdf[]>([]);
@@ -319,9 +324,33 @@ export default function App() {
             />
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar */}
-            <aside className="w-full lg:w-64 flex flex-col gap-4 shrink-0">
+          <div className="flex flex-col lg:flex-row gap-6 relative">
+            {/* Backdrop overlay for mobile drawer */}
+            {sidebarOpen && (
+              <div
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-45 transition-opacity duration-300"
+              />
+            )}
+
+            {/* Sidebar Slide-Out Drawer */}
+            <aside className={`
+              fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 p-4 border-r border-slate-200 flex flex-col gap-4 overflow-y-auto transition-transform duration-300 ease-in-out transform
+              ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+              lg:relative lg:translate-x-0 lg:w-64 lg:h-auto lg:shadow-none lg:bg-transparent lg:border-none lg:p-0 lg:z-auto lg:flex
+            `}>
+
+              {/* Mobile Sidebar Close Header */}
+              <div className="bg-white rounded-lg shadow-sm p-3.5 border border-slate-200 lg:hidden flex justify-between items-center shrink-0">
+                <span className="text-xs font-bold text-slate-800 font-serif">পরিসংখ্যান ও তথ্য</span>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-1 hover:bg-slate-100 active:bg-slate-200 rounded-lg text-slate-500 hover:text-slate-700 cursor-pointer transition-colors"
+                  title="বন্ধ করুন"
+                >
+                  <X className="w-4.5 h-4.5" />
+                </button>
+              </div>
 
               <div className="bg-white rounded-lg shadow-sm p-4 border border-slate-200">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">অনুসন্ধান পরিসংখ্যান</h3>
@@ -377,6 +406,17 @@ export default function App() {
 
             {/* Main Search Area */}
             <section className="flex-1 flex flex-col gap-6 min-w-0">
+
+              {/* Mobile Menu Toggle Button (Below Navbar, Above Search Banner) */}
+              <div className="lg:hidden flex items-center shrink-0">
+                <button
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="bg-white text-slate-800 border border-slate-200 shadow-sm px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-slate-50 active:bg-slate-100 transition-all cursor-pointer shadow-slate-100"
+                >
+                  <Menu className="w-4.5 h-4.5 text-blue-600 animate-pulse" />
+                  পরিসংখ্যান ও তথ্য ড্যাশবোর্ড
+                </button>
+              </div>
 
               <div className={`bg-gradient-to-r ${serverOnline ? 'from-blue-700 via-indigo-800 to-slate-900' : 'from-rose-800 via-red-900 to-slate-900'} text-white rounded-xl p-5 shadow-sm relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500`}>
                 <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>

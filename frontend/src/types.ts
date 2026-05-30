@@ -40,6 +40,12 @@ export interface VoterRecord {
   pdfPageNumber?: number;  // which PDF page this voter is on
   serialNum?: number;      // numeric serial (for highlight position calc)
   serialOnPage?: number;   // position within the page (1-15)
+  boundingBox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   address?: {
     village: string;
     postOffice: string;

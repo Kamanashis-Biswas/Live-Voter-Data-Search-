@@ -45,6 +45,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const [error, setError] = useState('');
   const [zoom, setZoom] = useState(1.2);
   const [pdfReady, setPdfReady] = useState(false);
+  const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties | null>(null);
 
   const pdfUrl = voter.pdfUploadId ? `${API_BASE}/api/pdf/${voter.pdfUploadId}/file` : '';
 
@@ -84,8 +85,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
 
       const task = pdfjs.getDocument({
         url: pdfUrl,
-        cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/cmaps/',
+        cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
         cMapPacked: true,
+        standardFontDataUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/standard_fonts/',
       });
       loadingTaskRef.current = task;
 
@@ -144,17 +146,76 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         await task.promise;
         if (cancelled) return;
 
-        // Try to find voter position on the page using text search
-        let highlightBox: HighlightBox | null = null;
-        try {
-          const textContent = await page.getTextContent();
-          highlightBox = findVoterHighlightBox(voter, textContent, viewport);
-        } catch (err) {
-          console.warn('Text search highlight failed:', err);
-        }
+        // Compute coordinate-based highlight or grid fallback
+        const voterPageNumber = voter.pdfPageNumber || 3;
+        if (currentPage === voterPageNumber) {
+          if (voter.boundingBox) {
+            const bbox = voter.boundingBox;
+            // The bbox coordinates represent the first line (serial/name) of the voter's cell.
+            // A standard voter card cell in the EC list layout is about 245 points wide and 80 points tall.
+            // Since the serial line is at the top left, the cell starts at bbox.x - 5 and extends 245 points wide.
+            // The top of the cell is at bbox.y + 12, and the cell extends 80 points downwards (so bottom is bbox.y - 68).
+            const cellPdfX = bbox.x - 5;
+            const cellPdfY = bbox.y - 68; // bottom boundary of the cell
+            const cellPdfW = 245;
+            const cellPdfH = 80;
 
-        // Draw voter highlight overlay
-        drawVoterHighlight(ctx, voter, viewport, currentPage, highlightBox);
+            // Convert PDF Cartesian coordinates (y bottom-up) to viewport canvas pixel coordinates (y top-down)
+            const [left, top] = viewport.convertToViewportPoint(cellPdfX, cellPdfY + cellPdfH);
+            const [right, bottom] = viewport.convertToViewportPoint(cellPdfX + cellPdfW, cellPdfY);
+
+            setOverlayStyle({
+              position: 'absolute',
+              left: `${left}px`,
+              top: `${top}px`,
+              width: `${right - left}px`,
+              height: `${bottom - top}px`,
+              border: '2px solid red',
+              backgroundColor: 'rgba(255, 0, 0, 0.2)',
+              zIndex: 10,
+              pointerEvents: 'none',
+              borderRadius: '6px',
+            });
+          } else {
+            // Fallback: mathematical grid layout
+            const serialNum = voter.serialNum || 0;
+            const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
+
+            const COLS = 3;
+            const ROWS_PER_PAGE = 5;
+
+            const col = ((serialOnPage - 1) % COLS);
+            const row = Math.floor((serialOnPage - 1) / COLS);
+
+            const W = viewport.width;
+            const H = viewport.height;
+
+            const GRID_TOP = H * 0.22;
+            const GRID_BOTTOM = H * 0.93;
+            const GRID_LEFT = W * 0.01;
+            const GRID_RIGHT = W * 0.99;
+
+            const cellW = (GRID_RIGHT - GRID_LEFT) / COLS;
+            const cellH = (GRID_BOTTOM - GRID_TOP) / ROWS_PER_PAGE;
+
+            const left = GRID_LEFT + col * cellW;
+            const top = GRID_TOP + row * cellH;
+
+            setOverlayStyle({
+              position: 'absolute',
+              left: `${left}px`,
+              top: `${top}px`,
+              width: `${cellW}px`,
+              height: `${cellH}px`,
+              border: '2px solid red',
+              backgroundColor: 'rgba(255, 0, 0, 0.2)',
+              zIndex: 10,
+              pointerEvents: 'none',
+            });
+          }
+        } else {
+          setOverlayStyle(null);
+        }
       } catch (e: any) {
         if (e?.name !== 'RenderingCancelledException' && !cancelled) {
           console.error('Render error:', e);
@@ -184,159 +245,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose, totalPages]);
 
-  interface HighlightBox {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }
 
-  // Find exact voter cell location using text coordinate search on the PDF page
-  function findVoterHighlightBox(voter: VoterRecord, textContent: any, viewport: any): HighlightBox | null {
-    const serialBn = voter.serialNo || '';
-    if (!serialBn) return null;
-
-    const bnToEnMap: any = { '০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9' };
-    const serialEn = serialBn.split('').map(c => bnToEnMap[c] || c).join('');
-    const serialEnInt = parseInt(serialEn).toString();
-
-    let foundItem: any = null;
-
-    // Search items for serial number patterns
-    for (const item of textContent.items) {
-      const text = (item.str || '').trim();
-      if (!text) continue;
-
-      const isMatch = 
-        text === `${serialBn}.` || 
-        text === serialBn || 
-        text === `${serialEn}.` || 
-        text === serialEn ||
-        text === `${serialEnInt}.` ||
-        text.startsWith(`${serialBn}.`) ||
-        text.startsWith(`${serialEn}.`);
-
-      if (isMatch) {
-        foundItem = item;
-        break;
-      }
-    }
-
-    // Fallback: search for voterNo if serial isn't found
-    if (!foundItem && voter.voterNo) {
-      const voterNoBn = voter.voterNo;
-      const voterNoEn = voterNoBn.split('').map(c => bnToEnMap[c] || c).join('');
-
-      for (const item of textContent.items) {
-        const text = (item.str || '').trim();
-        if (text.includes(voterNoBn) || text.includes(voterNoEn)) {
-          foundItem = item;
-          break;
-        }
-      }
-    }
-
-    if (!foundItem) return null;
-
-    const tx = foundItem.transform[4];
-    const ty = foundItem.transform[5];
-
-    const pageW = viewport.width;
-    const pageH = viewport.height;
-    
-    // Convert PDF coordinates (y is bottom-up) to viewport canvas coordinates (y is top-down)
-    const [vx, vy] = viewport.convertToViewportPoint(tx, ty);
-
-    const cellW = pageW * 0.325;
-    const cellH = pageH * 0.138;
-
-    // Align highlight box nicely around the cell starting from the serial number
-    const x = vx - 10;
-    const y = vy - 20;
-
-    return { x, y, width: cellW, height: cellH };
-  }
-
-  // Draw voter cell position highlight
-  function drawVoterHighlight(
-    ctx: CanvasRenderingContext2D, 
-    voter: VoterRecord, 
-    viewport: pdfjs.PageViewport, 
-    pageNum: number,
-    highlightBox: HighlightBox | null
-  ) {
-    const voterPageNumber = voter.pdfPageNumber || 3;
-    
-    // Only highlight if we're on the voter's page
-    if (pageNum !== voterPageNumber) return;
-
-    let x = 0;
-    let y = 0;
-    let cellW = 0;
-    let cellH = 0;
-
-    if (highlightBox) {
-      x = highlightBox.x;
-      y = highlightBox.y;
-      cellW = highlightBox.width;
-      cellH = highlightBox.height;
-    } else {
-      // Fallback: mathematical grid layout
-      const serialNum = voter.serialNum || 0;
-      const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
-
-      const COLS = 3;
-      const ROWS_PER_PAGE = 5;
-
-      const col = ((serialOnPage - 1) % COLS);
-      const row = Math.floor((serialOnPage - 1) / COLS);
-
-      const W = viewport.width;
-      const H = viewport.height;
-
-      const GRID_TOP = H * 0.22;
-      const GRID_BOTTOM = H * 0.93;
-      const GRID_LEFT = W * 0.01;
-      const GRID_RIGHT = W * 0.99;
-
-      cellW = (GRID_RIGHT - GRID_LEFT) / COLS;
-      cellH = (GRID_BOTTOM - GRID_TOP) / ROWS_PER_PAGE;
-
-      x = GRID_LEFT + col * cellW;
-      y = GRID_TOP + row * cellH;
-    }
-
-    const pageW = viewport.width;
-    const pageH = viewport.height;
-
-    // Keep highlight box within canvas boundaries
-    x = Math.max(0, Math.min(x, pageW - cellW));
-    y = Math.max(0, Math.min(y, pageH - cellH));
-
-    // Draw highlight border
-    ctx.save();
-    ctx.strokeStyle = 'rgba(220, 38, 38, 0.9)';  // red
-    ctx.lineWidth = 3;
-    ctx.setLineDash([]);
-    ctx.strokeRect(x + 2, y + 2, cellW - 4, cellH - 4);
-
-    // Semi-transparent fill
-    ctx.fillStyle = 'rgba(254, 202, 202, 0.25)';
-    ctx.fillRect(x + 2, y + 2, cellW - 4, cellH - 4);
-
-    // Label arrow at top
-    ctx.fillStyle = 'rgba(220, 38, 38, 0.95)';
-    ctx.beginPath();
-    const lx = x + 2;
-    const ly = y + 2;
-    ctx.roundRect(lx, ly - 22, 110, 22, 4);
-    ctx.fill();
-
-    ctx.fillStyle = 'white';
-    ctx.font = `bold ${Math.max(10, pageW * 0.018)}px sans-serif`;
-    ctx.fillText(`✓ ${voter.nameBn}`, lx + 6, ly - 5);
-    ctx.restore();
-  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-900/70 backdrop-blur-sm">
@@ -394,8 +303,16 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             </div>
           )}
           {!loading && !error && (
-            <div className="shadow-2xl">
+            <div className="relative shadow-2xl border border-slate-300 rounded-lg overflow-hidden">
               <canvas ref={canvasRef} className="block bg-white"/>
+              {overlayStyle && (
+                <div style={overlayStyle} className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                  {/* Premium floating check icon */}
+                  <div className="absolute -top-7 left-0 bg-red-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded shadow-md flex items-center gap-1 font-serif whitespace-nowrap pointer-events-none">
+                    <Check className="w-3 h-3 text-white" /> {voter.nameBn}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -196,6 +196,42 @@ function fixECExtractionArtifacts(str) {
   s = s.replace(/উন্নিন/g, 'উদ্দিন');
   s = s.replace(/বিছর/g, 'বছির');
 
+  // Fix custom legacy font extraction corruptions
+  s = s.replace(/সিবতা/g, 'সবিতা');
+  s = s.replace(/রী বীরেন/g, 'শ্রী বীরেন');
+  s = s.replace(/বিজ্ঞজিৎ/g, 'বিশ্বজিৎ');
+  s = s.replace(/উৎল/g, 'উৎপল');
+  s = s.replace(/দিো/g, 'দেবী');
+  s = s.replace(/সৗয়দ/g, 'সৈয়দ');
+  s = s.replace(/সৗয়/g, 'সৈয়দ');
+  s = s.replace(/ুাগতম/g, 'স্বাগতম');
+  s = s.replace(/জ্ঞভাকর/g, 'প্রভাকর');
+  s = s.replace(/পিরমল/g, 'পরিমল');
+  s = s.replace(/বি্ছম/g, 'বিপ্লব');
+  s = s.replace(/অমেল/g, 'অমল');
+  s = s.replace(/মিনষ/g, 'মনীষ');
+  s = s.replace(/অংমান/g, 'অংশুমান');
+  s = s.replace(/অপম/g, 'অনুপম');
+  s = s.replace(/জ্ঞমানহ্ন/g, 'প্রদ্যুন্ম');
+  s = s.replace(/জ্ঞদীপ/g, 'প্রদীপ');
+  s = s.replace(/শিল/g, 'শীল');
+  s = s.replace(/লিক্ষকান্ত/g, 'লক্ষ্মীকান্ত');
+  s = s.replace(/রিশক/g, 'রসিক');
+  s = s.replace(/সেন্তাষ/g, 'সন্তোষ');
+  s = s.replace(/সেরাজ/g, 'সিরাজ');
+  s = s.replace(/মৃল/g, 'মৃদুল');
+  s = s.replace(/বংি্ছম/g, 'বঙ্কিম');
+  s = s.replace(/রেসাময়/g, 'রসময়');
+  s = s.replace(/সুধাং/g, 'সুধাংশু');
+  s = s.replace(/নিত্যানহ্ন/g, 'নিত্যানন্দ');
+  s = s.replace(/ত্নজেন/g, 'নগেন');
+  s = s.replace(/বিেনাদ/g, 'বিনোদ');
+  s = s.replace(/ৗানদা/g, 'জ্ঞানদা');
+  s = s.replace(/দেবন্দ্র/g, 'দেবেন্দ্র');
+  s = s.replace(/देवन्द्र/g, 'দেবেন্দ্র');
+  s = s.replace(/সুত্নত/g, 'সুব্রত');
+  s = s.replace(/প্রদ্যুন্ম/g, 'প্রদ্যুম্ন');
+
   // Fix doubled spaces
   s = s.replace(/\s{2,}/g, ' ');
 

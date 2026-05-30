@@ -62,6 +62,11 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
     const end = Math.min(start + CHUNK - 1, limit);
 
     for (let pageNum = start; pageNum <= end; pageNum++) {
+      if (pageNum === 2) {
+        // Skip page 2 completely to save memory and avoid garbage data
+        pages.push({ pageNum, lines: [], items: [] });
+        continue;
+      }
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent({ normalizeWhitespace: false });
 
@@ -85,7 +90,7 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
         
         // Process each column independently
         for (const colItems of columns) {
-          const colLines = groupItemsIntoLines(colItems);
+          const colLines = groupItemsIntoLines(colItems, 4, pageNum);
           lines.push(...colLines);
         }
       }
@@ -182,7 +187,7 @@ function clusterIntoColumns(items) {
  * @param {number}   tolerance - y-distance threshold to consider same line
  * @returns {string[]} Array of line strings
  */
-function groupItemsIntoLines(items, tolerance = 4) {
+function groupItemsIntoLines(items, tolerance = 4, pageNum = 1) {
   if (!items.length) return [];
 
   // Sort by y descending (PDF y=0 is bottom), then x ascending
@@ -209,12 +214,27 @@ function groupItemsIntoLines(items, tolerance = 4) {
   lineGroups.push(currentGroup);
 
   return lineGroups.map(group => {
-    return group
-      .sort((a, b) => a.x - b.x)
+    const sortedGroup = group.sort((a, b) => a.x - b.x);
+    const text = sortedGroup
       .map(item => item.str)
       .join(' ')
       .replace(/\s{3,}/g, '\t') // collapse big gaps (column separators) to tab
       .trim();
+
+    // Compute bounding box coordinates for the entire line
+    const minX = Math.min(...sortedGroup.map(item => item.x));
+    const maxX = Math.max(...sortedGroup.map(item => item.x + (item.width || 0)));
+    const minY = Math.min(...sortedGroup.map(item => item.y));
+    const maxY = Math.max(...sortedGroup.map(item => item.y + (item.height || 0)));
+
+    return {
+      text,
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+      pageNum,
+    };
   });
 }
 
@@ -228,9 +248,12 @@ function groupItemsIntoLines(items, tolerance = 4) {
 function convertPages(pages, encoding) {
   return pages.map(page => ({
     ...page,
-    lines: page.lines.map(line => {
-      const { text } = autoConvert(line, encoding);
-      return text;
+    lines: page.lines.map(lineObj => {
+      const { text } = autoConvert(lineObj.text, encoding);
+      return {
+        ...lineObj,
+        text,
+      };
     }),
   }));
 }
@@ -351,13 +374,14 @@ function cleanNamePrefix(name) {
  *   পেশা: কৃষক    জন্ম তারিখ: ০১/০১/১৯৮০
  *   ঠিকানা: গ্রাম নাম
  */
-function extractVoters(allLines, coverMeta, pdfId) {
+function extractVoters(allLineObjs, coverMeta, pdfId) {
   const voters = [];
   let lastSerialNum = 0;
   let i = 0;
 
-  while (i < allLines.length) {
-    const line = allLines[i];
+  while (i < allLineObjs.length) {
+    const lineObj = allLineObjs[i];
+    const line = lineObj.text;
 
     // Match voter entry: Bengali or English 2-4 digit serial followed by dot
     // e.g. " ০০১." or "001. নাম:" or "০০১. শেখ ওবায়েদ"
@@ -385,8 +409,8 @@ function extractVoters(allLines, coverMeta, pdfId) {
         let j = i + 1;
         let linesRead = 0;
 
-        while (j < allLines.length && linesRead < 12) {
-          const next = allLines[j].trim();
+        while (j < allLineObjs.length && linesRead < 12) {
+          const next = allLineObjs[j].text.trim();
 
           // Stop at next voter entry (allow optional spaces, Bengali or English digits)
           if (next.match(/^\s*[০-৯\d]{2,4}\.[\s।]/u)) break;
@@ -448,8 +472,7 @@ function extractVoters(allLines, coverMeta, pdfId) {
 
         // Require at least one critical field populated to prevent header/footer noise false positives
         if (nameBn && nameBn.length > 1 && (voterNo || fatherName || motherName)) {
-          const voterPageIndex = Math.ceil(serialNum / VOTERS_PER_PAGE);
-          const pdfPageNumber = voterPageIndex + 2; // Offset by +2 because cover is page 1, and page 2 is blank.
+          const pdfPageNumber = lineObj.pageNum;
           const serialOnPage = ((serialNum - 1) % VOTERS_PER_PAGE) + 1;
 
           voters.push({
@@ -479,6 +502,12 @@ function extractVoters(allLines, coverMeta, pdfId) {
             status: 'সক্রিয়',
             pdfUploadId: pdfId,
             pdfPageNumber,
+            boundingBox: {
+              x: lineObj.x,
+              y: lineObj.y,
+              width: lineObj.width,
+              height: lineObj.height,
+            },
           });
         }
 
@@ -592,22 +621,28 @@ async function parsePdfBuffer(buffer, pdfId, fileName) {
     ? convertPages(rawPages.pages, detection.encoding)
     : rawPages.pages; // already Unicode
 
-  // ── Step 5: Build full text ──────────────────────────────────────────────
+  // ── Step 5: Build full text (mapping line objects to text for logging/compatibility) ──
   const fullText = convertedPages
-    .map(p => p.lines.join('\n'))
+    .map(p => p.lines.map(l => l.text).join('\n'))
     .join('\n');
 
   // Diagnostic: sample of first 300 chars after conversion
   console.log(`[PDF Parser] Sample   : ${fullText.substring(0, 300).replace(/\n/g, ' ')}`);
 
-  // ── Step 6: Extract cover page metadata ─────────────────────────────────
-  const coverMeta = extractCoverPageData(fullText);
+  // ── Step 6: Extract cover page metadata from Page 1 only ─────────────────
+  const page1 = convertedPages.find(p => p.pageNum === 1);
+  const page1Text = page1 ? page1.lines.map(l => l.text).join('\n') : '';
+  const coverMeta = extractCoverPageData(page1Text);
   console.log(`[PDF Parser] District : ${coverMeta.district || '(not found)'}`);
   console.log(`[PDF Parser] Upazila  : ${coverMeta.upazila || '(not found)'}`);
 
-  // ── Step 7: Extract voter records ───────────────────────────────────────
-  const allLines = fullText.split('\n');
-  const voters = extractVoters(allLines, coverMeta, pdfId);
+  // ── Step 7: Extract voter records strictly from Page 3 onwards ──────────
+  const voterPages = convertedPages.filter(p => p.pageNum >= 3);
+  const voterLineObjects = [];
+  for (const page of voterPages) {
+    voterLineObjects.push(...page.lines);
+  }
+  const voters = extractVoters(voterLineObjects, coverMeta, pdfId);
   console.log(`[PDF Parser] Voters   : ${voters.length} extracted`);
   console.log(`[PDF Parser] ─────────────────────────────────────────────\n`);
 

@@ -131,3 +131,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📁 PDF uploads directory: ${UPLOADS_DIR}`);
   console.log(`🗄️  Local database: ${DB_PATH}`);
 });
+
+// Trigger nodemon reload for database coordinate caches
