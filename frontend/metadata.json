@@ -1,0 +1,6 @@
+{
+  "name": "Live Voter Data Search",
+  "description": "A responsive, modern national-themed voter information lookup portal with custom Bengali localized fields, elegant typography, and intuitive administrative search controls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
