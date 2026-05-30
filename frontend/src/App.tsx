@@ -3,8 +3,10 @@ import { SearchFilters, VoterRecord, UploadedPdf, SearchLog } from './types';
 import { VoterSearchForm } from './components/VoterSearchForm';
 import { VoterResultCard } from './components/VoterResultCard';
 import { AdminDashboard } from './components/AdminDashboard';
+import { DeveloperModal } from './components/DeveloperModal';
 import {
   Lock,
+  Loader2,
 } from 'lucide-react';
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
@@ -21,9 +23,30 @@ export default function App() {
   // Track search state
   const [searching, setSearching] = useState<boolean>(false);
 
+  // Track backend server status
+  const [serverOnline, setServerOnline] = useState<boolean>(true);
+
+  // Track Developer Modal visibility
+  const [showDevModal, setShowDevModal] = useState<boolean>(false);
+
   // Real PDFs from backend
   const [uploadedPdfs, setUploadedPdfs] = useState<UploadedPdf[]>([]);
   const [pdfsLoading, setPdfsLoading] = useState<boolean>(false);
+
+  // Poll backend health status
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/health`);
+        setServerOnline(res.ok);
+      } catch {
+        setServerOnline(false);
+      }
+    };
+    checkHealth();
+    const interval = setInterval(checkHealth, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Track user search queries
   const [searchLogs, setSearchLogs] = useState<SearchLog[]>([]);
@@ -185,6 +208,11 @@ export default function App() {
     setSearchPerformed(false);
   };
 
+  const handleViewChange = (view: 'search' | 'dashboard') => {
+    handleReset();
+    setCurrentView(view);
+  };
+
   const handleAddVoter = (newVoter: VoterRecord) => {
     // Local memory sync for compatibility with props, though manual creation is deprecated
     setVoters(prev => [newVoter, ...prev]);
@@ -211,7 +239,7 @@ export default function App() {
     <div id="voter-app-root" className="min-h-screen bg-slate-100 font-sans text-slate-900 flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900 leading-normal">
 
       {/* Top Navigation Bar */}
-      <nav id="voter-main-header" className="h-14 bg-blue-850 flex items-center justify-between px-6 shadow-md z-10 select-none">
+      <nav id="voter-main-header" className="h-14 bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 border-b border-indigo-800/40 flex items-center justify-between px-6 shadow-md z-10 select-none">
         <div className="flex items-center gap-3">
           <div className="bg-white rounded-full p-1.5 flex items-center justify-center shadow-xs">
             <svg className="w-5 h-5 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,10 +254,17 @@ export default function App() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-1 text-emerald-300 bg-emerald-950/45 rounded-full border border-emerald-500/20 flex items-center gap-1.5 font-mono select-none">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            SECURE ACCESS
-          </span>
+          {serverOnline ? (
+            <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-1 text-emerald-300 bg-emerald-950/45 rounded-full border border-emerald-500/20 flex items-center gap-1.5 font-mono select-none">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              SECURE ACCESS
+            </span>
+          ) : (
+            <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-1 text-rose-300 bg-rose-950/45 rounded-full border border-rose-500/20 flex items-center gap-1.5 font-mono select-none">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              SERVER OFFLINE
+            </span>
+          )}
         </div>
       </nav>
 
@@ -250,12 +285,20 @@ export default function App() {
               <div className="flex gap-2.5">
                 <button
                   onClick={loadPdfs}
-                  className="px-4 py-2 text-xs font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+                  disabled={pdfsLoading}
+                  className="px-4 py-2 text-xs font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  ↻ রিফ্রেশ ডাটা
+                  {pdfsLoading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />
+                      লোডিং...
+                    </>
+                  ) : (
+                    <>↻ রিফ্রেশ ডাটা</>
+                  )}
                 </button>
                 <button
-                  onClick={() => setCurrentView('search')}
+                  onClick={() => handleViewChange('search')}
                   className="px-4 py-2 text-xs font-bold bg-blue-700 text-white hover:bg-blue-800 rounded-lg transition-colors cursor-pointer shadow-md shadow-blue-200"
                 >
                   ভোটার অনুসন্ধান পোর্টাল
@@ -335,23 +378,29 @@ export default function App() {
             {/* Main Search Area */}
             <section className="flex-1 flex flex-col gap-6 min-w-0">
 
-              <div className="bg-gradient-to-r from-blue-700 via-indigo-800 to-slate-905 text-white rounded-xl p-5 shadow-sm relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className={`bg-gradient-to-r ${serverOnline ? 'from-blue-700 via-indigo-800 to-slate-900' : 'from-rose-800 via-red-900 to-slate-900'} text-white rounded-xl p-5 shadow-sm relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500`}>
                 <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
                 <div className="z-10">
-                  <span className="px-2 py-0.5 text-[9px] font-bold rounded bg-blue-500/30 border border-blue-400/20 uppercase tracking-widest text-blue-200 font-mono">ভোটার ডাটাবেজ পোর্টাল</span>
-                  <h3 className="text-lg font-bold mt-1.5 font-serif leading-tight">ব্যক্তিগত ভোটার ডাটাবেস অনুসন্ধান</h3>
+                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-widest font-mono ${serverOnline ? 'bg-blue-500/30 border border-blue-400/20 text-blue-200' : 'bg-rose-500/30 border border-rose-400/20 text-rose-200'}`}>
+                    {serverOnline ? 'ভোটার ডাটাবেজ পোর্টাল' : 'সিস্টেম অফলাইন'}
+                  </span>
+                  <h3 className="text-lg font-bold mt-1.5 font-serif leading-tight">
+                    {serverOnline ? 'ব্যক্তিগত ভোটার ডাটাবেস অনুসন্ধান' : 'ডাটাবেস সার্ভার অফলাইন'}
+                  </h3>
                   <p className="text-xs text-blue-100/90 leading-relaxed max-w-xl mt-1">
-                    ব্যক্তিগত ভোটার তালিকা সার্ভার সচল রয়েছে। বাংলা বানান অনুযায়ী সঠিকভাবে নাম বা গ্রাম লিখে অনুসন্ধান শুরু করুন।
+                    {serverOnline 
+                      ? 'ব্যক্তিগত ভোটার তালিকা সার্ভার সচল রয়েছে। বাংলা বানান অনুযায়ী সঠিকভাবে নাম বা গ্রাম লিখে অনুসন্ধান শুরু করুন।'
+                      : 'সার্ভার অফলাইন বা ক্র্যাশ করেছে! অনুগ্রহ করে ব্যাকএন্ড সার্ভার চালু করুন (npm run dev)।'}
                   </p>
                 </div>
                 <div className="shrink-0 flex items-center gap-3 text-xs bg-white/10 px-3 py-2 rounded-lg border border-white/10 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span>DATABASE: {totalVotersInSystem > 0 ? `${totalVotersInSystem} RECORDS` : 'EMPTY — UPLOAD PDF'}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full ${serverOnline ? 'bg-emerald-400 animate-ping' : 'bg-rose-500 animate-pulse'}`}></span>
+                  <span>DATABASE: {!serverOnline ? 'OFFLINE' : (totalVotersInSystem > 0 ? `${totalVotersInSystem} RECORDS` : 'EMPTY — UPLOAD PDF')}</span>
                 </div>
               </div>
 
               <div id="voter-search-section">
-                <VoterSearchForm onSearch={handleSearch} onReset={handleReset} />
+                <VoterSearchForm onSearch={handleSearch} onReset={handleReset} serverOnline={serverOnline} searching={searching} />
               </div>
 
               <div id="voter-results-section" className="transition-all duration-300">
@@ -370,7 +419,7 @@ export default function App() {
 
         <div className="flex gap-4 items-center flex-wrap justify-center">
           <button
-            onClick={() => setCurrentView(currentView === 'search' ? 'dashboard' : 'search')}
+            onClick={() => handleViewChange(currentView === 'search' ? 'dashboard' : 'search')}
             className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-700 transition-all cursor-pointer"
           >
             <Lock className="w-3 h-3" />
@@ -379,9 +428,14 @@ export default function App() {
 
           <span className="hover:text-blue-400 cursor-pointer">গোপনীয়তা নীতি</span>
           <span className="hover:text-blue-400 cursor-pointer">যোগাযোগ</span>
-          <span className="text-slate-500 hidden sm:inline">© ২০২৬ ডিজিটাল ভোটার ম্যানেজমেন্ট সিস্টেম</span>
+          <span className="text-slate-500 hidden sm:inline">
+            © ২০২৬ ডিজিটাল ভোটার ম্যানেজমেন্ট সিস্টেম | তৈরীকৃত ও রক্ষণাবেক্ষণে: <button onClick={() => setShowDevModal(true)} className="text-blue-400 hover:text-blue-300 hover:underline font-bold transition-all cursor-pointer">Kamanashis Biswas</button>
+          </span>
         </div>
       </footer>
+
+      {/* Developer Profile Modal */}
+      <DeveloperModal isOpen={showDevModal} onClose={() => setShowDevModal(false)} />
 
     </div>
   );

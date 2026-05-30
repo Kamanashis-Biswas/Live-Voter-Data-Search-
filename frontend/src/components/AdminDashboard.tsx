@@ -4,7 +4,7 @@ import {
   Activity, CheckCircle2, XCircle, AlertCircle, Globe, 
   UploadCloud, Database, Lock, Unlock, FileText, Trash2, 
   X, Plus, FileCheck, Check, Info, ChevronLeft, ChevronRight,
-  MapPin, RefreshCw, UserCheck, Eye, EyeOff, Copy
+  MapPin, RefreshCw, UserCheck, Eye, EyeOff, Copy, Loader2
 } from 'lucide-react';
 
 // API base URL — matches backend port defined in backend/.env
@@ -50,6 +50,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string>('');
   const [uploadMsg, setUploadMsg] = useState('');
   const [uploadErr, setUploadErr] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -115,8 +116,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleDeletePdf = async (pdf: UploadedPdf) => {
     if (!confirm(`"${pdf.fileName}" এবং এর ভোটার ডাটা মুছে ফেলবেন?`)) return;
-    await fetch(`${API_BASE}/api/pdf/${pdf.id}`, { method: 'DELETE' });
-    setUploadedPdfs(prev => prev.filter(p => p.id !== pdf.id));
+    setDeletingId(pdf.id);
+    try {
+      await fetch(`${API_BASE}/api/pdf/${pdf.id}`, { method: 'DELETE' });
+      setUploadedPdfs(prev => prev.filter(p => p.id !== pdf.id));
+    } catch (err) {
+      console.error('Delete error:', err);
+    } finally {
+      setDeletingId('');
+    }
   };
 
   if (!isAuth) return (
@@ -182,8 +190,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         )}
         {authErr && <p className="text-xs text-rose-600 flex items-center gap-1.5 bg-rose-50 p-2.5 rounded-lg border border-rose-100"><AlertCircle className="w-4 h-4 shrink-0"/>{authErr}</p>}
         {authOk && <p className="text-xs text-emerald-600 flex items-center gap-1.5 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100"><CheckCircle2 className="w-4 h-4 shrink-0"/>{authOk}</p>}
-        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-sm disabled:opacity-50">
-          {authBusy ? 'প্রসেসিং...' : authMode==='login' ? 'লগইন' : authMode==='signup' ? 'সাইন আপ' : authMode==='forgot_password' ? 'টোকেন পাঠান' : 'পাসওয়ার্ড রিসেট'}
+        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
+          {authBusy ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              প্রসেসিং...
+            </>
+          ) : (
+            authMode==='login' ? 'লগইন' : authMode==='signup' ? 'সাইন আপ' : authMode==='forgot_password' ? 'টোকেন পাঠান' : 'পাসওয়ার্ড রিসেট'
+          )}
         </button>
       </form>
       <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500">
@@ -270,8 +285,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <p className="text-xs text-slate-400">PDF আপলোড করলে স্বয়ংক্রিয়ভাবে ভোটার তথ্য extract হবে</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={onRefreshPdfs} className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 cursor-pointer">
-                <RefreshCw className={`w-3.5 h-3.5 ${pdfsLoading?'animate-spin':''}`}/>রিফ্রেশ
+              <button 
+                onClick={onRefreshPdfs} 
+                disabled={pdfsLoading}
+                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${pdfsLoading?'animate-spin':''}`}/>
+                {pdfsLoading ? 'রিফ্রেশ হচ্ছে...' : 'রিফ্রেশ'}
               </button>
               <button onClick={()=>setModalOpen(true)} className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md cursor-pointer">
                 <Plus className="w-4 h-4"/>PDF আপলোড করুন
@@ -308,8 +328,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <td className="p-3 text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${pdf.genderType==='মহিলা'?'bg-pink-50 border-pink-100 text-pink-700':'bg-indigo-50 border-indigo-100 text-indigo-700'}`}>{pdf.genderType}</span></td>
                       <td className="p-3 text-[10px] font-mono text-slate-500">{pdf.publicationDate||'-'}</td>
                       <td className="p-3 text-center">
-                        <button onClick={()=>handleDeletePdf(pdf)} className="p-1 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg flex items-center gap-1 mx-auto font-bold cursor-pointer">
-                          <Trash2 className="w-3.5 h-3.5"/>মুছুন
+                        <button 
+                          onClick={()=>handleDeletePdf(pdf)} 
+                          disabled={deletingId === pdf.id}
+                          className="p-1 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg flex items-center gap-1 mx-auto font-bold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deletingId === pdf.id ? (
+                            <>
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                              মুছছে...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="w-3.5 h-3.5"/>
+                              মুছুন
+                            </>
+                          )}
                         </button>
                       </td>
                     </tr>
@@ -402,8 +436,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="pt-3 border-t border-slate-100 flex justify-end gap-2.5 text-xs">
                 <button type="button" onClick={()=>{setModalOpen(false);setSelectedFile(null);setUploadErr('');}} className="px-4 py-2 border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 cursor-pointer">বাতিল</button>
-                <button type="submit" disabled={uploading||!selectedFile} className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl flex items-center gap-1.5 disabled:opacity-50 cursor-pointer">
-                  {uploading ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"/>Extract হচ্ছে...</> : <><Check className="w-4 h-4"/>আপলোড ও Extract করুন</>}
+                <button 
+                  type="submit" 
+                  disabled={uploading||!selectedFile} 
+                  className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin"/>
+                      Extract হচ্ছে...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4"/>
+                      আপলোড ও Extract করুন
+                    </>
+                  )}
                 </button>
               </div>
             </form>

@@ -360,15 +360,15 @@ function extractVoters(allLines, coverMeta, pdfId) {
     const line = allLines[i];
 
     // Match voter entry: Bengali or English 2-4 digit serial followed by dot
-    // e.g. " ০০১." or "001. নাম:" or "০০১. শেখ মোহাম্মদ"
+    // e.g. " ০০১." or "001. নাম:" or "০০১. শেখ ওবায়েদ"
     const serialMatch = line.match(/^\s*([০-৯\d]{2,4})\.[\s।]*(?:নাম\s*[:।]\s*)?(.+)/u);
 
     if (serialMatch) {
       const serialStr = serialMatch[1];
       const serialNum = parseBengaliNumber(serialStr);
 
-      // Guard against false positives (must be > 0, allow ±20 for gaps from column parsing)
-      if (serialNum > 0 && (lastSerialNum === 0 || serialNum >= lastSerialNum - 20)) {
+      // Guard against false positives
+      if (serialNum > 0) {
         lastSerialNum = serialNum;
 
         // Clean up name: remove "নাম " prefix and other artifacts
@@ -446,9 +446,10 @@ function extractVoters(allLines, coverMeta, pdfId) {
         // Final name prefix/space cleanup
         nameBn = cleanNamePrefix(nameBn);
 
-        if (nameBn && nameBn.length > 1) {
+        // Require at least one critical field populated to prevent header/footer noise false positives
+        if (nameBn && nameBn.length > 1 && (voterNo || fatherName || motherName)) {
           const voterPageIndex = Math.ceil(serialNum / VOTERS_PER_PAGE);
-          const pdfPageNumber = voterPageIndex + 1;
+          const pdfPageNumber = voterPageIndex + 2; // Offset by +2 because cover is page 1, and page 2 is blank.
           const serialOnPage = ((serialNum - 1) % VOTERS_PER_PAGE) + 1;
 
           voters.push({

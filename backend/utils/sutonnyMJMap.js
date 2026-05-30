@@ -81,13 +81,13 @@ const SUTONNY_MAP = {
   '\u007C': '\u0965', // | → ॥
 
   // ── Independent vowels ─────────────────────────────────────────────────
-  '\u0128': '\u0987', // Ĩ → ই
-  '\u0129': '\u0987', // ĩ → ই
+  '\u0128': '\u09A8\u09CD\u09A8', // Ĩ → ন্ন
+  '\u0129': '\u09A8\u09CD\u09A8', // ĩ → ন্ন
   '\u012A': '\u0988', // Ī → ঈ  (NOTE: also mapped to ট্র conjunct below — context-dependent)
   '\u012B': '\u0988', // ī → ঈ
 
   // ── Consonants (single) ─────────────────────────────────────────────────
-  '\u0122': '\u0997', // Ģ → গ
+  '\u0122': '\u09A8\u09CD\u09A4', // Ģ → ন্ত
   '\u0174': '\u09AC', // Ŵ → ব
   '\u0175': '\u09AC', // ŵ → ব
   '\u0162': '\u09A4', // Ţ → ত
@@ -113,7 +113,8 @@ const SUTONNY_MAP = {
   '\u017E': '\u099C', // ž → জ
 
   // ── Additional consonants from EC fonts ─────────────────────────────────
-  '\u0181': '\u09B0', // Ɓ → র  (EC-specific variant for রু/রূ combinations)
+  '\u0181': '\u09B0\u09C1', // Ɓ → রু  (EC-specific variant for রু/রূ combinations)
+  '\u0180': '\u09B8\u09C1', // ƀ → সু  (EC-specific variant for সু)
 
   // ── Reph (র্) and ra-phala (্র) ────────────────────────────────────────
   '\u0154': '\u09B0\u09CD', // Ŕ → র্  (reph — goes before cluster, handled separately)
@@ -181,8 +182,8 @@ const SUTONNY_MAP = {
   '\u015D': '\u09B7\u09CD\u09A3', // ŝ → ষ্ণ
   '\u013B': '\u09B2\u09CD\u09B2', // Ļ → ল্ল
   '\u013C': '\u09B2\u09CD\u09B2', // ļ → ল্ল
-  '\u014C': '\u09AC\u09CD\u09A6', // Ō → ব্দ
-  '\u014D': '\u09AC\u09CD\u09A6', // ō → ব্দ
+  '\u014C': '\u09B2\u09CD\u09B2', // Ō → ল্ল
+  '\u014D': '\u09B2\u09CD\u09B2', // ō → ল্ল
   '\u0170': '\u09AC\u09CD\u09B0', // Ű → ব্র
   '\u0171': '\u09AC\u09CD\u09B0', // ű → ব্র
   '\u0172': '\u0995\u09CD\u09B0', // Ų → ক্র
@@ -261,7 +262,7 @@ const SUTONNY_MAP = {
   '\u00F6': '\u0994',             // ö → ঔ
   '\u00F9': '\u09CE',             // ù → ৎ (khanda ta)
   '\u00FA': '\u09F0',             // ú → র (Assamese ra)
-  '\u00FB': '\u09F1',             // û → ৱ (Assamese wa)
+  '\u00FB': '\u099E\u09CD\u099A', // û → ঞ্চ  (EC-specific ঞ্চ)
   '\u00FC': '\u09BC',             // ü → ় (nukta)
   '\u00FD': '\u09D7',             // ý → ৗ  (au-length mark)
   '\u00FF': '\u09BE',             // ÿ → া  (aa-matra variant)

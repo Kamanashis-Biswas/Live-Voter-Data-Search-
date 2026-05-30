@@ -4,36 +4,84 @@ const { normalizeForSearch } = require('../utils/bengaliUnicodeConverter');
 
 const DB_PATH = path.join(__dirname, '../data/db.json');
 
-// ── In-memory cache ─────────────────────────────────────────────────────────
+// ── In-memory cache & indexing ──────────────────────────────────────────────
 // Avoids reading/parsing 1.6MB+ JSON file on every request
+// Pre-calculates normalized consonant skeletons for high-speed indexing
 let _cache = null;
-let _cacheTime = 0;
 let _writeTimer = null;
 const WRITE_DEBOUNCE_MS = 500;
 
-function readDb() {
-  try {
-    // Use cache if available and fresh
-    if (_cache) return _cache;
-    const raw = fs.readFileSync(DB_PATH, { encoding: 'utf8' });
-    _cache = JSON.parse(raw);
-    _cacheTime = Date.now();
-    return _cache;
-  } catch {
-    _cache = { voters: [], pdfs: [] };
-    return _cache;
+const BACKUP_PATH = DB_PATH + '.bak';
+const TEMP_PATH = DB_PATH + '.tmp';
+
+function rebuildIndexes() {
+  if (!_cache || !_cache.voters) return;
+  const voters = _cache.voters;
+  
+  // Attach pre-normalized consonant skeletons directly to voter objects in memory
+  for (let i = 0; i < voters.length; i++) {
+    const v = voters[i];
+    v.normalName = v.nameBn ? normalizeBengali(v.nameBn) : '';
+    v.normalFather = v.fatherName ? normalizeBengali(v.fatherName) : '';
+    v.normalMother = v.motherName ? normalizeBengali(v.motherName) : '';
+    v.normalVillage = v.village ? normalizeBengali(v.village) : '';
+    v.normalVoterArea = v.voterArea ? normalizeBengali(v.voterArea) : '';
+    v.normalUpazila = v.upazila ? normalizeBengali(v.upazila) : '';
+    v.normalDistrict = v.district ? normalizeBengali(v.district) : '';
+    v.normalOccupation = v.occupation ? normalizeBengali(v.occupation) : '';
   }
+}
+
+function readDb() {
+  if (_cache) return _cache;
+  
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const raw = fs.readFileSync(DB_PATH, { encoding: 'utf8' });
+      _cache = JSON.parse(raw);
+      rebuildIndexes();
+      return _cache;
+    }
+  } catch (err) {
+    console.error('[DB] Database read error, attempting backup recovery:', err.message);
+    // Corruption recovery: attempt to load from automatic backup file
+    try {
+      if (fs.existsSync(BACKUP_PATH)) {
+        const raw = fs.readFileSync(BACKUP_PATH, { encoding: 'utf8' });
+        _cache = JSON.parse(raw);
+        // Recover main database file
+        fs.writeFileSync(DB_PATH, raw, { encoding: 'utf8' });
+        console.log('[DB] Database recovery successful: restored from db.json.bak');
+        rebuildIndexes();
+        return _cache;
+      }
+    } catch (bakErr) {
+      console.error('[DB] Backup restoration failed:', bakErr.message);
+    }
+  }
+
+  // Fallback to fresh database state if both files are missing/corrupted
+  _cache = { voters: [], pdfs: [] };
+  rebuildIndexes();
+  return _cache;
 }
 
 function writeDb(data) {
   _cache = data;
+  rebuildIndexes(); // update in-memory pre-calculated fields immediately
+
   // Debounce writes to avoid hammering disk during batch operations
   if (_writeTimer) clearTimeout(_writeTimer);
   _writeTimer = setTimeout(() => {
     try {
-      fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+      // 1. Write atomically using a temporary file
+      fs.writeFileSync(TEMP_PATH, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+      fs.renameSync(TEMP_PATH, DB_PATH);
+      
+      // 2. Refresh the backup file
+      fs.copyFileSync(DB_PATH, BACKUP_PATH);
     } catch (err) {
-      console.error('[DB] Write error:', err.message);
+      console.error('[DB] Atomic write error:', err.message);
     }
     _writeTimer = null;
   }, WRITE_DEBOUNCE_MS);
@@ -47,7 +95,9 @@ function flushDb() {
   }
   if (_cache) {
     try {
-      fs.writeFileSync(DB_PATH, JSON.stringify(_cache, null, 2), { encoding: 'utf8' });
+      fs.writeFileSync(TEMP_PATH, JSON.stringify(_cache, null, 2), { encoding: 'utf8' });
+      fs.renameSync(TEMP_PATH, DB_PATH);
+      fs.copyFileSync(DB_PATH, BACKUP_PATH);
     } catch (err) {
       console.error('[DB] Flush error:', err.message);
     }
@@ -75,26 +125,22 @@ function normalizeBengali(str) {
 }
 
 /**
- * Check if stored Unicode Bengali text fuzzy-matches a user search query.
- * Both stored text and query are normalized to consonant skeletons before comparing.
+ * High-performance matching using pre-normalized consonant skeletons.
+ * Extremely fast as it avoids calling normalizeBengali on database entries inside filter loops.
  */
-function bengaliMatch(stored, query) {
+function bengaliMatchFast(stored, normalStored, query, normalQuery) {
   if (!stored || !query) return false;
-  const q = query.trim();
-  if (!q) return false;
+  
+  // 1. Direct substring match (handles exact Unicode matches instantly)
+  if (stored.includes(query)) return true;
 
-  // 1. Direct substring match (handles exact Unicode queries)
-  if (stored.includes(q)) return true;
+  // 2. Pre-normalized match — checks against cached consonant skeletons
+  if (normalQuery && normalStored && normalStored.includes(normalQuery)) return true;
 
-  // 2. Normalized (consonant skeleton) match — tolerates matra differences
-  const normalStored = normalizeBengali(stored);
-  const normalQuery = normalizeBengali(q);
-  if (normalQuery && normalStored.includes(normalQuery)) return true;
-
-  // 3. Word-level partial match (all query words must appear)
+  // 3. Word-level partial match (all query words must be present)
   const queryWords = normalQuery.split(/\s+/).filter(w => w.length >= 2);
   if (queryWords.length > 1) {
-    return queryWords.every(word => normalStored.includes(word));
+    return queryWords.every(word => normalStored && normalStored.includes(word));
   }
 
   return false;
@@ -129,37 +175,56 @@ const db = {
   },
 
   searchVoters({ name, fatherName, motherName, village, voterArea, upazila, district, voterNo, nid, occupation, gender, page = 1, limit = 100 }) {
-    let voters = readDb().voters;
+    // Trigger lazy DB load
+    readDb();
+    
+    let voters = _cache.voters;
 
     if (name && name.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.nameBn, name));
+      const q = name.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.nameBn, v.normalName, q, nq));
     }
     if (fatherName && fatherName.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.fatherName, fatherName));
+      const q = fatherName.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.fatherName, v.normalFather, q, nq));
     }
     if (motherName && motherName.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.motherName, motherName));
+      const q = motherName.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.motherName, v.normalMother, q, nq));
     }
     if (village && village.trim()) {
+      const q = village.trim();
+      const nq = normalizeBengali(q);
       voters = voters.filter(v =>
-        bengaliMatch(v.village, village) ||
-        bengaliMatch(v.voterArea, village)
+        bengaliMatchFast(v.village, v.normalVillage, q, nq) ||
+        bengaliMatchFast(v.voterArea, v.normalVoterArea, q, nq)
       );
     }
     if (voterArea && voterArea.trim()) {
+      const q = voterArea.trim();
+      const nq = normalizeBengali(q);
       voters = voters.filter(v =>
-        bengaliMatch(v.voterArea, voterArea) ||
-        bengaliMatch(v.village, voterArea)
+        bengaliMatchFast(v.voterArea, v.normalVoterArea, q, nq) ||
+        bengaliMatchFast(v.village, v.normalVillage, q, nq)
       );
     }
     if (upazila && upazila.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.upazila, upazila));
+      const q = upazila.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.upazila, v.normalUpazila, q, nq));
     }
     if (district && district.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.district, district));
+      const q = district.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.district, v.normalDistrict, q, nq));
     }
     if (occupation && occupation.trim()) {
-      voters = voters.filter(v => bengaliMatch(v.occupation, occupation));
+      const q = occupation.trim();
+      const nq = normalizeBengali(q);
+      voters = voters.filter(v => bengaliMatchFast(v.occupation, v.normalOccupation, q, nq));
     }
     if (voterNo && voterNo.trim()) {
       voters = voters.filter(v => (v.voterNo || '').includes(voterNo.trim()));
@@ -213,7 +278,6 @@ const db = {
 
   invalidateCache() {
     _cache = null;
-    _cacheTime = 0;
   },
 
   flush: flushDb,

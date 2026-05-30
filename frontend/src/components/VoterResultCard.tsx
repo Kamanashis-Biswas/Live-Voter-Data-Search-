@@ -39,7 +39,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const isMountedRef = useRef(true);
   const loadingTaskRef = useRef<pdfjs.PDFDocumentLoadingTask | null>(null);
 
-  const [currentPage, setCurrentPage] = useState<number>(voter.pdfPageNumber || 2);
+  const [currentPage, setCurrentPage] = useState<number>(voter.pdfPageNumber || 3);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -63,10 +63,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
       try { await pdfRef.current.destroy(); } catch {}
       pdfRef.current = null;
     }
-    if (loadingTaskRef.current) {
-      try { await loadingTaskRef.current.destroy(); } catch {}
-      loadingTaskRef.current = null;
-    }
+    // DO NOT destroy loadingTaskRef.current here as it can terminate the shared worker thread,
+    // causing "Worker was destroyed" errors in React 18 StrictMode double-mount cycles.
+    loadingTaskRef.current = null;
     setPdfReady(false);
   }, [cancelRender]);
 
@@ -266,7 +265,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     pageNum: number,
     highlightBox: HighlightBox | null
   ) {
-    const voterPageNumber = voter.pdfPageNumber || 2;
+    const voterPageNumber = voter.pdfPageNumber || 3;
     
     // Only highlight if we're on the voter's page
     if (pageNum !== voterPageNumber) return;

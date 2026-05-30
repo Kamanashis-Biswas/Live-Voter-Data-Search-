@@ -88,18 +88,24 @@ function applyGlyphMap(str, map, preSources) {
  *   Already correct:    [ত][ে][ম][া]
  *   Not touched:        [ত][ে][ম][া] = তেমা ✓
  */
+function tagRawUnicodePreMatras(str) {
+  if (!str) return '';
+  // Tag already-Unicode pre-matras with a sentinel only if NOT preceded by a consonant or hasanta
+  const TAG_REGEX = /(?<![\u0995-\u09B9\u09DC-\u09DF\u09CE\u09F0-\u09F1\u09CD])([\u09BF\u09C7\u09C8])/g;
+  return str.replace(TAG_REGEX, SENTINEL + '$1');
+}
+
+/**
+ * Reorder ONLY sentinel-tagged pre-matras: [SENTINEL + matra][consonant_cluster]
+ * → [consonant_cluster][matra]   (sentinel is removed in the process)
+ *
+ * Correctly-placed matras (no sentinel) are LEFT UNTOUCHED.
+ */
 function reorderPreMatras(str) {
   // 1. Replace sentinel-tagged pre-matras: move matra after the following consonant cluster
   let result = str.replace(SENTINEL_CLUSTER_RE, (_match, matra, cluster) => cluster + matra);
   // Clean up any remaining sentinels (safety net)
-  result = result.replace(/\u0002/g, '');
-
-  // 2. Replace untagged already-Unicode pre-matras that are placed BEFORE a consonant cluster
-  // This is crucial for EC PDFs where some matras are already extracted as Unicode but in visual order (before consonant)
-  const UNICODE_PRE_MATRA_RE = /([\u09BF\u09C7\u09C8])([\u0995-\u09B9\u09DC-\u09DF\u09CE\u09F0-\u09F1](?:\u09CD[\u0995-\u09B9\u09DC-\u09DF\u09CE\u09F0-\u09F1])*)/gu;
-  result = result.replace(UNICODE_PRE_MATRA_RE, (_match, matra, cluster) => cluster + matra);
-
-  return result;
+  return result.replace(/\u0002/g, '');
 }
 
 
@@ -181,6 +187,14 @@ function fixECExtractionArtifacts(str) {
 
   // Fix "জহ্ল" → "জন্ম" (common EC artifact in DOB fields)
   s = s.replace(/জহ্ল/g, 'জন্ম');
+  s = s.replace(/জম্ভ/g, 'জন্ম');
+  s = s.replace(/নণ্ডর/g, 'নম্বর');
+  s = s.replace(/জ্ঞকাশ/g, 'প্রকাশ');
+  s = s.replace(/সবেমোট/g, 'সর্বমোট');
+  s = s.replace(/নিবোচন/g, 'নির্বাচন');
+  s = s.replace(/কিমশন/g, 'কমিশন');
+  s = s.replace(/উন্নিন/g, 'উদ্দিন');
+  s = s.replace(/বিছর/g, 'বছির');
 
   // Fix doubled spaces
   s = s.replace(/\s{2,}/g, ' ');
@@ -200,7 +214,8 @@ function fixECExtractionArtifacts(str) {
  */
 function convertSutonnyMJ(raw) {
   if (!raw) return '';
-  let s = applyGlyphMap(raw, SUTONNY_MAP, SUTONNY_PRE_MATRA_SOURCES);
+  let s = tagRawUnicodePreMatras(raw);
+  s = applyGlyphMap(s, SUTONNY_MAP, SUTONNY_PRE_MATRA_SOURCES);
   s = reorderPreMatras(s);
   s = normalizeComplexMatras(s);
   s = s.normalize('NFC');
@@ -216,7 +231,8 @@ function convertSutonnyMJ(raw) {
  */
 function convertBijoy(raw) {
   if (!raw) return '';
-  let s = applyGlyphMap(raw, BIJOY_MAP, BIJOY_PRE_MATRA_SOURCES);
+  let s = tagRawUnicodePreMatras(raw);
+  s = applyGlyphMap(s, BIJOY_MAP, BIJOY_PRE_MATRA_SOURCES);
   s = reorderPreMatras(s);
   s = normalizeComplexMatras(s);
   s = s.normalize('NFC');
@@ -265,8 +281,20 @@ function autoConvert(raw, hintEncoding = null) {
  */
 function normalizeForSearch(str) {
   if (!str) return '';
-  // Remove all Bengali vowel matras, hasanta, nukta, anusvara, visarga
-  return str
+  let s = str;
+  
+  // 1. Common transposition typos
+  s = s.replace(/বিল্পব/g, 'বিপ্লব');
+  
+  // 2. Sibilant & consonant homophone normalization for robust phonetic matching
+  s = s.replace(/[ষস]/g, 'শ'); // normalize all sibilants to শ
+  s = s.replace(/[ড়ঢ়]/g, 'র'); // normalize flapped Rs to র
+  s = s.replace(/ণ/g, 'ন');    // normalize ণ to ন
+  s = s.replace(/ঈ/g, 'ই');    // normalize ঈ to ই
+  s = s.replace(/ঊ/g, 'উ');    // normalize ঊ to উ
+  
+  // 3. Remove all Bengali vowel matras, hasanta, nukta, anusvara, visarga
+  return s
     .replace(/[\u09BE-\u09CC\u09CD\u09BC\u0981-\u0983]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();

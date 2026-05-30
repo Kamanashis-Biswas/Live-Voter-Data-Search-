@@ -74,11 +74,11 @@ async function diagnose() {
     });
     
     let lines = [];
-    let currentLine = [lineItems[0]];
-    let currentY = lineItems[0]?.transform?.[5] || 0;
+    let currentLine = lineItems.length > 0 ? [lineItems[0]] : [];
+    let currentY = lineItems.length > 0 ? (lineItems[0].transform ? lineItems[0].transform[5] : 0) : 0;
     
     for (let i = 1; i < lineItems.length; i++) {
-      const y = lineItems[i].transform?.[5] || 0;
+      const y = lineItems[i].transform ? lineItems[i].transform[5] : 0;
       if (Math.abs(y - currentY) <= 4) {
         currentLine.push(lineItems[i]);
       } else {
@@ -87,7 +87,7 @@ async function diagnose() {
         currentY = y;
       }
     }
-    if (currentLine.length) lines.push(currentLine.map(it => it.str).join(' '));
+    if (currentLine.length > 0) lines.push(currentLine.map(it => it.str).join(' '));
     
     console.log(`\nReconstructed lines (first 20):`);
     for (let i = 0; i < Math.min(20, lines.length); i++) {
