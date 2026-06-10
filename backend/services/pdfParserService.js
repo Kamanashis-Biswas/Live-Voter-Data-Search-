@@ -11,7 +11,13 @@
  *
  * Architecture:
  *   buffer → detectPdfType → extractTextWithPdfjs → convertToUnicode
- *          → extractCoverPageData → extractVoters → return structured data
+ *          → extractCoverPageData → extractVoters → correctVoters → return structured data
+ *
+ * CORRECTION PIPELINE (v7.0.0):
+ *   After voter extraction, every record passes through:
+ *     1. Dictionary Correction — fixes corrupted Bengali words
+ *     2. Name Correction — fixes corrupted person names using fuzzy/phonetic matching
+ *     3. District Validation — corrects geographic field spelling
  */
 
 const { v4: uuidv4 } = require('uuid');
@@ -20,6 +26,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 const { detectPdfType } = require('../utils/pdfTypeDetector');
 const { autoConvert, normalizeForSearch, legacyRatio } = require('../utils/bengaliUnicodeConverter');
+const { correctText } = require('../utils/dictionaryCorrector');
+const { correctName } = require('../utils/nameCorrector');
+const { validateAddress } = require('../utils/districtValidator');
+const logger = require('../utils/logger');
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -99,15 +109,19 @@ async function extractRawPages(buffer, { maxPages = 0, groupByLine = true } = {}
 
       let lines = [];
       // Reassemble individual text spans into complete lines using spatial layouts.
-      // If we merge lines blindly horizontally, the 3 separate voter columns will merge.
-      // Thus, we partition raw items into columns first using X-coordinate cluster groups.
       if (groupByLine && rawItems.length > 0) {
-        const columns = clusterIntoColumns(rawItems);
-        
-        // Process each column vertically from top to bottom
-        for (const colItems of columns) {
-          const colLines = groupItemsIntoLines(colItems, 4, pageNum);
-          lines.push(...colLines);
+        if (pageNum === 1) {
+          // Cover page: DON'T use column clustering — it's a structured metadata page
+          // with label-value pairs on the same row. Group by Y-coordinate to keep
+          // "উপজেলা/থানা রামপাল" together on one line.
+          lines = groupItemsIntoLines(rawItems, 4, pageNum);
+        } else {
+          // Voter pages: use column clustering for the 3-column layout
+          const columns = clusterIntoColumns(rawItems);
+          for (const colItems of columns) {
+            const colLines = groupItemsIntoLines(colItems, 4, pageNum);
+            lines.push(...colLines);
+          }
         }
       }
 
@@ -327,38 +341,96 @@ function extractCoverPageData(text) {
 
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const nextLine = (i + 1 < lines.length) ? lines[i + 1].trim() : '';
+
+    // ── District ──
     if ((line.includes('জেলা') || line.includes('জেলা:'))) {
       const m = line.match(/জেলা[:\s।]+(.+)/u);
       if (m && !meta.district) meta.district = m[1].trim().replace(/[\u0964\u0965]/g, '').split(/\s{2,}/)[0].trim();
+      // If label only (no value after colon), take next line
+      if (!meta.district && nextLine && !nextLine.includes(':')) {
+        meta.district = nextLine.trim();
+      }
     }
+
+    // ── Upazila ──
     if (line.includes('উপজেলা') || line.includes('থানা')) {
       const m = line.match(/(?:উপজেলা|থানা)[/\s]*(?:থানা)?[:\s।]+(.+)/u);
-      if (m && !meta.upazila) meta.upazila = m[1].trim().split(/\s{2,}/)[0].trim();
+      if (m && !meta.upazila) {
+        meta.upazila = m[1].trim().split(/\s{2,}/)[0].trim();
+      }
+      // If label only (no value after colon), take next line
+      if (!meta.upazila && nextLine && !nextLine.includes(':') && !nextLine.includes('ইউনিয়ন')) {
+        meta.upazila = nextLine.trim();
+      }
     }
-    if (line.includes('ইউনিয়ন') || line.includes('ওয়ার্ড/কাঃ বোঃ')) {
-      const m = line.match(/(?:ইউনিয়ন|ওয়ার্ড)[^:]*[:\s।]+(.+)/u);
-      if (m && !meta.unionName) meta.unionName = m[1].trim().split(/\s{2,}/)[0].trim();
+
+    // ── Union/Ward ──
+    if (line.includes('ইউনিয়ন') || line.includes('ওয়ার্ড/') || line.includes('ওয়াডে')) {
+      const m = line.match(/(?:ইউনিয়ন|ওয়ার্ড|ওয়াডে)[^:]*[:\s।]+(.+)/u);
+      if (m && !meta.unionName) {
+        meta.unionName = m[1].trim().split(/\s{2,}/)[0].trim();
+      }
+      // If label only, take next non-label line
+      if (!meta.unionName) {
+        for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+          const nl = lines[j].trim();
+          if (nl && !nl.includes(':') && !nl.includes('ওয়ার্ড') && !nl.includes('ওয়াডে') && 
+              !nl.includes('ক্যাণ্ট') && !nl.includes('বোর্ড') && !nl.includes('বোডে')) {
+            meta.unionName = nl;
+            break;
+          }
+        }
+      }
     }
-    if (line.includes('ওয়ার্ড নম্বর') || line.includes('ওয়ার্ড নং')) {
-      const m = line.match(/ওয়ার্ড\s*(?:নম্বর|নং)[^:]*[:\s।]+([০-৯\d]+)/u);
+
+    // ── Ward Number ──
+    if (line.includes('ওয়ার্ড নম্বর') || line.includes('ওয়ার্ড নং') ||
+        line.includes('ওয়াডে নম্বর') || line.includes('ওয়াডে নং')) {
+      const m = line.match(/(?:ওয়ার্ড|ওয়াডে)\s*(?:নম্বর|নং)[^:]*[:\s।]+([০-৯\d]+)/u);
       if (m) meta.wardNo = m[1].trim();
+      // If no number on same line, check next
+      if (!meta.wardNo && nextLine && /^[০-৯\d]+$/.test(nextLine.trim())) {
+        meta.wardNo = nextLine.trim();
+      }
     }
+
+    // ── Voter Area Number ──
     if (line.includes('ভোটার এলাকার নম্বর') || line.includes('ভোটার এলাকা নম্বর') || line.includes('ভোটার এলাকার কোড')) {
       const m = line.match(/ভোটার এলাকা(?:র)?\s*(?:নম্বর|কোড)[:\s।]+([০-৯\d]+)/u);
       if (m) meta.voterAreaNo = m[1].trim();
+      if (!meta.voterAreaNo && nextLine && /^[০-৯\d]+$/.test(nextLine.trim())) {
+        meta.voterAreaNo = nextLine.trim();
+      }
     }
+
+    // ── Voter Area Name ──
     if (line.includes('ভোটার এলাকা') && !line.includes('নম্বর') && !line.includes('কোড')) {
       const m = line.match(/ভোটার এলাকা(?:র নাম)?[:\s।]*(.+)/u);
       if (m && !meta.voterArea) meta.voterArea = m[1].trim().split(/\s{2,}/)[0].trim();
+      if (!meta.voterArea && nextLine && !nextLine.includes(':')) {
+        meta.voterArea = nextLine.trim();
+      }
     }
+
+    // ── Total Voters ──
     if (line.includes('সর্বমোট ভোটার') || line.includes('সবমোট ভোটার')) {
       const m = line.match(/(?:সর্ব|সব)মোট ভোটার[^:]*[:\s।]+([০-৯\d,]+)/u);
       if (m) meta.totalVoters = parseBengaliNumber(m[1]);
+      if (!meta.totalVoters && nextLine && /^[০-৯\d,]+$/.test(nextLine.trim())) {
+        meta.totalVoters = parseBengaliNumber(nextLine.trim());
+      }
     }
+
+    // ── Male/Female voters ──
     if (line.includes('মোট পুরুষ')) {
       const m = line.match(/মোট পুরুষ[^:]*[:\s।]+([০-৯\d,]+)/u);
       if (m) { meta.totalMaleVoters = parseBengaliNumber(m[1]); meta.genderType = 'পুরুষ'; }
+      if (!meta.totalMaleVoters && nextLine && /^[০-৯\d,]+$/.test(nextLine.trim())) {
+        meta.totalMaleVoters = parseBengaliNumber(nextLine.trim()); meta.genderType = 'পুরুষ';
+      }
     }
     if (line.includes('মোট মহিলা')) {
       const m = line.match(/মোট মহিলা[^:]*[:\s।]+([০-৯\d,]+)/u);
@@ -368,10 +440,14 @@ function extractCoverPageData(text) {
       if (line.includes('মহিলা')) meta.genderType = 'মহিলা';
       else if (line.includes('পুরুষ')) meta.genderType = 'পুরুষ';
     }
+
+    // ── Publication Date ──
     if (line.includes('প্রকাশের তারিখ') || line.includes('প্রকাশ তারিখ') || line.includes('প্রকাশের তারিখ')) {
       const m = line.match(/(?:প্রকাশ(?:ের)? তারিখ)[:\s।]+([০-৯\d/]+)/u);
       if (m) meta.publicationDate = m[1].trim();
     }
+
+    // ── Postal Code ──
     if (line.includes('পোস্টকোড') || line.includes('পোষ্টকোড')) {
       const m = line.match(/পো(?:স্ট|ষ্ট)কোড[:\s।]+([০-৯\d]+)/u);
       if (m) meta.postCode = m[1].trim();
@@ -569,36 +645,114 @@ function extractVoters(allLineObjs, coverMeta, pdfId) {
   return voters;
 }
 
+// ── Bengali Correction Pipeline ─────────────────────────────────────────────
+
+/**
+ * Apply the full Bengali correction pipeline to extracted voter records.
+ * This is the CRITICAL step that was previously missing, causing corrupted Bengali.
+ *
+ * Pipeline:
+ *   1. correctText() — dictionary-based word correction on all text fields
+ *   2. correctName() — fuzzy/phonetic name correction on name fields
+ *   3. validateAddress() — geographic field correction
+ *
+ * @param {object[]} voters - Array of raw voter records after extraction
+ * @param {object} coverMeta - Cover page metadata
+ * @param {string} reqId - Request ID for logging
+ * @returns {object} - { voters: corrected voters, corrections: stats }
+ */
+function applyCorrections(voters, coverMeta, reqId = null) {
+  let totalCorrections = 0;
+  let nameCorrections = 0;
+  let dictCorrections = 0;
+  let geoCorrections = 0;
+
+  const correctedVoters = voters.map(voter => {
+    // 1. Dictionary correction on all text fields
+    const textFields = ['nameBn', 'fatherName', 'motherName', 'occupation', 'address'];
+    for (const field of textFields) {
+      if (voter[field] && voter[field].length > 0) {
+        const result = correctText(voter[field]);
+        if (result.correctionCount > 0) {
+          voter[field] = result.corrected;
+          dictCorrections += result.correctionCount;
+          totalCorrections += result.correctionCount;
+        }
+      }
+    }
+
+    // 2. Name correction on person name fields
+    const nameFields = ['nameBn', 'fatherName', 'motherName'];
+    for (const field of nameFields) {
+      if (voter[field] && voter[field].length > 1) {
+        const result = correctName(voter[field], 0.80);
+        if (result.corrections && result.corrections.length > 0) {
+          voter[field] = result.corrected;
+          nameCorrections += result.corrections.length;
+          totalCorrections += result.corrections.length;
+        }
+      }
+    }
+
+    // 3. Geographic field correction
+    if (voter.district || voter.upazila) {
+      const addrResult = validateAddress({
+        district: voter.district,
+        upazila: voter.upazila,
+      });
+      if (addrResult.corrected) {
+        if (addrResult.corrected.district && addrResult.corrected.district !== voter.district) {
+          voter.district = addrResult.corrected.district;
+          geoCorrections++;
+          totalCorrections++;
+        }
+        if (addrResult.corrected.upazila && addrResult.corrected.upazila !== voter.upazila) {
+          voter.upazila = addrResult.corrected.upazila;
+          geoCorrections++;
+          totalCorrections++;
+        }
+      }
+    }
+
+    return voter;
+  });
+
+  // Also correct cover metadata
+  if (coverMeta.district) {
+    const distResult = correctText(coverMeta.district);
+    if (distResult.correctionCount > 0) coverMeta.district = distResult.corrected;
+  }
+  if (coverMeta.upazila) {
+    const upResult = correctText(coverMeta.upazila);
+    if (upResult.correctionCount > 0) coverMeta.upazila = upResult.corrected;
+  }
+  if (coverMeta.unionName) {
+    const unResult = correctText(coverMeta.unionName);
+    if (unResult.correctionCount > 0) coverMeta.unionName = unResult.corrected;
+  }
+
+  if (totalCorrections > 0) {
+    logger.info(`Correction Pipeline: ${totalCorrections} total corrections (dict=${dictCorrections}, name=${nameCorrections}, geo=${geoCorrections})`, reqId);
+  }
+
+  return {
+    voters: correctedVoters,
+    corrections: { total: totalCorrections, dict: dictCorrections, name: nameCorrections, geo: geoCorrections },
+  };
+}
+
 // ── OCR Fallback (for scanned PDFs) ─────────────────────────────────────────
 
 /**
- * Attempt OCR on a scanned PDF.
- * Requires 'tesseract.js' to be installed separately.
- * Returns empty result with a warning if tesseract.js is not found.
+ * Attempt OCR on a scanned PDF using the OCR service.
+ * Falls back gracefully if tesseract.js is not installed.
  */
 async function ocrFallback(buffer, pdfId, fileName) {
   try {
-    // Dynamic import so the service works even without tesseract.js
-    const Tesseract = require('tesseract.js');
-    const { createWorker } = Tesseract;
-
-    console.warn('[PDF Parser] Scanned PDF detected — attempting OCR (slow)...');
-
-    // For scanned PDFs we'd need to rasterize pages first (requires canvas)
-    // Basic implementation: extract any embedded text that might exist
-    console.warn('[PDF Parser] OCR for scanned PDFs requires additional setup.');
-    console.warn('[PDF Parser] Install: npm install tesseract.js canvas pdfjs-dist');
-
-    return {
-      coverMeta: { district: '', upazila: '', unionName: '', wardNo: '', voterArea: '', voterAreaNo: '', totalVoters: 0, totalMaleVoters: 0, totalFemaleVoters: 0, genderType: 'পুরুষ', publicationDate: '', postCode: '' },
-      voters: [],
-      totalPages: 0,
-      rawTextLength: 0,
-      pdfType: 'scanned',
-      encoding: 'unknown',
-      warning: 'Scanned PDF detected. Install tesseract.js for OCR support.',
-    };
+    const ocrService = require('./ocrService');
+    return await ocrService.processScannedPdf(buffer, pdfId, fileName);
   } catch (_) {
+    logger.warn(`OCR not available for scanned PDF: ${fileName}. Install tesseract.js and canvas for OCR support.`);
     return {
       coverMeta: { district: '', upazila: '', unionName: '', wardNo: '', voterArea: '', voterAreaNo: '', totalVoters: 0, totalMaleVoters: 0, totalFemaleVoters: 0, genderType: 'পুরুষ', publicationDate: '', postCode: '' },
       voters: [],
@@ -606,7 +760,7 @@ async function ocrFallback(buffer, pdfId, fileName) {
       rawTextLength: 0,
       pdfType: 'scanned',
       encoding: 'unknown',
-      warning: 'Scanned PDF detected. OCR not available (tesseract.js not installed).',
+      warning: 'Scanned PDF detected. OCR not available — install: npm install tesseract.js canvas',
     };
   }
 }
@@ -631,23 +785,21 @@ async function ocrFallback(buffer, pdfId, fileName) {
  * }>}
  */
 async function parsePdfBuffer(buffer, pdfId, fileName) {
-  console.log(`\n[PDF Parser] ─────────────────────────────────────────────`);
-  console.log(`[PDF Parser] File: ${fileName}`);
+  const startTime = Date.now();
+  logger.info(`PDF Parse Start: ${fileName}`, pdfId);
 
   // ── Step 1: Detect PDF type ──────────────────────────────────────────────
   let detection;
   try {
     detection = await detectPdfType(buffer);
   } catch (err) {
-    console.warn('[PDF Parser] Type detection failed, assuming legacy_font:', err.message);
+    logger.warn(`PDF type detection failed for ${fileName}, assuming legacy_font: ${err.message}`, pdfId);
     detection = { type: 'legacy_font', encoding: 'sutonny', totalPages: 0, confidence: 0.5, fontNames: [] };
   }
 
-  console.log(`[PDF Parser] Type     : ${detection.type} (confidence: ${(detection.confidence * 100).toFixed(0)}%)`);
-  console.log(`[PDF Parser] Encoding : ${detection.encoding}`);
-  console.log(`[PDF Parser] Pages    : ${detection.totalPages}`);
+  logger.info(`PDF Type: ${detection.type} (confidence: ${(detection.confidence * 100).toFixed(0)}%) encoding=${detection.encoding} pages=${detection.totalPages}`, pdfId);
   if (detection.fontNames.length > 0) {
-    console.log(`[PDF Parser] Fonts    : ${detection.fontNames.slice(0, 5).join(', ')}`);
+    logger.debug(`PDF Fonts: ${detection.fontNames.slice(0, 5).join(', ')}`, pdfId);
   }
 
   // ── Step 2: Route to correct strategy ───────────────────────────────────
@@ -668,20 +820,21 @@ async function parsePdfBuffer(buffer, pdfId, fileName) {
     ? convertPages(rawPages.pages, detection.encoding)
     : rawPages.pages; // already Unicode
 
+  logger.logBengaliConversion(detection.encoding, convertedPages.reduce((sum, p) => sum + p.lines.reduce((s, l) => s + l.text.length, 0), 0), pdfId);
+
   // ── Step 5: Build full text (mapping line objects to text for logging/compatibility) ──
   const fullText = convertedPages
     .map(p => p.lines.map(l => l.text).join('\n'))
     .join('\n');
 
-  // Diagnostic: sample of first 300 chars after conversion
-  console.log(`[PDF Parser] Sample   : ${fullText.substring(0, 300).replace(/\n/g, ' ')}`);
+  logger.debug(`PDF Sample (300 chars): ${fullText.substring(0, 300).replace(/\n/g, ' ')}`, pdfId);
 
   // ── Step 6: Extract cover page metadata from Page 1 only ─────────────────
   const page1 = convertedPages.find(p => p.pageNum === 1);
   const page1Text = page1 ? page1.lines.map(l => l.text).join('\n') : '';
+  logger.debug(`Cover Page1 Lines:\n${page1Text}`, pdfId);
   const coverMeta = extractCoverPageData(page1Text);
-  console.log(`[PDF Parser] District : ${coverMeta.district || '(not found)'}`);
-  console.log(`[PDF Parser] Upazila  : ${coverMeta.upazila || '(not found)'}`);
+  logger.info(`Cover Meta: district=${coverMeta.district || '(none)'} upazila=${coverMeta.upazila || '(none)'} union=${coverMeta.unionName || '(none)'} ward=${coverMeta.wardNo || '(none)'} area=${coverMeta.voterArea || '(none)'}`, pdfId);
 
   // ── Step 7: Extract voter records strictly from Page 3 onwards ──────────
   const voterPages = convertedPages.filter(p => p.pageNum >= 3);
@@ -689,9 +842,14 @@ async function parsePdfBuffer(buffer, pdfId, fileName) {
   for (const page of voterPages) {
     voterLineObjects.push(...page.lines);
   }
-  const voters = extractVoters(voterLineObjects, coverMeta, pdfId);
-  console.log(`[PDF Parser] Voters   : ${voters.length} extracted`);
-  console.log(`[PDF Parser] ─────────────────────────────────────────────\n`);
+  const rawVoters = extractVoters(voterLineObjects, coverMeta, pdfId);
+
+  // ── Step 8: Apply Bengali Correction Pipeline ──────────────────────────
+  const { voters, corrections } = applyCorrections(rawVoters, coverMeta, pdfId);
+
+  const duration = Date.now() - startTime;
+  logger.logPdfParsing(voters.length, rawPages.totalPages, duration, pdfId);
+  logger.info(`Corrections applied: ${corrections.total} (dict=${corrections.dict}, name=${corrections.name}, geo=${corrections.geo})`, pdfId);
 
   return {
     coverMeta,
@@ -701,6 +859,7 @@ async function parsePdfBuffer(buffer, pdfId, fileName) {
     pdfType: detection.type,
     encoding: detection.encoding,
     confidence: detection.confidence,
+    corrections,
   };
 }
 

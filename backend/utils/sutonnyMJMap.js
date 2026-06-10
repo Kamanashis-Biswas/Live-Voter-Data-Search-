@@ -13,8 +13,13 @@
  *  2. Pre-matra reordering → ি (i-matra), ে (e-matra), ৈ (oi-matra) are stored
  *     BEFORE their consonant in the byte stream but must come AFTER in Unicode.
  *
+ * This is the SINGLE AUTHORITATIVE mapping for all EC/SutonnyMJ font variants.
+ * All EC-specific, AdarshaLipi, and Akaash mappings are consolidated here.
+ *
  * Usage:
  *   const { SUTONNY_MAP, PRE_MATRAS } = require('./sutonnyMJMap');
+ *
+ * @version 6.0.0 — Consolidated from sutonnyMJMap + ecFontDecoder + glyphMapper
  */
 
 // Characters that must be moved AFTER their following consonant cluster.
@@ -25,7 +30,7 @@ const PRE_MATRAS = new Set([
 ]);
 
 /**
- * Complete SutonnyMJ → Unicode mapping.
+ * Complete SutonnyMJ + EC Font → Unicode mapping.
  * Keys are the raw codepoints extracted from legacy-font PDFs.
  * Values are the correct Unicode Bengali string.
  *
@@ -33,6 +38,7 @@ const PRE_MATRAS = new Set([
  *  - Latin Extended range (U+00C0–U+024F) — matras, conjuncts, special chars
  *  - Specific ASCII characters that EC fonts map to Bengali glyphs
  *  - Control range (U+0080–U+00BF) used by some EC font variants
+ *  - EC-specific combined glyph+vowel forms
  */
 const SUTONNY_MAP = {
   // ── Pre-matras (stored before consonant in legacy font) ─────────────────
@@ -83,7 +89,7 @@ const SUTONNY_MAP = {
   // ── Independent vowels ─────────────────────────────────────────────────
   '\u0128': '\u09A8\u09CD\u09A8', // Ĩ → ন্ন
   '\u0129': '\u09A8\u09CD\u09A8', // ĩ → ন্ন
-  '\u012A': '\u0988', // Ī → ঈ  (NOTE: also mapped to ট্র conjunct below — context-dependent)
+  '\u012A': '\u0988', // Ī → ঈ
   '\u012B': '\u0988', // ī → ঈ
 
   // ── Consonants (single) ─────────────────────────────────────────────────
@@ -111,13 +117,28 @@ const SUTONNY_MAP = {
   '\u017B': '\u09AF', // Ż → য
   '\u017D': '\u099C', // Ž → জ
   '\u017E': '\u099C', // ž → জ
+  '\u010E': '\u099B', // Ď → ছ
+  '\u010F': '\u099B', // ď → ছ
 
   // ── Additional consonants from EC fonts ─────────────────────────────────
-  '\u0181': '\u09B0\u09C1', // Ɓ → রু  (EC-specific variant for রু/রূ combinations)
-  '\u0180': '\u09B8\u09C1', // ƀ → সু  (EC-specific variant for সু)
+  '\u0181': '\u09B0\u09C1', // Ɓ → রু  (EC-specific রু/রূ combination)
+  '\u0180': '\u09B8\u09C1', // ƀ → সু  (EC-specific সু)
+  '\u0182': '\u09A8\u09C1', // Ƃ → নু  (EC-specific নু)
+  '\u0183': '\u09A4\u09C1', // ƃ → তু  (EC-specific তু)
+  '\u0184': '\u09A6\u09C1', // Ƅ → দু  (EC-specific দু)
+  '\u0185': '\u09AE\u09C1', // ƅ → মু  (EC-specific মু)
+  '\u0186': '\u09B6\u09C1', // Ɔ → শু  (EC-specific শু)
+  '\u0187': '\u09B9\u09C1', // Ƈ → হু  (EC-specific হু)
+  '\u0188': '\u0995\u09C1', // ƈ → কু  (EC-specific কু)
+  '\u0189': '\u0997\u09C1', // Ɖ → গু  (EC-specific গু)
+  '\u018A': '\u099C\u09C1', // Ɗ → জু  (EC-specific জু)
+  '\u018B': '\u09AA\u09C1', // Ƌ → পু  (EC-specific পু)
+  '\u018C': '\u09AC\u09C1', // ƌ → বু  (EC-specific বু)
+  '\u018D': '\u099A\u09C1', // ƍ → চু  (EC-specific চু)
+  '\u018E': '\u09A5\u09C1', // Ǝ → থু  (EC-specific থু)
 
   // ── Reph (র্) and ra-phala (্র) ────────────────────────────────────────
-  '\u0154': '\u09B0\u09CD', // Ŕ → র্  (reph — goes before cluster, handled separately)
+  '\u0154': '\u09B0\u09CD', // Ŕ → র্  (reph — goes before cluster)
   '\u0155': '\u09B0\u09CD', // ŕ → র্
   '\u0178': '\u09B0\u09CD', // Ÿ → র্
   '\u00D7': '\u09CD\u09B0', // × → ্র  (ra-phala)
@@ -133,7 +154,7 @@ const SUTONNY_MAP = {
 
   // ── জ্ঞ ─────────────────────────────────────────────────────────────────
   '\u0126': '\u099C\u09CD\u099E', // Ħ → জ্ঞ
-  '\u0134': '\u099C\u09CD\u099E', // Ĵ → জ্ঞ  (also used for প্র in EC fonts)
+  '\u0134': '\u099C\u09CD\u099E', // Ĵ → জ্ঞ
 
   // ── Common conjuncts ────────────────────────────────────────────────────
   '\u00CB': '\u09CD\u09AF',       // Ë → ্য  (ya-phala — common in EC PDFs)
@@ -198,8 +219,6 @@ const SUTONNY_MAP = {
   // ── Additional EC-specific conjuncts ────────────────────────────────────
   '\u0120': '\u0997\u09CD\u09A7', // Ġ → গ্ধ
   '\u0121': '\u0997\u09CD\u09A8', // ġ → গ্ন
-  '\u010E': '\u099B',             // Ď → ছ
-  '\u010F': '\u099B',             // ď → ছ
   '\u0112': '\u09A6\u09CD\u09AC', // Ē → দ্ব
   '\u0113': '\u09A6\u09CD\u09AC', // ē → দ্ব
   '\u0116': '\u09A8\u09CD\u09A8', // Ė → ন্ন
@@ -214,13 +233,38 @@ const SUTONNY_MAP = {
   '\u014F': '\u09B9\u09CD\u09AE', // ŏ → হ্ম
   '\u0177': '\u09AF\u09CD',       // ŷ → য্
 
+  // ── Additional conjuncts for completeness ───────────────────────────────
+  '\u0190': '\u0995\u09CD\u09A4', // Ɛ → ক্ত
+  '\u0193': '\u0999\u09CD\u0997', // Ɠ → ঙ্গ
+  '\u0194': '\u099A\u09CD\u099B', // Ɣ → চ্ছ
+  '\u0195': '\u099C\u09CD\u099C', // ƕ → জ্জ
+  '\u0196': '\u099E\u09CD\u099C', // Ɩ → ঞ্জ
+  '\u0197': '\u099F\u09CD\u099F', // Ɨ → ট্ট
+  '\u0198': '\u09A1\u09CD\u09A1', // Ƙ → ড্ড
+  '\u0199': '\u09A6\u09CD\u09A6', // ƙ → দ্দ
+  '\u019A': '\u09A8\u09CD\u09AE', // ƚ → ন্ম
+  '\u019B': '\u09AA\u09CD\u09AA', // ƛ → প্প
+  '\u019C': '\u09B8\u09CD\u09A4', // Ɯ → স্ত
+  '\u019D': '\u09B8\u09CD\u09A5', // Ɲ → স্থ
+  '\u019E': '\u09B9\u09CD\u09A8', // ƞ → হ্ন
+  '\u019F': '\u09A4\u09CD\u09A5', // Ɵ → ত্থ
+  '\u01A0': '\u09B7\u09CD\u099F', // Ơ → ষ্ট
+  '\u01A1': '\u09B7\u09CD\u09A0', // ơ → ষ্ঠ
+  '\u01A4': '\u09B8\u09CD\u09A8', // Ƥ → স্ন
+  '\u01A5': '\u09B8\u09CD\u09AE', // ƥ → স্ম
+  '\u01A6': '\u0995\u09CD\u09A8', // Ʀ → ক্ন (rare)
+  '\u01A7': '\u0997\u09CD\u09AE', // Ƨ → গ্ম
+  '\u01A8': '\u099E\u09CD\u099A', // ƨ → ঞ্চ
+  '\u01A9': '\u09B6\u09CD\u09B0', // Ʃ → শ্র
+  '\u01AA': '\u09B8\u09CD\u09B0', // ƪ → স্র
+
   // ── Combined consonant+vowel glyphs (single codepoint in font) ──────────
   '\u01A3': '\u0995\u09C1',       // ƣ → কু
   '\u01A2': '\u0997\u09C1',       // Ƣ → গু
   '\u012D': '\u09DC',             // ĭ → ড়
   '\u012C': '\u09DD',             // Ĭ → ঢ়
 
-  // ── EC-specific: additional Latin Extended mappings found in voter PDFs ──
+  // ── EC-specific: Latin Extended mappings found in voter PDFs ────────────
   '\u00C0': '\u09CD\u09A4',       // À → ্ত
   '\u00C1': '\u09CD\u09A6',       // Á → ্দ
   '\u00C2': '\u09CD\u09A8',       // Â → ্ন
@@ -262,7 +306,7 @@ const SUTONNY_MAP = {
   '\u00F6': '\u0994',             // ö → ঔ
   '\u00F9': '\u09CE',             // ù → ৎ (khanda ta)
   '\u00FA': '\u09F0',             // ú → র (Assamese ra)
-  '\u00FB': '\u099E\u09CD\u099A', // û → ঞ্চ  (EC-specific ঞ্চ)
+  '\u00FB': '\u099E\u09CD\u099A', // û → ঞ্চ
   '\u00FC': '\u09BC',             // ü → ় (nukta)
   '\u00FD': '\u09D7',             // ý → ৗ  (au-length mark)
   '\u00FF': '\u09BE',             // ÿ → া  (aa-matra variant)

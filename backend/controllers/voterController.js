@@ -1,4 +1,5 @@
 const db = require('../services/localDb');
+const logger = require('../utils/logger');
 
 /**
  * @file voterController.js
@@ -18,6 +19,7 @@ const db = require('../services/localDb');
  */
 exports.searchVoters = (req, res, next) => {
   try {
+    const startTime = Date.now();
     const {
       name, fatherName, motherName, village, voterArea,
       upazila, district, nid, voterNo, occupation, gender,
@@ -30,6 +32,9 @@ exports.searchVoters = (req, res, next) => {
       upazila, district, nid, voterNo, occupation, gender,
       page, limit
     });
+
+    const duration = Date.now() - startTime;
+    logger.logSearch({ name, fatherName, village, district }, results.length, duration, req.id);
 
     res.json({
       success: true,

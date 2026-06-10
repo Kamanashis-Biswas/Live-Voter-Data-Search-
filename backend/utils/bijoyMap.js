@@ -7,6 +7,8 @@
  * from SutonnyMJ in some codepoint assignments.
  *
  * The PRE_MATRAS set is shared with SutonnyMJ.
+ *
+ * @version 6.0.0 — Expanded with missing conjuncts and special forms
  */
 
 const { PRE_MATRAS } = require('./sutonnyMJMap');
@@ -39,7 +41,7 @@ const BIJOY_MAP = {
   '\u0052': '\u09A5', // R → থ
   '\u0053': '\u09A6', // S → দ
   '\u0054': '\u099F', // T → ট
-  '\u0055': '\u09A5', // U → থ (alt)
+  '\u0055': '\u09A0', // U → ঠ
   '\u0056': '\u09AD', // V → ভ
   '\u0057': '\u09B6', // W → শ
   '\u0058': '\u09B7', // X → ষ
@@ -74,6 +76,10 @@ const BIJOY_MAP = {
   '\u0079': '\u09AF', // y → য
   '\u007A': '\u09CD', // z → ্  (hasanta/virama)
 
+  // Bijoy special characters
+  '\u0026': '\u0983', // & → ঃ  (visarga)
+  '\u0060': '\u0982', // ` → ং  (anusvara)
+
   // Latin Extended — same as SutonnyMJ for most entries
   '\u00CF': '\u09C7', // Ï → ে
   '\u00CE': '\u09C7', // Î → ে
@@ -91,7 +97,9 @@ const BIJOY_MAP = {
   '\u0154': '\u09B0\u09CD', // Ŕ → র্
   '\u0178': '\u09B0\u09CD', // Ÿ → র্
   '\u00D7': '\u09CD\u09B0', // × → ্র
+  '\u00F7': '\u09CD\u09B0', // ÷ → ্র
   '\u0141': '\u09CD\u09AF', // Ł → ্য
+  '\u0142': '\u09CD\u09AF', // ł → ্য
   '\u0147': '\u09A8\u09CD\u09A4', // Ň → ন্ত
   '\u0148': '\u09A8\u09CD\u09A4', // ň → ন্ত
   '\u0126': '\u099C\u09CD\u099E', // Ħ → জ্ঞ
@@ -105,6 +113,35 @@ const BIJOY_MAP = {
   '\u015D': '\u09B7\u09CD\u09A3', // ŝ → ষ্ণ
   '\u00DE': '\u09A4\u09CD\u09AC', // Þ → ত্ব
   '\u00FE': '\u09A4\u09CD\u09AC', // þ → ত্ব
+
+  // Additional Bijoy conjuncts
+  '\u0100': '\u09CD',              // Ā → ্ (hasanta)
+  '\u0101': '\u09CD',              // ā → ্
+  '\u00C5': '\u09AA\u09CD\u09B0', // Å → প্র
+  '\u00E5': '\u09AA\u09CD\u09B0', // å → প্র
+  '\u0164': '\u09A4\u09CD\u09A4', // Ť → ত্ত
+  '\u0145': '\u09A8\u09CD\u09A6', // Ņ → ন্দ
+  '\u0146': '\u09A8\u09CD\u09A6', // ņ → ন্দ
+  '\u0143': '\u09A3\u09CD\u09A1', // Ń → ণ্ড
+  '\u0144': '\u09A3\u09CD\u09A1', // ń → ণ্ড
+  '\u012F': '\u09AE\u09CD\u09AD', // į → ম্ভ
+  '\u012E': '\u09AE\u09CD\u09AD', // Į → ম্ভ
+  '\u0112': '\u09A6\u09CD\u09AC', // Ē → দ্ব
+  '\u0113': '\u09A6\u09CD\u09AC', // ē → দ্ব
+  '\u0116': '\u09A8\u09CD\u09A8', // Ė → ন্ন
+  '\u0117': '\u09A8\u09CD\u09A8', // ė → ন্ন
+  '\u011E': '\u09AE\u09CD\u09AE', // Ğ → ম্ম
+  '\u011F': '\u09AE\u09CD\u09AE', // ğ → ম্ম
+  '\u013B': '\u09B2\u09CD\u09B2', // Ļ → ল্ল
+  '\u013C': '\u09B2\u09CD\u09B2', // ļ → ল্ল
+  '\u0170': '\u09AC\u09CD\u09B0', // Ű → ব্র
+  '\u0171': '\u09AC\u09CD\u09B0', // ű → ব্র
+  '\u0172': '\u0995\u09CD\u09B0', // Ų → ক্র
+  '\u0173': '\u0995\u09CD\u09B0', // ų → ক্র
+  '\u012D': '\u09DC',             // ĭ → ড়
+  '\u012C': '\u09DD',             // Ĭ → ঢ়
+
+  // Bengali danda
   '\u0001': '\u0964',              // SOH → ।
 };
 

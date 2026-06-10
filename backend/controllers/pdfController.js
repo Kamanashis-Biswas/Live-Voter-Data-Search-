@@ -3,6 +3,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../services/localDb');
 const { parsePdfBuffer } = require('../services/pdfParserService');
+const logger = require('../utils/logger');
 
 /**
  * @file pdfController.js
@@ -24,7 +25,7 @@ const UPLOADS_DIR = path.join(__dirname, '../uploads');
 // Automatically create uploads directory if missing
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  console.log(`📁 Created uploads directory: ${UPLOADS_DIR}`);
+  logger.info(`Created uploads directory: ${UPLOADS_DIR}`);
 }
 
 /**
@@ -52,7 +53,7 @@ exports.uploadPdf = async (req, res, next) => {
     try {
       fs.writeFileSync(filePath, req.file.buffer);
     } catch (writeErr) {
-      console.error('Failed to save PDF file:', writeErr.message);
+      logger.error('Failed to save PDF file', writeErr, pdfId);
       return res.status(500).json({ success: false, message: 'PDF ফাইল সেভ করতে সমস্যা হয়েছে।' });
     }
 
@@ -63,7 +64,7 @@ exports.uploadPdf = async (req, res, next) => {
     try {
       parseResult = await parsePdfBuffer(req.file.buffer, pdfId, originalName);
     } catch (parseErr) {
-      console.warn('PDF parse warning:', parseErr.message);
+      logger.warn(`PDF parse warning for ${originalName}: ${parseErr.message}`, pdfId);
       // Continue processing even if layout extraction encounters minor warning anomalies
     }
 

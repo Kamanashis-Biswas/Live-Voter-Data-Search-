@@ -1,0 +1,929 @@
+{"timestamp":"2026-05-31T16:24:10.792Z","level":"INFO","message":"GET /api/health","reqId":"26b76efe-c0b7-4086-aa5a-83414a59ee97"}
+{"timestamp":"2026-05-31T16:24:15.495Z","level":"INFO","message":"GET /api/health","reqId":"de0629a3-d5f6-422f-abf7-48b88794aaba"}
+{"timestamp":"2026-05-31T16:24:20.490Z","level":"INFO","message":"GET /api/health","reqId":"1e145baa-fef5-4ccf-980f-af93ff4751e5"}
+{"timestamp":"2026-05-31T16:24:25.487Z","level":"INFO","message":"GET /api/health","reqId":"22de740f-bcb6-4df6-833c-1c00b49966f4"}
+{"timestamp":"2026-05-31T16:24:30.497Z","level":"INFO","message":"GET /api/health","reqId":"7288da6f-b3f0-4f52-9d7e-1f1d701ff6e4"}
+{"timestamp":"2026-05-31T16:24:35.321Z","level":"INFO","message":"GET /api/health","reqId":"c55addc1-25a7-4a7d-b611-8f9c2e3c0ecf"}
+{"timestamp":"2026-06-01T08:23:49.545Z","level":"INFO","message":"GET /api/health","reqId":"035b4e85-8f33-4d81-81a7-013ee119b945"}
+{"timestamp":"2026-06-01T08:23:49.552Z","level":"INFO","message":"GET /api/pdf/list","reqId":"bec6e60a-9370-4268-a523-fd82eee77126"}
+{"timestamp":"2026-06-01T08:23:49.595Z","level":"INFO","message":"GET /api/health","reqId":"2228ff20-d1bc-4568-a68f-8eb7e3b7c5d8"}
+{"timestamp":"2026-06-01T08:23:49.597Z","level":"INFO","message":"GET /api/pdf/list","reqId":"5fbf0395-261a-4dad-9607-7ee49db5f837"}
+{"timestamp":"2026-06-01T08:23:53.358Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"cf957974-5081-4223-be4d-986bcf8823c1"}
+{"timestamp":"2026-06-01T08:23:54.241Z","level":"INFO","message":"GET /api/health","reqId":"c563a517-4ae6-42f6-8df1-8c00344558f8"}
+{"timestamp":"2026-06-01T08:23:59.247Z","level":"INFO","message":"GET /api/health","reqId":"80e073b9-fa56-442e-bf27-5e305f8295a3"}
+{"timestamp":"2026-06-01T08:24:04.252Z","level":"INFO","message":"GET /api/health","reqId":"fbb0ab72-050e-4a70-aceb-8cd6f0b81938"}
+{"timestamp":"2026-06-01T08:24:07.887Z","level":"INFO","message":"GET /api/pdf/0d21ebc1-134f-4e86-9398-6ab2f3f3216a/file","reqId":"1d2ba63d-caba-4e08-b007-8ca4da671476"}
+{"timestamp":"2026-06-01T08:24:07.891Z","level":"INFO","message":"GET /api/pdf/0d21ebc1-134f-4e86-9398-6ab2f3f3216a/file","reqId":"72fda710-b94d-428c-82d5-61ceb2e76e30"}
+{"timestamp":"2026-06-01T08:24:09.243Z","level":"INFO","message":"GET /api/health","reqId":"f021c103-fc7d-45ed-8583-361da0eb8b28"}
+{"timestamp":"2026-06-01T08:24:14.256Z","level":"INFO","message":"GET /api/health","reqId":"6fe4c6fa-394c-438c-9713-45ad4c50811e"}
+{"timestamp":"2026-06-01T08:24:19.242Z","level":"INFO","message":"GET /api/health","reqId":"5b3636e0-cc2d-425c-a716-8773de6fba3d"}
+{"timestamp":"2026-06-01T08:24:24.245Z","level":"INFO","message":"GET /api/health","reqId":"643e1c3c-bb1b-4b33-8cf6-34c1a7139c8f"}
+{"timestamp":"2026-06-01T08:24:29.244Z","level":"INFO","message":"GET /api/health","reqId":"1fea3083-456c-4d0e-8a21-f8a575967211"}
+{"timestamp":"2026-06-01T08:24:34.250Z","level":"INFO","message":"GET /api/health","reqId":"b52bfc73-e7fe-4eb0-aff5-05a5b2e77614"}
+{"timestamp":"2026-06-01T08:24:39.256Z","level":"INFO","message":"GET /api/health","reqId":"1b62e4d7-bc6d-4bdc-9b38-b2c034437ff0"}
+{"timestamp":"2026-06-01T08:24:44.244Z","level":"INFO","message":"GET /api/health","reqId":"bea4981d-46df-48b9-a375-721a5401d906"}
+{"timestamp":"2026-06-01T08:24:49.255Z","level":"INFO","message":"GET /api/health","reqId":"d41a7154-0daf-4cc7-b766-b9d45981d8de"}
+{"timestamp":"2026-06-01T08:24:54.249Z","level":"INFO","message":"GET /api/health","reqId":"8f5d4b31-da5e-4c6e-9fd2-ae0ef34f9f5a"}
+{"timestamp":"2026-06-01T08:24:59.255Z","level":"INFO","message":"GET /api/health","reqId":"7213e11e-c362-464d-ad61-8fa60b2ceb45"}
+{"timestamp":"2026-06-01T08:25:04.240Z","level":"INFO","message":"GET /api/health","reqId":"fcd16dfa-b21a-4d84-979a-924ce34e4c7c"}
+{"timestamp":"2026-06-01T08:25:09.253Z","level":"INFO","message":"GET /api/health","reqId":"30286e68-0e62-4f8d-a555-b5f84ce09703"}
+{"timestamp":"2026-06-01T08:25:14.254Z","level":"INFO","message":"GET /api/health","reqId":"ae835ce1-f717-4ea6-9fea-eaaecec8a230"}
+{"timestamp":"2026-06-01T08:25:19.250Z","level":"INFO","message":"GET /api/health","reqId":"d81b9408-d957-481e-b879-7f324e16447b"}
+{"timestamp":"2026-06-01T08:25:24.252Z","level":"INFO","message":"GET /api/health","reqId":"96929b9d-9d05-4426-83b8-63c49fa70d57"}
+{"timestamp":"2026-06-01T08:25:29.247Z","level":"INFO","message":"GET /api/health","reqId":"70cce8d4-fd71-4531-ad78-3daae168bce1"}
+{"timestamp":"2026-06-01T08:25:34.252Z","level":"INFO","message":"GET /api/health","reqId":"fbfa9530-3eb7-4840-b26b-425bcf381f4d"}
+{"timestamp":"2026-06-01T08:25:39.248Z","level":"INFO","message":"GET /api/health","reqId":"73dcb5cb-9de7-4cf6-b5da-b5e72098587e"}
+{"timestamp":"2026-06-01T08:25:44.564Z","level":"INFO","message":"GET /api/health","reqId":"e0df462c-fa20-4f11-a569-d6deb8cb7454"}
+{"timestamp":"2026-06-01T08:25:49.248Z","level":"INFO","message":"GET /api/health","reqId":"c793527d-182f-4d76-9e69-5d0179834cd5"}
+{"timestamp":"2026-06-01T08:25:54.255Z","level":"INFO","message":"GET /api/health","reqId":"789a3179-c8a4-4a70-9e55-e7665aef4c74"}
+{"timestamp":"2026-06-01T08:25:59.249Z","level":"INFO","message":"GET /api/health","reqId":"39d94b3c-a17c-41d5-8566-b374e77cc41d"}
+{"timestamp":"2026-06-01T08:26:04.248Z","level":"INFO","message":"GET /api/health","reqId":"6155bb43-bd4c-499c-8ee3-f3fe2dd2c722"}
+{"timestamp":"2026-06-01T08:26:09.243Z","level":"INFO","message":"GET /api/health","reqId":"13724925-9514-40da-b8f0-59247ba6e805"}
+{"timestamp":"2026-06-01T08:26:14.254Z","level":"INFO","message":"GET /api/health","reqId":"385fbc42-9582-4a07-a3c0-e490cfa79258"}
+{"timestamp":"2026-06-01T08:26:19.252Z","level":"INFO","message":"GET /api/health","reqId":"bb7c7081-3388-4617-872a-fb3642d42df2"}
+{"timestamp":"2026-06-01T08:26:24.249Z","level":"INFO","message":"GET /api/health","reqId":"e0786855-9869-40bf-8e5b-2b8b49260a4b"}
+{"timestamp":"2026-06-01T08:26:29.252Z","level":"INFO","message":"GET /api/health","reqId":"bc384c21-6866-4ee4-9e73-d23051d8af17"}
+{"timestamp":"2026-06-01T08:26:34.565Z","level":"INFO","message":"GET /api/health","reqId":"8622f396-99f6-4f90-8e83-9f7ecaae53a7"}
+{"timestamp":"2026-06-01T08:26:39.251Z","level":"INFO","message":"GET /api/health","reqId":"6f61d3d6-dd7c-4739-8466-da379a10fe77"}
+{"timestamp":"2026-06-01T08:26:44.243Z","level":"INFO","message":"GET /api/health","reqId":"5c616839-2cdb-4ffc-a7e4-c1df70315b69"}
+{"timestamp":"2026-06-01T08:26:49.245Z","level":"INFO","message":"GET /api/health","reqId":"5a24979e-4d57-4b53-afd6-de915738de10"}
+{"timestamp":"2026-06-01T08:26:54.248Z","level":"INFO","message":"GET /api/health","reqId":"98a4e7a1-e7f6-45dc-9a23-e6317572b6a9"}
+{"timestamp":"2026-06-01T08:26:59.248Z","level":"INFO","message":"GET /api/health","reqId":"22d1cad3-5185-41b6-9418-b32533c37c92"}
+{"timestamp":"2026-06-01T08:27:04.252Z","level":"INFO","message":"GET /api/health","reqId":"12948f95-e164-4c9c-b492-c1aadf0ce927"}
+{"timestamp":"2026-06-01T08:27:09.558Z","level":"INFO","message":"GET /api/health","reqId":"3bde1d37-923e-4614-909f-04277683bd4c"}
+{"timestamp":"2026-06-01T08:27:14.252Z","level":"INFO","message":"GET /api/health","reqId":"04e71ce8-283b-49f7-a962-f8b2bb3e4716"}
+{"timestamp":"2026-06-01T08:27:19.248Z","level":"INFO","message":"GET /api/health","reqId":"f7dbda88-3b7f-468f-933a-b5ceaac03be3"}
+{"timestamp":"2026-06-01T08:27:24.243Z","level":"INFO","message":"GET /api/health","reqId":"5f9533c4-e749-4742-adcb-d57bc90925f2"}
+{"timestamp":"2026-06-01T08:27:29.248Z","level":"INFO","message":"GET /api/health","reqId":"1eefbd80-c2c4-47cb-91d9-073bc10d9f17"}
+{"timestamp":"2026-06-01T08:27:34.250Z","level":"INFO","message":"GET /api/health","reqId":"1d3c2586-1da1-4b9f-903a-d8ce0b7b34d9"}
+{"timestamp":"2026-06-01T08:27:39.243Z","level":"INFO","message":"GET /api/health","reqId":"3ccdcc06-4193-43a4-b387-7393ceecf600"}
+{"timestamp":"2026-06-01T08:27:44.555Z","level":"INFO","message":"GET /api/health","reqId":"cd957cf2-0569-4689-a234-1586849087e7"}
+{"timestamp":"2026-06-01T08:27:49.254Z","level":"INFO","message":"GET /api/health","reqId":"9b04ee51-4e84-4e38-8c8d-1183c841a2db"}
+{"timestamp":"2026-06-01T08:27:54.243Z","level":"INFO","message":"GET /api/health","reqId":"f9403d9e-87da-4478-a5a6-90597cef2892"}
+{"timestamp":"2026-06-01T08:27:59.562Z","level":"INFO","message":"GET /api/health","reqId":"618df4b5-b078-4fdb-88e6-8e7eb8c3e56c"}
+{"timestamp":"2026-06-01T08:28:04.245Z","level":"INFO","message":"GET /api/health","reqId":"582ad072-5265-4fec-b8ac-59267c7f2a51"}
+{"timestamp":"2026-06-01T08:28:09.255Z","level":"INFO","message":"GET /api/health","reqId":"ad71633f-f8f4-4c43-bcb3-b6659c10440c"}
+{"timestamp":"2026-06-01T08:28:14.250Z","level":"INFO","message":"GET /api/health","reqId":"b8d5b33f-40c1-4a8d-8abb-5fc2df4e3266"}
+{"timestamp":"2026-06-01T08:28:19.256Z","level":"INFO","message":"GET /api/health","reqId":"b66529f6-140f-4b73-a136-39f66c39215f"}
+{"timestamp":"2026-06-01T08:28:24.244Z","level":"INFO","message":"GET /api/health","reqId":"c1be37e5-a850-407a-b1be-ee91d38c0af2"}
+{"timestamp":"2026-06-01T08:28:29.253Z","level":"INFO","message":"GET /api/health","reqId":"da190fb2-8ac8-431f-b519-6c55eac4fdc0"}
+{"timestamp":"2026-06-01T08:28:34.242Z","level":"INFO","message":"GET /api/health","reqId":"fae80ec5-c0b8-42f6-9982-845f8e6b8407"}
+{"timestamp":"2026-06-01T08:28:39.242Z","level":"INFO","message":"GET /api/health","reqId":"858b956f-066a-44cf-83fb-bc5b820ba1d9"}
+{"timestamp":"2026-06-01T08:28:44.246Z","level":"INFO","message":"GET /api/health","reqId":"fb3288f6-380c-4c97-92c1-58702eac3363"}
+{"timestamp":"2026-06-01T08:28:49.244Z","level":"INFO","message":"GET /api/health","reqId":"ab10e3a8-b3b3-4a85-a1eb-c1ae2428c60c"}
+{"timestamp":"2026-06-01T08:28:54.252Z","level":"INFO","message":"GET /api/health","reqId":"c7e7317c-a610-4f00-8b49-ac97e88e63b3"}
+{"timestamp":"2026-06-01T08:28:59.249Z","level":"INFO","message":"GET /api/health","reqId":"5a8e3e13-2d00-4d49-88a0-a79536843ed5"}
+{"timestamp":"2026-06-01T08:29:04.246Z","level":"INFO","message":"GET /api/health","reqId":"260ce610-fb15-4251-92f4-72508584b3f1"}
+{"timestamp":"2026-06-01T08:29:09.247Z","level":"INFO","message":"GET /api/health","reqId":"52af7d65-6729-4c7d-9c3b-37934c5e890d"}
+{"timestamp":"2026-06-01T08:29:14.249Z","level":"INFO","message":"GET /api/health","reqId":"92fb9d79-38b5-4376-b7fc-01d55ac7b5df"}
+{"timestamp":"2026-06-01T08:29:19.254Z","level":"INFO","message":"GET /api/health","reqId":"92e32b08-142e-4945-9cec-1409867d8a4f"}
+{"timestamp":"2026-06-01T08:29:24.257Z","level":"INFO","message":"GET /api/health","reqId":"05614de7-1af7-4c87-b975-fc149018caf2"}
+{"timestamp":"2026-06-01T08:29:29.246Z","level":"INFO","message":"GET /api/health","reqId":"6dd5de08-a039-48e7-a399-67778e8f0eed"}
+{"timestamp":"2026-06-01T08:29:34.247Z","level":"INFO","message":"GET /api/health","reqId":"3756f58e-a32d-47dc-83be-56a3299e1f83"}
+{"timestamp":"2026-06-01T08:29:39.250Z","level":"INFO","message":"GET /api/health","reqId":"1d6aa2bb-1281-403e-ae13-24a81b8152ae"}
+{"timestamp":"2026-06-01T08:29:44.247Z","level":"INFO","message":"GET /api/health","reqId":"5edc5b4b-afdb-4301-8ee4-b5a82837916d"}
+{"timestamp":"2026-06-01T08:29:49.565Z","level":"INFO","message":"GET /api/health","reqId":"f6f6dce0-3b91-43e7-b98d-3892c1293740"}
+{"timestamp":"2026-06-01T08:29:54.240Z","level":"INFO","message":"GET /api/health","reqId":"7b312345-36b7-49a7-a23a-343d2175ef50"}
+{"timestamp":"2026-06-01T08:29:59.253Z","level":"INFO","message":"GET /api/health","reqId":"248af1c3-baf3-40d4-895e-c464687ab4ce"}
+{"timestamp":"2026-06-01T08:30:04.560Z","level":"INFO","message":"GET /api/health","reqId":"4ec2ed43-4e19-428b-a8e2-3c3373065493"}
+{"timestamp":"2026-06-01T08:30:09.241Z","level":"INFO","message":"GET /api/health","reqId":"6adfc940-303e-430c-8797-9839c9fed06f"}
+{"timestamp":"2026-06-01T08:30:14.251Z","level":"INFO","message":"GET /api/health","reqId":"10c3f43c-30f3-458b-85bd-dbd5ed99bf1d"}
+{"timestamp":"2026-06-01T08:30:19.548Z","level":"INFO","message":"GET /api/health","reqId":"b0a985bc-17ce-4a38-aea5-8ae690624697"}
+{"timestamp":"2026-06-01T08:30:24.241Z","level":"INFO","message":"GET /api/health","reqId":"2d344536-81d5-4065-af9a-1191d27a0f6d"}
+{"timestamp":"2026-06-01T08:30:26.844Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"13641e98-b2dd-4bee-a5df-cce5f3665056"}
+{"timestamp":"2026-06-01T08:30:26.890Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=44ms","reqId":"13641e98-b2dd-4bee-a5df-cce5f3665056"}
+{"timestamp":"2026-06-01T08:30:29.254Z","level":"INFO","message":"GET /api/health","reqId":"9218fc20-a911-479f-870f-37c667768238"}
+{"timestamp":"2026-06-01T08:30:34.254Z","level":"INFO","message":"GET /api/health","reqId":"1d642133-1aeb-4beb-94e8-cabcab328059"}
+{"timestamp":"2026-06-01T08:30:39.246Z","level":"INFO","message":"GET /api/health","reqId":"c6d99e21-defb-47c1-a882-ab7db8fa2372"}
+{"timestamp":"2026-06-01T08:30:44.245Z","level":"INFO","message":"GET /api/health","reqId":"6f54940a-2b79-448b-a071-eccc05b8c079"}
+{"timestamp":"2026-06-01T08:30:49.249Z","level":"INFO","message":"GET /api/health","reqId":"c1535c4b-faa3-48a3-9fe5-f48e2fcbb052"}
+{"timestamp":"2026-06-01T08:30:54.240Z","level":"INFO","message":"GET /api/health","reqId":"6667c14c-b228-4924-9c89-be9c2cdc08d7"}
+{"timestamp":"2026-06-01T08:30:59.250Z","level":"INFO","message":"GET /api/health","reqId":"1f16baf0-ad4f-4066-a69b-ff77fae363e3"}
+{"timestamp":"2026-06-01T08:31:01.792Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%AC%E0%A6%BF%E0%A6%B2%E0%A7%8D%E0%A6%AA%E0%A6%AC+%E0%A6%9A%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"e484757f-4bb4-47a3-acd6-f33316d91a9a"}
+{"timestamp":"2026-06-01T08:31:01.829Z","level":"INFO","message":"Search: query=\"{\"name\":\"বিল্পব চন্দ্র বিশ্বাস\"}\" results=1 time=35ms","reqId":"e484757f-4bb4-47a3-acd6-f33316d91a9a"}
+{"timestamp":"2026-06-01T08:31:04.244Z","level":"INFO","message":"GET /api/health","reqId":"4d4a41da-ef8c-451e-92b5-73352b089b2a"}
+{"timestamp":"2026-06-01T08:31:09.251Z","level":"INFO","message":"GET /api/health","reqId":"45ab6c77-3da9-4c9a-9a20-d871f2670c71"}
+{"timestamp":"2026-06-01T08:31:09.940Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%95%E0%A6%BE%E0%A6%AE%E0%A6%A8%E0%A6%BE%E0%A6%B6%E0%A7%80%E0%A6%B7","reqId":"e2862a72-d52f-4ac7-8665-40d08aa90d6f"}
+{"timestamp":"2026-06-01T08:31:09.942Z","level":"INFO","message":"Search: query=\"{\"name\":\"কামনাশীষ\"}\" results=1 time=1ms","reqId":"e2862a72-d52f-4ac7-8665-40d08aa90d6f"}
+{"timestamp":"2026-06-01T08:31:14.242Z","level":"INFO","message":"GET /api/health","reqId":"39f9dc60-64e5-4eb4-8d44-87375a6cc582"}
+{"timestamp":"2026-06-01T08:31:19.245Z","level":"INFO","message":"GET /api/health","reqId":"9dc3bc00-2f36-4ae9-a3c3-9fae56b883cd"}
+{"timestamp":"2026-06-01T08:31:24.012Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%95%E0%A7%8D%E0%A6%B7%E0%A6%BF%E0%A6%A4%E0%A7%80%E0%A6%B6+%E0%A6%9A%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"29e83927-995f-4b94-ae5b-354ec4d68990"}
+{"timestamp":"2026-06-01T08:31:24.048Z","level":"INFO","message":"Search: query=\"{\"name\":\"ক্ষিতীশ চন্দ্র বিশ্বাস\"}\" results=1 time=34ms","reqId":"29e83927-995f-4b94-ae5b-354ec4d68990"}
+{"timestamp":"2026-06-01T08:31:24.245Z","level":"INFO","message":"GET /api/health","reqId":"5463eddb-0851-4273-a5e9-e9ae3addbbf6"}
+{"timestamp":"2026-06-01T08:31:29.250Z","level":"INFO","message":"GET /api/health","reqId":"7acde9e1-f6aa-4502-a2b0-23d05fd94e62"}
+{"timestamp":"2026-06-01T08:31:29.896Z","level":"INFO","message":"GET /api/pdf/0d21ebc1-134f-4e86-9398-6ab2f3f3216a/file","reqId":"94881ffd-973b-4a2b-b542-88bed1c56c3a"}
+{"timestamp":"2026-06-01T08:31:29.901Z","level":"INFO","message":"GET /api/pdf/0d21ebc1-134f-4e86-9398-6ab2f3f3216a/file","reqId":"2659fc15-ac41-49a7-9459-6f2b4a015dc5"}
+{"timestamp":"2026-06-01T08:31:34.253Z","level":"INFO","message":"GET /api/health","reqId":"4e75b62c-41b3-4f82-b8de-00c8a8aad520"}
+{"timestamp":"2026-06-01T08:31:39.248Z","level":"INFO","message":"GET /api/health","reqId":"62d612dd-53ee-40ab-94c6-97edb3b03b07"}
+{"timestamp":"2026-06-01T08:31:44.247Z","level":"INFO","message":"GET /api/health","reqId":"79742527-e5bf-4064-af3d-7542536bd997"}
+{"timestamp":"2026-06-01T08:31:49.246Z","level":"INFO","message":"GET /api/health","reqId":"ee603757-e12d-4553-8c75-16c7c74263a4"}
+{"timestamp":"2026-06-01T08:31:54.247Z","level":"INFO","message":"GET /api/health","reqId":"9a54a9e4-788e-4a64-9104-0476b5e3afa1"}
+{"timestamp":"2026-06-01T08:31:59.246Z","level":"INFO","message":"GET /api/health","reqId":"64a5ee58-202e-46cc-8cc5-e608bae72791"}
+{"timestamp":"2026-06-01T08:32:04.255Z","level":"INFO","message":"GET /api/health","reqId":"299eedc4-4285-4011-b56c-5deaf978981f"}
+{"timestamp":"2026-06-01T08:32:09.245Z","level":"INFO","message":"GET /api/health","reqId":"f49cee9d-a2f5-45c7-994e-a4c6b68585a1"}
+{"timestamp":"2026-06-01T08:32:14.245Z","level":"INFO","message":"GET /api/health","reqId":"5727fed7-52c8-4b1b-916f-c30ae8421a5c"}
+{"timestamp":"2026-06-01T08:32:19.570Z","level":"INFO","message":"GET /api/health","reqId":"09ac5f64-1274-434a-93f5-7c2f8e195f65"}
+{"timestamp":"2026-06-01T17:31:34.206Z","level":"INFO","message":"GET /api/health","reqId":"ce442c9d-301d-4edf-978f-8164eb1205e5"}
+{"timestamp":"2026-06-01T17:31:34.214Z","level":"INFO","message":"GET /api/pdf/list","reqId":"7901817d-ea9f-49cb-9758-6ffa8e6610d9"}
+{"timestamp":"2026-06-01T17:31:34.254Z","level":"INFO","message":"GET /api/health","reqId":"c3c77a32-35b4-4a4d-9058-03d1d97f8bb1"}
+{"timestamp":"2026-06-01T17:31:34.256Z","level":"INFO","message":"GET /api/pdf/list","reqId":"ac46efd7-2c9f-47d6-abba-b2e42beac1eb"}
+{"timestamp":"2026-06-01T17:31:37.605Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"a6eddcc2-595b-4004-ab18-8c16c9316c63"}
+{"timestamp":"2026-06-01T17:31:37.608Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=2ms","reqId":"a6eddcc2-595b-4004-ab18-8c16c9316c63"}
+{"timestamp":"2026-06-01T17:31:38.902Z","level":"INFO","message":"GET /api/health","reqId":"e5fbcb46-8899-414b-98d8-fb739014892d"}
+{"timestamp":"2026-06-01T17:31:43.905Z","level":"INFO","message":"GET /api/health","reqId":"61947801-ab80-4cc9-8b60-2baed45fa52d"}
+{"timestamp":"2026-06-01T17:31:48.913Z","level":"INFO","message":"GET /api/health","reqId":"84e61cb2-3113-4164-a374-157a49a6ee14"}
+{"timestamp":"2026-06-01T17:31:53.902Z","level":"INFO","message":"GET /api/health","reqId":"0ccd0e4b-6dfe-443e-b0a2-d4f8b1f92803"}
+{"timestamp":"2026-06-01T17:31:58.901Z","level":"INFO","message":"GET /api/health","reqId":"b6e2be14-2f7e-44fe-96c4-9c1012a9afbd"}
+{"timestamp":"2026-06-01T17:32:03.912Z","level":"INFO","message":"GET /api/health","reqId":"dc85b13c-6278-42c0-bdd9-cb549efd84db"}
+{"timestamp":"2026-06-01T17:32:08.904Z","level":"INFO","message":"GET /api/health","reqId":"001f2b07-29a6-4beb-b893-83653d57c8d7"}
+{"timestamp":"2026-06-01T17:32:13.905Z","level":"INFO","message":"GET /api/health","reqId":"2c89fe94-a8c6-4dff-9fe2-651309756d54"}
+{"timestamp":"2026-06-01T17:32:18.908Z","level":"INFO","message":"GET /api/health","reqId":"997efc9d-9f00-45bb-b1f3-2cd8959c5245"}
+{"timestamp":"2026-06-01T17:32:23.914Z","level":"INFO","message":"GET /api/health","reqId":"dd73f0a6-7e68-4225-93c8-e0d030083d42"}
+{"timestamp":"2026-06-01T17:32:28.904Z","level":"INFO","message":"GET /api/health","reqId":"15062756-c174-451b-8c32-5450bd264a90"}
+{"timestamp":"2026-06-01T17:32:33.968Z","level":"INFO","message":"GET /api/health","reqId":"a3d96867-4dd1-40af-a8ad-b228e18110db"}
+{"timestamp":"2026-06-01T17:32:39.220Z","level":"INFO","message":"GET /api/health","reqId":"a534247a-adbb-4e06-a095-edcdad776e73"}
+{"timestamp":"2026-06-01T17:32:43.902Z","level":"INFO","message":"GET /api/health","reqId":"d7850dc9-a76d-4dbe-8aab-11c8c4d92b3a"}
+{"timestamp":"2026-06-01T17:32:49.225Z","level":"INFO","message":"GET /api/health","reqId":"7ae6751d-0973-4923-bc1e-1f3885141d30"}
+{"timestamp":"2026-06-01T17:32:50.763Z","level":"INFO","message":"POST /api/auth/login","reqId":"86eac57b-142e-4a56-a559-70fe78f458dd"}
+{"timestamp":"2026-06-01T17:32:53.904Z","level":"INFO","message":"GET /api/health","reqId":"f2da0c71-f9f1-483c-8e60-2e6c6329aa2f"}
+{"timestamp":"2026-06-01T17:32:58.573Z","level":"INFO","message":"DELETE /api/pdf/b7db2834-b8bc-47c9-a222-f251e9b17347","reqId":"15c5a6a8-6de4-4eb7-ae21-482fe0c05e3f"}
+{"timestamp":"2026-06-01T17:32:58.901Z","level":"INFO","message":"GET /api/health","reqId":"4d79ca5f-dc92-40da-a0b9-7dfbaed7b7d2"}
+{"timestamp":"2026-06-01T17:33:00.777Z","level":"INFO","message":"DELETE /api/pdf/0d21ebc1-134f-4e86-9398-6ab2f3f3216a","reqId":"3eeeb3fa-6d38-4d31-b0c0-d2ff764e1417"}
+{"timestamp":"2026-06-01T17:33:04.215Z","level":"INFO","message":"GET /api/health","reqId":"840c03a2-8a56-430c-ac7c-917db5d0c960"}
+{"timestamp":"2026-06-01T17:33:08.914Z","level":"INFO","message":"GET /api/health","reqId":"39b58747-2064-4579-a190-21af498b8a83"}
+{"timestamp":"2026-06-01T17:33:14.220Z","level":"INFO","message":"GET /api/health","reqId":"ffc9fba5-81ab-4ca3-b1b7-db6e7ff17419"}
+{"timestamp":"2026-06-01T17:33:15.967Z","level":"INFO","message":"POST /api/pdf/upload","reqId":"5ff99945-5a23-4040-8786-27be16373884"}
+{"timestamp":"2026-06-01T17:33:15.984Z","level":"INFO","message":"PDF Parse Start: 011138_com_879_male_without_photo_50_2025-11-24.pdf","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:16.164Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:16.519Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=145567","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:16.522Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=(none)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:18.642Z","level":"INFO","message":"Correction Pipeline: 720 total corrections (dict=74, name=646, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:18.642Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2659ms","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:18.643Z","level":"INFO","message":"Corrections applied: 720 (dict=74, name=646, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-01T17:33:18.666Z","level":"INFO","message":"GET /api/pdf/list","reqId":"b0ae9cc6-faa6-4482-b68e-0c8181ecd8d0"}
+{"timestamp":"2026-06-01T17:33:18.908Z","level":"INFO","message":"GET /api/health","reqId":"abe478c7-f1e6-4f45-a287-7fc68f6a0a63"}
+{"timestamp":"2026-06-01T17:33:24.226Z","level":"INFO","message":"GET /api/health","reqId":"00096bcc-11c4-4512-9208-6881603ea7cc"}
+{"timestamp":"2026-06-01T17:33:28.903Z","level":"INFO","message":"GET /api/health","reqId":"841e26c0-725d-4ff8-89ea-c608316de401"}
+{"timestamp":"2026-06-01T17:33:33.908Z","level":"INFO","message":"GET /api/health","reqId":"dedb90ca-a57c-46ed-ba4b-7cc5c0d8b27f"}
+{"timestamp":"2026-06-01T17:33:38.904Z","level":"INFO","message":"GET /api/health","reqId":"10a9203f-e52b-4302-8778-d306f69aaa6a"}
+{"timestamp":"2026-06-01T17:33:42.382Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"37ffed09-0e9c-45e4-9690-02d082fa647b"}
+{"timestamp":"2026-06-01T17:33:42.408Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=24ms","reqId":"37ffed09-0e9c-45e4-9690-02d082fa647b"}
+{"timestamp":"2026-06-01T17:33:43.913Z","level":"INFO","message":"GET /api/health","reqId":"ae982bc3-1e3c-46e6-a303-0994ba0f3af8"}
+{"timestamp":"2026-06-01T17:33:48.914Z","level":"INFO","message":"GET /api/health","reqId":"2eb5cfba-299f-4841-8212-60595e0f49de"}
+{"timestamp":"2026-06-01T17:33:54.218Z","level":"INFO","message":"GET /api/health","reqId":"4d5d8881-cadd-4333-90ce-7e3a5ba9d40c"}
+{"timestamp":"2026-06-01T17:33:58.901Z","level":"INFO","message":"GET /api/health","reqId":"c18ec047-612e-4c91-8d8d-670b742c19b4"}
+{"timestamp":"2026-06-01T17:34:04.230Z","level":"INFO","message":"GET /api/health","reqId":"6cb9c475-913c-4676-9f89-9b86ba346b9f"}
+{"timestamp":"2026-06-01T17:34:08.908Z","level":"INFO","message":"GET /api/health","reqId":"3dc964d1-3328-4619-87c0-df373c527049"}
+{"timestamp":"2026-06-01T17:34:13.916Z","level":"INFO","message":"GET /api/health","reqId":"05a13955-111f-4611-a3ac-f13ac443da0a"}
+{"timestamp":"2026-06-01T17:34:18.907Z","level":"INFO","message":"GET /api/health","reqId":"b2f96714-0026-4515-a974-5ccaf26a06f6"}
+{"timestamp":"2026-06-01T17:34:24.221Z","level":"INFO","message":"GET /api/health","reqId":"8e82788f-a8c4-4592-9408-c339255a677f"}
+{"timestamp":"2026-06-01T17:34:28.913Z","level":"INFO","message":"GET /api/health","reqId":"679bf7b6-cee8-4ace-abcc-28a05c4a6745"}
+{"timestamp":"2026-06-01T17:34:33.903Z","level":"INFO","message":"GET /api/health","reqId":"da456739-4c74-46d9-8384-cf2f9ddbae58"}
+{"timestamp":"2026-06-01T17:34:38.911Z","level":"INFO","message":"GET /api/health","reqId":"3f08cdb0-c180-450e-9a60-7a1b39b6b719"}
+{"timestamp":"2026-06-01T17:34:43.903Z","level":"INFO","message":"GET /api/health","reqId":"ffd7dc86-e2a3-42a7-8641-e59b4763af0a"}
+{"timestamp":"2026-06-01T17:34:48.905Z","level":"INFO","message":"GET /api/health","reqId":"ca1211f1-6eb9-460d-b164-ea66b6dbc178"}
+{"timestamp":"2026-06-01T17:34:53.908Z","level":"INFO","message":"GET /api/health","reqId":"debee444-2e73-4db4-accc-37669d63017e"}
+{"timestamp":"2026-06-01T17:34:58.908Z","level":"INFO","message":"GET /api/health","reqId":"97b96634-e987-4146-b034-71f4bde04316"}
+{"timestamp":"2026-06-01T17:35:03.905Z","level":"INFO","message":"GET /api/health","reqId":"6b9b34a4-2a91-44d9-a634-880712ed1717"}
+{"timestamp":"2026-06-01T17:35:08.902Z","level":"INFO","message":"GET /api/health","reqId":"6f1d2c2a-d71f-4461-a4a7-920ee7d4f2ad"}
+{"timestamp":"2026-06-01T17:35:13.915Z","level":"INFO","message":"GET /api/health","reqId":"31cdb9b5-e4aa-49a2-a1dc-8ddf600e07e2"}
+{"timestamp":"2026-06-01T17:35:18.906Z","level":"INFO","message":"GET /api/health","reqId":"9c9279a2-3e43-4378-87f4-e0e6f4c1032b"}
+{"timestamp":"2026-06-01T17:35:23.900Z","level":"INFO","message":"GET /api/health","reqId":"cb23e18d-a207-4d69-993e-e269a0b1c8f1"}
+{"timestamp":"2026-06-01T17:35:28.906Z","level":"INFO","message":"GET /api/health","reqId":"61e89a1e-19cc-4d5e-965f-4d5d0cb32410"}
+{"timestamp":"2026-06-01T17:35:33.910Z","level":"INFO","message":"GET /api/health","reqId":"b4b32e57-b0e5-41a6-adda-09ced55ec59a"}
+{"timestamp":"2026-06-01T17:35:38.915Z","level":"INFO","message":"GET /api/health","reqId":"5f029eff-9cad-4999-a9f4-6ab9f7c43e01"}
+{"timestamp":"2026-06-01T17:35:43.915Z","level":"INFO","message":"GET /api/health","reqId":"5a36ae07-68c3-4d66-aa20-d2118a851464"}
+{"timestamp":"2026-06-01T17:35:48.912Z","level":"INFO","message":"GET /api/health","reqId":"9e7d2200-dd68-41d9-b202-5bcf03fa0e9a"}
+{"timestamp":"2026-06-01T17:35:53.902Z","level":"INFO","message":"GET /api/health","reqId":"63d2328b-634b-4d1b-9ae3-9ea9f34b4739"}
+{"timestamp":"2026-06-01T17:35:58.915Z","level":"INFO","message":"GET /api/health","reqId":"c19e9720-e029-43d2-87fe-a3edd8b50af5"}
+{"timestamp":"2026-06-01T17:36:03.908Z","level":"INFO","message":"GET /api/health","reqId":"dc6c4c27-fb1b-4d50-b242-e691d7738e86"}
+{"timestamp":"2026-06-01T17:36:08.903Z","level":"INFO","message":"GET /api/health","reqId":"8c6c4b38-ead4-4a00-a127-b5da85a20e4d"}
+{"timestamp":"2026-06-01T17:36:13.911Z","level":"INFO","message":"GET /api/health","reqId":"7e44058b-a694-460a-bab8-c06defd13c39"}
+{"timestamp":"2026-06-01T17:36:18.914Z","level":"INFO","message":"GET /api/health","reqId":"6bfc8cf2-f9b1-44c1-9bc8-895836dd30be"}
+{"timestamp":"2026-06-01T17:36:23.903Z","level":"INFO","message":"GET /api/health","reqId":"a131b784-42cb-45e3-a484-112d801c37a7"}
+{"timestamp":"2026-06-01T17:36:28.906Z","level":"INFO","message":"GET /api/health","reqId":"7ab9d232-ae31-4de0-85c4-81898f45e203"}
+{"timestamp":"2026-06-01T17:36:33.903Z","level":"INFO","message":"GET /api/health","reqId":"05aa6599-e7aa-4966-8f4b-76648bb6c187"}
+{"timestamp":"2026-06-01T17:36:38.912Z","level":"INFO","message":"GET /api/health","reqId":"8f67b8e9-6d4e-4860-a76f-5323089553a4"}
+{"timestamp":"2026-06-01T17:36:43.901Z","level":"INFO","message":"GET /api/health","reqId":"36d0a296-ad03-4061-bfb4-a8245ee16bb9"}
+{"timestamp":"2026-06-01T17:36:48.910Z","level":"INFO","message":"GET /api/health","reqId":"fe0247a3-6692-4351-8f2d-f7cfbef0a915"}
+{"timestamp":"2026-06-01T17:36:53.917Z","level":"INFO","message":"GET /api/health","reqId":"c55ede7c-f0eb-48bd-94f8-6b5df68d07ff"}
+{"timestamp":"2026-06-01T17:36:58.914Z","level":"INFO","message":"GET /api/health","reqId":"72a702c7-8729-4fe7-a419-1d0f8be1b712"}
+{"timestamp":"2026-06-01T17:37:03.900Z","level":"INFO","message":"GET /api/health","reqId":"65616dda-90ad-4442-b726-415861e919d2"}
+{"timestamp":"2026-06-01T17:37:08.915Z","level":"INFO","message":"GET /api/health","reqId":"fef69d50-6420-488e-a5d6-ce75d592bf44"}
+{"timestamp":"2026-06-01T17:37:13.915Z","level":"INFO","message":"GET /api/health","reqId":"66c367c5-ab7d-4f14-84db-8972377fc4dd"}
+{"timestamp":"2026-06-01T17:37:18.907Z","level":"INFO","message":"GET /api/health","reqId":"68792a98-469c-4f04-9bf2-6a2499a8d947"}
+{"timestamp":"2026-06-01T17:37:23.906Z","level":"INFO","message":"GET /api/health","reqId":"b36d837c-3324-4a0d-aea7-9f1cca9af169"}
+{"timestamp":"2026-06-01T17:37:28.911Z","level":"INFO","message":"GET /api/health","reqId":"9d8d2e72-1f68-4a89-8472-6245cf567139"}
+{"timestamp":"2026-06-01T17:37:33.912Z","level":"INFO","message":"GET /api/health","reqId":"50120659-d210-4d2d-8167-ac4bbe51a58e"}
+{"timestamp":"2026-06-01T17:37:38.902Z","level":"INFO","message":"GET /api/health","reqId":"4de51750-d22e-431c-a040-4a1edcdf124d"}
+{"timestamp":"2026-06-01T17:37:43.904Z","level":"INFO","message":"GET /api/health","reqId":"6ed4fb95-2a3e-42ee-8777-26db5d81cac2"}
+{"timestamp":"2026-06-01T17:37:48.901Z","level":"INFO","message":"GET /api/health","reqId":"c2a90491-aac3-4191-99b7-b88dd7b953da"}
+{"timestamp":"2026-06-01T17:37:53.907Z","level":"INFO","message":"GET /api/health","reqId":"fda83d8c-ebde-47e8-ba81-8a47ed250981"}
+{"timestamp":"2026-06-01T17:37:58.912Z","level":"INFO","message":"GET /api/health","reqId":"cc00895a-26b1-4887-b09c-2a1b692cf1fb"}
+{"timestamp":"2026-06-01T17:38:03.901Z","level":"INFO","message":"GET /api/health","reqId":"a973a8ef-3126-4a1d-989e-356e69c01588"}
+{"timestamp":"2026-06-01T17:38:08.908Z","level":"INFO","message":"GET /api/health","reqId":"9b84c329-c1c9-48ae-9cab-ebff8510965a"}
+{"timestamp":"2026-06-01T17:38:13.911Z","level":"INFO","message":"GET /api/health","reqId":"d92891be-e84f-4ec9-9cef-71a4d5e1cef4"}
+{"timestamp":"2026-06-01T17:38:18.911Z","level":"INFO","message":"GET /api/health","reqId":"c31d187e-392e-4481-8e19-8a99dbd6e75a"}
+{"timestamp":"2026-06-01T17:38:23.903Z","level":"INFO","message":"GET /api/health","reqId":"31a3039d-c511-477a-914d-348359befb64"}
+{"timestamp":"2026-06-01T17:38:28.906Z","level":"INFO","message":"GET /api/health","reqId":"e626c709-a9d2-487c-8dfd-2234e17152c3"}
+{"timestamp":"2026-06-01T17:38:33.904Z","level":"INFO","message":"GET /api/health","reqId":"14a863cf-b8ad-4341-8ede-dc1decb19ead"}
+{"timestamp":"2026-06-01T17:38:38.975Z","level":"INFO","message":"GET /api/health","reqId":"a842afb2-9d62-4ba3-896a-59f44468f662"}
+{"timestamp":"2026-06-01T17:38:43.971Z","level":"INFO","message":"GET /api/health","reqId":"d6db4a1b-804b-4d62-8e6e-5dde731ea8ca"}
+{"timestamp":"2026-06-01T17:38:48.973Z","level":"INFO","message":"GET /api/health","reqId":"669a4c41-2502-4799-9414-be69225b2791"}
+{"timestamp":"2026-06-01T17:38:53.974Z","level":"INFO","message":"GET /api/health","reqId":"a5a360e0-7208-4fa0-bcfb-8fe2a4d0d10b"}
+{"timestamp":"2026-06-01T17:38:58.978Z","level":"INFO","message":"GET /api/health","reqId":"1d794575-51ca-4147-9312-e66dc324b9f0"}
+{"timestamp":"2026-06-01T17:39:03.966Z","level":"INFO","message":"GET /api/health","reqId":"8922a240-01ca-4885-a802-25da3832a977"}
+{"timestamp":"2026-06-01T17:39:08.974Z","level":"INFO","message":"GET /api/health","reqId":"01d9e7e9-c868-4c69-9e8c-bb2e7a2f4154"}
+{"timestamp":"2026-06-01T17:39:13.973Z","level":"INFO","message":"GET /api/health","reqId":"8d57eb21-f9d9-4eb3-9ac4-5f15e96dacc4"}
+{"timestamp":"2026-06-01T17:39:18.975Z","level":"INFO","message":"GET /api/health","reqId":"49b7e65e-dc71-4097-a55f-9979afe5072c"}
+{"timestamp":"2026-06-01T17:39:23.967Z","level":"INFO","message":"GET /api/health","reqId":"c76b63aa-0c1e-470d-98ed-1e69fec4e2ee"}
+{"timestamp":"2026-06-01T17:39:28.967Z","level":"INFO","message":"GET /api/health","reqId":"eb471f05-ec23-4a49-823e-06d172e6b1b0"}
+{"timestamp":"2026-06-01T17:39:33.970Z","level":"INFO","message":"GET /api/health","reqId":"0cf86d2f-a317-4ee8-82b0-e573a83e4087"}
+{"timestamp":"2026-06-01T17:40:37.282Z","level":"INFO","message":"GET /api/health","reqId":"6dd520d4-9b55-482b-97a8-cf1d236dbc4e"}
+{"timestamp":"2026-06-01T17:41:36.982Z","level":"INFO","message":"GET /api/health","reqId":"8af1d957-e069-48d1-8121-73606c4f0159"}
+{"timestamp":"2026-06-01T17:42:37.287Z","level":"INFO","message":"GET /api/health","reqId":"5a50456a-9f74-45c8-b1c7-a8a432f727ae"}
+{"timestamp":"2026-06-01T17:43:36.973Z","level":"INFO","message":"GET /api/health","reqId":"2519359a-ad8c-444d-bed7-19b6e02a9d82"}
+{"timestamp":"2026-06-01T17:44:37.289Z","level":"INFO","message":"GET /api/health","reqId":"89e0ffb2-a5f6-4284-ad56-9bb2bc326282"}
+{"timestamp":"2026-06-01T17:45:36.976Z","level":"INFO","message":"GET /api/health","reqId":"21459cf1-73e1-459e-803e-65cceedd795a"}
+{"timestamp":"2026-06-01T17:46:37.279Z","level":"INFO","message":"GET /api/health","reqId":"832963ac-cd51-4ca6-b538-cdf038e123d2"}
+{"timestamp":"2026-06-01T17:47:36.980Z","level":"INFO","message":"GET /api/health","reqId":"20172e27-2a44-4423-87eb-b4aa6768f480"}
+{"timestamp":"2026-06-01T17:48:37.281Z","level":"INFO","message":"GET /api/health","reqId":"c4efc82c-6b0c-4ade-8332-68580c96650b"}
+{"timestamp":"2026-06-01T17:49:36.980Z","level":"INFO","message":"GET /api/health","reqId":"6cd66a93-6e94-4554-86ca-c0de359714c7"}
+{"timestamp":"2026-06-01T17:50:29.355Z","level":"INFO","message":"GET /api/health","reqId":"8eff2c78-e888-40cc-b49d-8cd60b073b0b"}
+{"timestamp":"2026-06-02T09:10:02.780Z","level":"INFO","message":"GET /api/health","reqId":"8cac12f3-08c7-43d7-836d-3b3e4419b9d6"}
+{"timestamp":"2026-06-02T09:10:02.785Z","level":"INFO","message":"GET /api/pdf/list","reqId":"a4c952ae-75b0-4f9d-8eac-d58c21ccd660"}
+{"timestamp":"2026-06-02T09:10:02.810Z","level":"INFO","message":"GET /api/health","reqId":"fe3fd780-241a-4d29-b0af-94f40511b0dd"}
+{"timestamp":"2026-06-02T09:10:02.811Z","level":"INFO","message":"GET /api/pdf/list","reqId":"f111d5f6-8b8d-4e18-8e7c-6f8a82ef5295"}
+{"timestamp":"2026-06-02T09:10:07.030Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"6ae7d246-f5ed-4417-8260-7e71de042c99"}
+{"timestamp":"2026-06-02T09:10:07.032Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=1ms","reqId":"6ae7d246-f5ed-4417-8260-7e71de042c99"}
+{"timestamp":"2026-06-02T09:10:07.483Z","level":"INFO","message":"GET /api/health","reqId":"efe33f29-ce47-4d49-aa71-4d1f216e1be9"}
+{"timestamp":"2026-06-02T09:10:12.477Z","level":"INFO","message":"GET /api/health","reqId":"d5b49ec8-dbe6-4ebd-b64e-e42b347987f6"}
+{"timestamp":"2026-06-02T09:10:17.476Z","level":"INFO","message":"GET /api/health","reqId":"7c971b5f-c227-4301-9bc4-5c2fafa38314"}
+{"timestamp":"2026-06-02T09:10:22.485Z","level":"INFO","message":"GET /api/health","reqId":"1eea0e05-320d-42d1-9c9d-d0b2fcd3b73b"}
+{"timestamp":"2026-06-02T09:10:27.483Z","level":"INFO","message":"GET /api/health","reqId":"4c8235e4-5c5d-4491-8dfc-449657633aa3"}
+{"timestamp":"2026-06-02T09:10:29.654Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"3d718b4d-5193-4bdc-916a-388421d5fefc"}
+{"timestamp":"2026-06-02T09:10:29.671Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"28f7b1e6-89a1-4d9c-9d43-0b67f734ac35"}
+{"timestamp":"2026-06-02T09:10:32.478Z","level":"INFO","message":"GET /api/health","reqId":"e8c782df-89c9-4490-a350-deb506181d2c"}
+{"timestamp":"2026-06-02T09:10:37.477Z","level":"INFO","message":"GET /api/health","reqId":"985f38d0-0fc5-4d38-bdbc-2c440cafd322"}
+{"timestamp":"2026-06-02T09:10:42.475Z","level":"INFO","message":"GET /api/health","reqId":"7516efd0-3644-40c1-a52a-ef0974aaf4e0"}
+{"timestamp":"2026-06-02T09:10:47.477Z","level":"INFO","message":"GET /api/health","reqId":"3cbe4e83-529e-4fb7-a8ea-1ac76bb556f2"}
+{"timestamp":"2026-06-02T09:10:52.476Z","level":"INFO","message":"GET /api/health","reqId":"23b47b8f-447c-4fa8-9605-3641816de92d"}
+{"timestamp":"2026-06-02T09:10:57.469Z","level":"INFO","message":"GET /api/health","reqId":"add63c01-327b-45a3-8867-489ae9dd6ca5"}
+{"timestamp":"2026-06-02T09:11:02.471Z","level":"INFO","message":"GET /api/health","reqId":"3ec4493c-8f08-4f5d-a71f-cd7a5cc56745"}
+{"timestamp":"2026-06-02T09:11:07.476Z","level":"INFO","message":"GET /api/health","reqId":"e20b47f4-d908-4672-971f-198794dbc672"}
+{"timestamp":"2026-06-02T09:11:12.468Z","level":"INFO","message":"GET /api/health","reqId":"d66eb158-d417-46c7-b95c-40f72dbaaa1b"}
+{"timestamp":"2026-06-02T09:11:17.470Z","level":"INFO","message":"GET /api/health","reqId":"6746be4d-d89e-4e94-848f-dbd9c2d9bddb"}
+{"timestamp":"2026-06-02T09:11:22.788Z","level":"INFO","message":"GET /api/health","reqId":"21997073-6318-4bc8-ad2f-7cfb64bd4143"}
+{"timestamp":"2026-06-02T09:11:27.479Z","level":"INFO","message":"GET /api/health","reqId":"812b70ab-2edd-4961-80a4-7aebe7094b7a"}
+{"timestamp":"2026-06-02T09:11:32.990Z","level":"INFO","message":"GET /api/health","reqId":"b185ed36-be51-48e0-95ba-5004f12021e8"}
+{"timestamp":"2026-06-02T09:11:37.986Z","level":"INFO","message":"GET /api/health","reqId":"17fc35d4-f1bd-4860-a88f-335a8fb9d237"}
+{"timestamp":"2026-06-02T09:11:42.995Z","level":"INFO","message":"GET /api/health","reqId":"36599e23-5552-4bda-9caf-a4f2cd807432"}
+{"timestamp":"2026-06-02T09:11:47.986Z","level":"INFO","message":"GET /api/health","reqId":"10a762d2-6ad5-4090-9b9a-001d4505a6ba"}
+{"timestamp":"2026-06-02T09:11:53.300Z","level":"INFO","message":"GET /api/health","reqId":"137a5ef0-dab2-4a7e-80a2-41c42aad5639"}
+{"timestamp":"2026-06-02T09:11:57.990Z","level":"INFO","message":"GET /api/health","reqId":"abe73b57-b575-46ae-8f36-1e984b0c2055"}
+{"timestamp":"2026-06-02T09:12:02.477Z","level":"INFO","message":"GET /api/health","reqId":"a65ba926-0783-43f2-a1f8-21da78e2f8b8"}
+{"timestamp":"2026-06-02T09:12:07.364Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%AC%E0%A6%BF%E0%A6%B2%E0%A7%8D%E0%A6%AA%E0%A6%AC+%E0%A6%9A%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"c5636a59-64e0-4763-b264-100b890b8e6c"}
+{"timestamp":"2026-06-02T09:12:07.392Z","level":"INFO","message":"Search: query=\"{\"name\":\"বিল্পব চন্দ্র বিশ্বাস\"}\" results=1 time=27ms","reqId":"c5636a59-64e0-4763-b264-100b890b8e6c"}
+{"timestamp":"2026-06-02T09:12:07.481Z","level":"INFO","message":"GET /api/health","reqId":"2d25acc5-ee02-44c9-bb2e-48a4f825a217"}
+{"timestamp":"2026-06-02T09:12:12.794Z","level":"INFO","message":"GET /api/health","reqId":"c2c20b61-b7bd-4f9c-ab03-fabcaa4c7ed3"}
+{"timestamp":"2026-06-02T09:12:17.476Z","level":"INFO","message":"GET /api/health","reqId":"e5b23986-d650-4ab7-9444-4664f98b5414"}
+{"timestamp":"2026-06-02T09:12:22.478Z","level":"INFO","message":"GET /api/health","reqId":"eff13986-f6d5-45e0-bbbb-a20838534662"}
+{"timestamp":"2026-06-02T09:12:27.480Z","level":"INFO","message":"GET /api/health","reqId":"69e689e4-bdaa-47e1-9da8-1682c5388943"}
+{"timestamp":"2026-06-02T09:12:32.470Z","level":"INFO","message":"GET /api/health","reqId":"8b470bf0-b395-41da-9c63-7d2a722fe9ac"}
+{"timestamp":"2026-06-02T09:12:37.990Z","level":"INFO","message":"GET /api/health","reqId":"812e9fbf-15e9-4b28-a27d-8f00e78027e6"}
+{"timestamp":"2026-06-02T09:12:42.995Z","level":"INFO","message":"GET /api/health","reqId":"3aa749e6-10a2-4190-9edb-8e8cf003859a"}
+{"timestamp":"2026-06-02T09:12:47.985Z","level":"INFO","message":"GET /api/health","reqId":"921b88c1-61e1-44e8-9cbc-e968a2323a7c"}
+{"timestamp":"2026-06-02T09:12:52.991Z","level":"INFO","message":"GET /api/health","reqId":"4c911097-0935-4586-b04c-7814e3199265"}
+{"timestamp":"2026-06-02T09:12:57.470Z","level":"INFO","message":"GET /api/health","reqId":"0a66a5e1-1ad0-489d-8a01-e3f38cd616a0"}
+{"timestamp":"2026-06-02T09:13:02.469Z","level":"INFO","message":"GET /api/health","reqId":"0fc23a2d-612c-4818-af06-106921497562"}
+{"timestamp":"2026-06-02T09:13:03.597Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"594c56da-db44-46c4-b613-6ecd8dad87b8"}
+{"timestamp":"2026-06-02T09:13:03.626Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=28ms","reqId":"594c56da-db44-46c4-b613-6ecd8dad87b8"}
+{"timestamp":"2026-06-02T09:13:07.484Z","level":"INFO","message":"GET /api/health","reqId":"9f5f4be4-1fd4-447f-8a52-63c3a64dc772"}
+{"timestamp":"2026-06-02T09:13:12.473Z","level":"INFO","message":"GET /api/health","reqId":"dfab0183-c639-48b3-991d-1eaaea02cf84"}
+{"timestamp":"2026-06-02T09:13:17.481Z","level":"INFO","message":"GET /api/health","reqId":"2e06e82a-0dd1-47e1-83d7-50c5a45209f1"}
+{"timestamp":"2026-06-02T09:13:22.473Z","level":"INFO","message":"GET /api/health","reqId":"98719104-e6f6-4396-867a-f617efb86acc"}
+{"timestamp":"2026-06-02T09:13:27.477Z","level":"INFO","message":"GET /api/health","reqId":"7fbe5d1b-1f2d-4b80-a06f-025095450553"}
+{"timestamp":"2026-06-02T09:13:32.477Z","level":"INFO","message":"GET /api/health","reqId":"51d81260-c34f-4e88-a97f-95e94974d4c7"}
+{"timestamp":"2026-06-02T09:13:37.481Z","level":"INFO","message":"GET /api/health","reqId":"5b48694f-99a4-4554-842e-ec4928f8b116"}
+{"timestamp":"2026-06-02T09:13:42.993Z","level":"INFO","message":"GET /api/health","reqId":"8c13029f-2562-4453-b650-5aa5ff413d05"}
+{"timestamp":"2026-06-02T09:13:48.302Z","level":"INFO","message":"GET /api/health","reqId":"e87056f1-250b-4348-90a9-bd3c864cdc4d"}
+{"timestamp":"2026-06-02T09:13:52.989Z","level":"INFO","message":"GET /api/health","reqId":"c6974b9a-c440-40db-8329-6228d1d6c0c2"}
+{"timestamp":"2026-06-02T09:13:57.984Z","level":"INFO","message":"GET /api/health","reqId":"e2700975-f359-4926-b15e-ea28707ce64f"}
+{"timestamp":"2026-06-02T09:14:02.985Z","level":"INFO","message":"GET /api/health","reqId":"07506249-59c7-423f-ab10-c311ee5a6f8f"}
+{"timestamp":"2026-06-02T09:14:07.981Z","level":"INFO","message":"GET /api/health","reqId":"6852a5b8-4905-42e5-8193-e5a39e1d2bf9"}
+{"timestamp":"2026-06-02T09:14:12.477Z","level":"INFO","message":"GET /api/health","reqId":"63eb054d-4c05-4a49-b983-3bb0210fa894"}
+{"timestamp":"2026-06-02T09:14:13.223Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"fb671f47-176f-43e2-9a1d-75920c102ef2"}
+{"timestamp":"2026-06-02T09:14:13.252Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=28ms","reqId":"fb671f47-176f-43e2-9a1d-75920c102ef2"}
+{"timestamp":"2026-06-02T09:14:13.962Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"6356c31b-b0fe-4256-b00f-e530db2cf047"}
+{"timestamp":"2026-06-02T09:14:13.964Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=1ms","reqId":"6356c31b-b0fe-4256-b00f-e530db2cf047"}
+{"timestamp":"2026-06-02T09:14:15.916Z","level":"INFO","message":"PDF Parse Start: 011138_com_879_male_without_photo_50_2025-11-24.pdf","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:16.049Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:16.351Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=145592","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:16.353Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=(none)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:17.474Z","level":"INFO","message":"GET /api/health","reqId":"3c8d4317-4894-4a8f-b216-de75acfc4128"}
+{"timestamp":"2026-06-02T09:14:17.904Z","level":"INFO","message":"Correction Pipeline: 664 total corrections (dict=67, name=597, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:17.905Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 1989ms","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:17.905Z","level":"INFO","message":"Corrections applied: 664 (dict=67, name=597, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T09:14:19.241Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"cf4a7ce2-c3fb-418c-b1ee-ac6e1ea4976f"}
+{"timestamp":"2026-06-02T09:14:19.260Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=15ms","reqId":"cf4a7ce2-c3fb-418c-b1ee-ac6e1ea4976f"}
+{"timestamp":"2026-06-02T09:14:22.476Z","level":"INFO","message":"GET /api/health","reqId":"490e600e-89dc-4669-894a-c6157c3ac612"}
+{"timestamp":"2026-06-02T09:14:27.785Z","level":"INFO","message":"GET /api/health","reqId":"fb70c655-9090-461e-b362-02dc3dd90ebc"}
+{"timestamp":"2026-06-02T09:14:32.995Z","level":"INFO","message":"GET /api/health","reqId":"86da4d81-1168-4b84-b6b6-51b8cf9dceaa"}
+{"timestamp":"2026-06-02T09:14:38.297Z","level":"INFO","message":"GET /api/health","reqId":"1a9cc342-808f-4c5a-b139-ecb994ec4ab2"}
+{"timestamp":"2026-06-02T09:14:43.001Z","level":"INFO","message":"GET /api/health","reqId":"50d7c34c-c288-47fa-b726-33814d4b2570"}
+{"timestamp":"2026-06-02T09:14:47.986Z","level":"INFO","message":"GET /api/health","reqId":"c4404d19-a0de-4419-89e0-fdbc9c857d29"}
+{"timestamp":"2026-06-02T09:14:53.306Z","level":"INFO","message":"GET /api/health","reqId":"1307b4d6-6d30-48d8-9e44-5cccc5d2edff"}
+{"timestamp":"2026-06-02T09:14:57.990Z","level":"INFO","message":"GET /api/health","reqId":"fa146fde-c258-42fc-a8fc-4d277c7c3d60"}
+{"timestamp":"2026-06-02T09:15:02.996Z","level":"INFO","message":"GET /api/health","reqId":"ad3fca44-be25-43ee-bf03-e56ace84ce4e"}
+{"timestamp":"2026-06-02T09:15:07.983Z","level":"INFO","message":"GET /api/health","reqId":"d2b6ca45-686b-4ad2-b4df-2e748661fe18"}
+{"timestamp":"2026-06-02T09:15:12.980Z","level":"INFO","message":"GET /api/health","reqId":"647bbb22-8044-4309-813a-1ab7b5424d37"}
+{"timestamp":"2026-06-02T09:15:17.985Z","level":"INFO","message":"GET /api/health","reqId":"20b197c8-8584-46ca-a3b1-747e3d05b19d"}
+{"timestamp":"2026-06-02T09:15:22.992Z","level":"INFO","message":"GET /api/health","reqId":"1bae08ed-eff4-415a-9b5d-93b1b6cb20c8"}
+{"timestamp":"2026-06-02T09:15:27.985Z","level":"INFO","message":"GET /api/health","reqId":"4ff47b37-e058-46ad-99da-151d3f09322b"}
+{"timestamp":"2026-06-02T09:15:32.473Z","level":"INFO","message":"GET /api/health","reqId":"ccaa6c08-0a0f-40e0-a11e-ee1071a5947d"}
+{"timestamp":"2026-06-02T09:15:37.476Z","level":"INFO","message":"GET /api/health","reqId":"f7c3d8d4-f171-4937-a409-1f406153556e"}
+{"timestamp":"2026-06-02T09:15:42.480Z","level":"INFO","message":"GET /api/health","reqId":"8069f9c4-3446-46d3-8bc3-947973f88df7"}
+{"timestamp":"2026-06-02T09:15:47.987Z","level":"INFO","message":"GET /api/health","reqId":"a22e712c-8eb8-4536-a3f5-ebc67141016b"}
+{"timestamp":"2026-06-02T09:15:52.469Z","level":"INFO","message":"GET /api/health","reqId":"449b5abc-e561-4aaf-91b9-d00aff366921"}
+{"timestamp":"2026-06-02T09:15:57.991Z","level":"INFO","message":"GET /api/health","reqId":"da56d376-85e7-4a61-aa39-83d52c17d27a"}
+{"timestamp":"2026-06-02T09:16:02.991Z","level":"INFO","message":"GET /api/health","reqId":"1c45383b-278f-4805-bc86-c5f274fae664"}
+{"timestamp":"2026-06-02T09:16:07.997Z","level":"INFO","message":"GET /api/health","reqId":"b40b1fba-2e37-4680-a6eb-455e94c6e485"}
+{"timestamp":"2026-06-02T09:16:12.994Z","level":"INFO","message":"GET /api/health","reqId":"e19bbf24-ec67-4f92-a057-5059eca51fc3"}
+{"timestamp":"2026-06-02T09:16:17.996Z","level":"INFO","message":"GET /api/health","reqId":"a9a660f7-6620-401b-93cb-623aff9deb38"}
+{"timestamp":"2026-06-02T09:16:23.308Z","level":"INFO","message":"GET /api/health","reqId":"23048172-9e2a-48f7-a52b-da2978cc4623"}
+{"timestamp":"2026-06-02T09:16:27.991Z","level":"INFO","message":"GET /api/health","reqId":"b96c83c2-8343-4a29-adf4-7b35df047623"}
+{"timestamp":"2026-06-02T09:16:32.990Z","level":"INFO","message":"GET /api/health","reqId":"4ac06e37-57e2-4468-967a-082b2a4349dc"}
+{"timestamp":"2026-06-02T09:16:38.311Z","level":"INFO","message":"GET /api/health","reqId":"b35ed918-b7b1-430b-93d4-c7d90d96537e"}
+{"timestamp":"2026-06-02T09:16:42.989Z","level":"INFO","message":"GET /api/health","reqId":"86151520-5cb7-42f5-af38-6560e96729ea"}
+{"timestamp":"2026-06-02T09:16:47.984Z","level":"INFO","message":"GET /api/health","reqId":"15d4588a-769c-4efa-b820-e943ea450960"}
+{"timestamp":"2026-06-02T09:16:53.299Z","level":"INFO","message":"GET /api/health","reqId":"86d6832f-b811-4300-a767-f3425baf8d60"}
+{"timestamp":"2026-06-02T09:17:37.990Z","level":"INFO","message":"GET /api/health","reqId":"36ed5661-ef0c-46f5-ba9f-297e916dad0c"}
+{"timestamp":"2026-06-02T09:17:59.027Z","level":"INFO","message":"GET /api/health","reqId":"08222711-1a6d-4e62-a1c2-2b505591020e"}
+{"timestamp":"2026-06-02T09:18:02.470Z","level":"INFO","message":"GET /api/health","reqId":"dfb43d19-f266-4cbe-86ec-7c5d58c9ee93"}
+{"timestamp":"2026-06-02T09:18:07.474Z","level":"INFO","message":"GET /api/health","reqId":"9d549c90-f70f-443b-9335-e9efc02e381d"}
+{"timestamp":"2026-06-02T09:18:08.846Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"1642336f-22c9-49b7-8a1d-22c224cb6032"}
+{"timestamp":"2026-06-02T09:18:08.868Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=21ms","reqId":"1642336f-22c9-49b7-8a1d-22c224cb6032"}
+{"timestamp":"2026-06-02T09:18:12.482Z","level":"INFO","message":"GET /api/health","reqId":"4a9b32a8-a8e1-4666-a608-80f99c73ab37"}
+{"timestamp":"2026-06-02T09:18:17.479Z","level":"INFO","message":"GET /api/health","reqId":"06c7132e-5e51-40d7-8643-9b8b40daf5c9"}
+{"timestamp":"2026-06-02T09:18:22.474Z","level":"INFO","message":"GET /api/health","reqId":"131157eb-4861-439e-8f1a-ce5a47e642d2"}
+{"timestamp":"2026-06-02T09:18:23.436Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"9174de7b-da94-4a2c-94a9-afbad8a23523"}
+{"timestamp":"2026-06-02T09:18:23.439Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"95a6e6b8-3b01-48a8-8a0c-77f2d49d1b48"}
+{"timestamp":"2026-06-02T09:18:27.475Z","level":"INFO","message":"GET /api/health","reqId":"cc23940e-29c5-48ef-a420-17522324751c"}
+{"timestamp":"2026-06-02T09:18:32.470Z","level":"INFO","message":"GET /api/health","reqId":"2d771045-d25e-4ed5-a185-53a2a16370ad"}
+{"timestamp":"2026-06-02T09:18:37.483Z","level":"INFO","message":"GET /api/health","reqId":"313cc647-3992-4aaf-8478-87e8bc7c68d2"}
+{"timestamp":"2026-06-02T09:18:42.986Z","level":"INFO","message":"GET /api/health","reqId":"67c1a965-84fd-42a5-b87f-8d00af2a754d"}
+{"timestamp":"2026-06-02T21:47:16.761Z","level":"INFO","message":"PDF Parse Start: 011138_com_879_male_without_photo_50_2025-11-24.pdf","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:16.888Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:17.179Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=144846","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:17.181Z","level":"INFO","message":"Cover Meta: district=ইউনিয়ন/ পৌর ওয়ার্ড/ upazila=(none)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:18.801Z","level":"INFO","message":"Correction Pipeline: 623 total corrections (dict=26, name=597, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:18.801Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2041ms","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:47:18.802Z","level":"INFO","message":"Corrections applied: 623 (dict=26, name=597, geo=0)","reqId":"01aee2ee-8ca4-4277-b8a2-d514e65869fb"}
+{"timestamp":"2026-06-02T21:49:08.392Z","level":"INFO","message":"PDF Parse Start: test-id","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:08.520Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:08.822Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=144846","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:08.824Z","level":"INFO","message":"Cover Meta: district=ইউনিয়ন/ পৌর ওয়ার্ড/ upazila=(none)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:10.534Z","level":"INFO","message":"Correction Pipeline: 623 total corrections (dict=26, name=597, geo=0)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:10.534Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2142ms","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:10.534Z","level":"INFO","message":"Corrections applied: 623 (dict=26, name=597, geo=0)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:35.185Z","level":"INFO","message":"PDF Parse Start: test-id","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:35.312Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:35.636Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=144846","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:35.638Z","level":"INFO","message":"Cover Meta: district=ইউনিয়ন/ পৌর ওয়ার্ড/ upazila=(none) union=ওয়ার্ড/ ward=(none) area=কুমলাই (৬নং ওয়ার্ডের অংশ)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:37.251Z","level":"INFO","message":"Correction Pipeline: 623 total corrections (dict=26, name=597, geo=0)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:37.251Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2066ms","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T21:49:37.252Z","level":"INFO","message":"Corrections applied: 623 (dict=26, name=597, geo=0)","reqId":"011138_test.pdf"}
+{"timestamp":"2026-06-02T22:06:23.295Z","level":"INFO","message":"GET /api/health","reqId":"a6358bb5-118f-442a-9e7c-d1145a164c55"}
+{"timestamp":"2026-06-02T22:06:23.303Z","level":"INFO","message":"GET /api/pdf/list","reqId":"4d1d2ba4-88f7-4bda-852e-30a81776900d"}
+{"timestamp":"2026-06-02T22:06:23.327Z","level":"INFO","message":"GET /api/health","reqId":"a7e9f22c-1339-48f6-88e5-b329c20a192a"}
+{"timestamp":"2026-06-02T22:06:23.329Z","level":"INFO","message":"GET /api/pdf/list","reqId":"5d4ddf71-04dd-48b4-9b75-b3d3d524eeb3"}
+{"timestamp":"2026-06-02T22:06:27.997Z","level":"INFO","message":"GET /api/health","reqId":"df113221-05ab-4288-996d-1cede4101913"}
+{"timestamp":"2026-06-02T22:06:31.107Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"60be1a30-7339-49a7-807c-9cf2392b1ede"}
+{"timestamp":"2026-06-02T22:06:31.109Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=1ms","reqId":"60be1a30-7339-49a7-807c-9cf2392b1ede"}
+{"timestamp":"2026-06-02T22:06:32.996Z","level":"INFO","message":"GET /api/health","reqId":"7c537aa4-9b79-4cb1-8809-71ec4afd78bd"}
+{"timestamp":"2026-06-02T22:06:37.999Z","level":"INFO","message":"GET /api/health","reqId":"42709415-d17a-43ae-9399-673fc8368756"}
+{"timestamp":"2026-06-02T22:06:43.000Z","level":"INFO","message":"GET /api/health","reqId":"300a5659-a44e-4b4c-a839-921f1793c9da"}
+{"timestamp":"2026-06-02T22:06:48.314Z","level":"INFO","message":"GET /api/health","reqId":"eb452584-5210-485a-84a8-8e3a97628033"}
+{"timestamp":"2026-06-02T22:06:52.996Z","level":"INFO","message":"GET /api/health","reqId":"f96129d2-a66a-43a5-80a2-5ce5eb6dcf99"}
+{"timestamp":"2026-06-02T22:06:57.993Z","level":"INFO","message":"GET /api/health","reqId":"4c7db955-c0f1-4bf2-b60b-8a0421eb2add"}
+{"timestamp":"2026-06-02T22:07:00.571Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"293e937d-a669-4bfe-a36e-c21c733e9cd3"}
+{"timestamp":"2026-06-02T22:07:00.575Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"aa312586-358f-48eb-8d5e-3ae4b0fb4612"}
+{"timestamp":"2026-06-02T22:07:03.002Z","level":"INFO","message":"GET /api/health","reqId":"f08e2cdf-363f-4230-9433-ee135e7e7b3c"}
+{"timestamp":"2026-06-02T22:07:07.993Z","level":"INFO","message":"GET /api/health","reqId":"19e2d2ff-ddd0-4d13-9339-7a6625a8bb03"}
+{"timestamp":"2026-06-02T22:07:13.004Z","level":"INFO","message":"GET /api/health","reqId":"909dbe01-8103-4fea-8f56-46c0c52525cc"}
+{"timestamp":"2026-06-02T22:07:18.000Z","level":"INFO","message":"GET /api/health","reqId":"d61d080e-06b6-45a6-8bfe-b0202bf15c70"}
+{"timestamp":"2026-06-02T22:07:23.005Z","level":"INFO","message":"GET /api/health","reqId":"e2076ecb-7fa6-4f8d-b7e0-755f665bf60f"}
+{"timestamp":"2026-06-02T22:07:27.993Z","level":"INFO","message":"GET /api/health","reqId":"1f5b92f8-3335-46d3-aa5e-d8feda53e559"}
+{"timestamp":"2026-06-02T22:07:32.992Z","level":"INFO","message":"GET /api/health","reqId":"32d09185-40f2-4a06-828e-04fd48b3794a"}
+{"timestamp":"2026-06-02T22:07:37.996Z","level":"INFO","message":"GET /api/health","reqId":"3db190a3-f209-48ba-9b44-527a1d539253"}
+{"timestamp":"2026-06-02T22:07:38.599Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"a28fd1d0-fd7a-47c5-8091-4ec766d382ec"}
+{"timestamp":"2026-06-02T22:07:38.601Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"edf64a56-b351-4a34-8d96-cc4f01f1fa1f"}
+{"timestamp":"2026-06-02T22:07:42.997Z","level":"INFO","message":"GET /api/health","reqId":"4cd5221b-f5ec-4222-b921-a7da75444013"}
+{"timestamp":"2026-06-02T22:07:47.990Z","level":"INFO","message":"GET /api/health","reqId":"b1b75ca9-faa2-4e52-a5be-6c08662fac93"}
+{"timestamp":"2026-06-02T22:07:53.005Z","level":"INFO","message":"GET /api/health","reqId":"6f1eba97-b0b2-4134-8b2b-501bc1ac5790"}
+{"timestamp":"2026-06-02T22:07:53.502Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"01be5abb-7f13-46fe-b302-c68fdf6bc59f"}
+{"timestamp":"2026-06-02T22:07:53.505Z","level":"INFO","message":"GET /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb/file","reqId":"6e7e6e77-849c-4c87-952e-fbec3221c04e"}
+{"timestamp":"2026-06-02T22:07:57.999Z","level":"INFO","message":"GET /api/health","reqId":"546ad3b8-a69b-462e-9896-3c51c73ff664"}
+{"timestamp":"2026-06-02T22:08:02.996Z","level":"INFO","message":"GET /api/health","reqId":"3b7bd742-eeb1-4e07-8b72-030441ad7a02"}
+{"timestamp":"2026-06-02T22:08:07.998Z","level":"INFO","message":"GET /api/health","reqId":"5ba9aab1-7b88-45b8-adeb-477b2150cf91"}
+{"timestamp":"2026-06-02T22:08:12.383Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%95%E0%A6%BE%E0%A6%AE%E0%A6%A8%E0%A6%BE%E0%A6%B6%E0%A7%80%E0%A6%B7","reqId":"44dd6cc3-caf0-49b1-a577-ca3dcc53b841"}
+{"timestamp":"2026-06-02T22:08:12.385Z","level":"INFO","message":"Search: query=\"{\"name\":\"কামনাশীষ\"}\" results=1 time=1ms","reqId":"44dd6cc3-caf0-49b1-a577-ca3dcc53b841"}
+{"timestamp":"2026-06-02T22:08:12.993Z","level":"INFO","message":"GET /api/health","reqId":"4c8e499c-f27b-4e59-8884-a089f8100fa9"}
+{"timestamp":"2026-06-02T22:08:17.990Z","level":"INFO","message":"GET /api/health","reqId":"532b6888-7114-40eb-9ea1-437ac1a5bf6a"}
+{"timestamp":"2026-06-02T22:08:22.994Z","level":"INFO","message":"GET /api/health","reqId":"e269e286-cf3e-4930-b394-51a71ba1bb90"}
+{"timestamp":"2026-06-02T22:08:24.449Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A6%BE%E0%A6%A7%E0%A6%A8%E0%A6%BE+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"708cd380-35d2-4d49-8124-d30af7916413"}
+{"timestamp":"2026-06-02T22:08:24.451Z","level":"INFO","message":"Search: query=\"{\"name\":\"সাধনা বিশ্বাস\"}\" results=0 time=0ms","reqId":"708cd380-35d2-4d49-8124-d30af7916413"}
+{"timestamp":"2026-06-02T22:08:27.997Z","level":"INFO","message":"GET /api/health","reqId":"dddebb79-1d8b-45bd-bb3c-6fd263bd8855"}
+{"timestamp":"2026-06-02T22:08:32.996Z","level":"INFO","message":"GET /api/health","reqId":"fbb695f7-d079-4fb2-b27d-a27bd3105c03"}
+{"timestamp":"2026-06-02T22:08:33.950Z","level":"INFO","message":"POST /api/auth/login","reqId":"698c7916-7598-4a6c-b474-2b066ec40d21"}
+{"timestamp":"2026-06-02T22:08:37.992Z","level":"INFO","message":"GET /api/health","reqId":"51593d71-4486-4391-9077-0e5af4e2ae4c"}
+{"timestamp":"2026-06-02T22:08:42.998Z","level":"INFO","message":"GET /api/health","reqId":"4feb62ed-aba2-4e14-8efb-3c39be71e867"}
+{"timestamp":"2026-06-02T22:08:43.709Z","level":"INFO","message":"POST /api/pdf/upload","reqId":"9245671c-d4ee-43a4-b654-da5bd98e3a73"}
+{"timestamp":"2026-06-02T22:08:43.719Z","level":"INFO","message":"PDF Parse Start: 011138_com_866_female_without_photo_49_2025-11-24.pdf","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:43.899Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 68%) encoding=sutonny pages=51","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:44.303Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=141027","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:44.306Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=(none) union=বাইনতলা ward=(none) area=কুমলাই (৬নং ওয়ার্ডের অংশ) সর্বমোট ভোটার সংখ্যা১৭৪৫","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:46.205Z","level":"INFO","message":"Correction Pipeline: 467 total corrections (dict=28, name=439, geo=0)","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:46.206Z","level":"INFO","message":"PDF Parsed: 866 voters from 51 pages in 2488ms","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:46.207Z","level":"INFO","message":"Corrections applied: 467 (dict=28, name=439, geo=0)","reqId":"cf3efbbc-2730-4840-8138-734b907c800c"}
+{"timestamp":"2026-06-02T22:08:46.243Z","level":"INFO","message":"GET /api/pdf/list","reqId":"9c05db32-f24f-45c2-a67f-d860d7db11af"}
+{"timestamp":"2026-06-02T22:08:48.305Z","level":"INFO","message":"GET /api/health","reqId":"39a78a2e-2c80-4708-9efe-9b2d706b664a"}
+{"timestamp":"2026-06-02T22:08:53.000Z","level":"INFO","message":"GET /api/health","reqId":"5bc31565-c726-47b9-96a4-c17632b5d03f"}
+{"timestamp":"2026-06-02T22:08:56.475Z","level":"INFO","message":"DELETE /api/pdf/cf3efbbc-2730-4840-8138-734b907c800c","reqId":"3ea6a09c-029d-491e-94fc-c393a316b4be"}
+{"timestamp":"2026-06-02T22:08:58.585Z","level":"INFO","message":"GET /api/health","reqId":"b7edb23d-05ff-4b38-b714-1073778199bf"}
+{"timestamp":"2026-06-02T22:08:58.590Z","level":"INFO","message":"DELETE /api/pdf/01aee2ee-8ca4-4277-b8a2-d514e65869fb","reqId":"70b1c576-ad24-4c4a-b7e1-fa345971ad80"}
+{"timestamp":"2026-06-02T22:09:03.307Z","level":"INFO","message":"GET /api/health","reqId":"7a8f6f09-0fdc-4b3b-ab1d-63ccf4e8923c"}
+{"timestamp":"2026-06-02T22:09:04.591Z","level":"INFO","message":"POST /api/pdf/upload","reqId":"64934fd3-a927-4cda-a0a0-fba7f0bc1d22"}
+{"timestamp":"2026-06-02T22:09:04.601Z","level":"INFO","message":"PDF Parse Start: 011138_com_879_male_without_photo_50_2025-11-24.pdf","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:04.764Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:05.164Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=144850","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:05.166Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=(none) union=বাইনতলা ward=(none) area=কুমলাই (৬নং ওয়ার্ডের অংশ) সর্বমোট ভোটার সংখ্যা১৭৪৫","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:07.114Z","level":"INFO","message":"Correction Pipeline: 623 total corrections (dict=26, name=597, geo=0)","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:07.116Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2515ms","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:07.117Z","level":"INFO","message":"Corrections applied: 623 (dict=26, name=597, geo=0)","reqId":"50b7228c-d0a2-4b9c-9acb-b7b10158d204"}
+{"timestamp":"2026-06-02T22:09:07.133Z","level":"INFO","message":"GET /api/pdf/list","reqId":"80155d59-882e-4eb7-b08b-c2eb48a2f82f"}
+{"timestamp":"2026-06-02T22:09:08.314Z","level":"INFO","message":"GET /api/health","reqId":"d3a3b35a-595a-40d8-aa62-f217a20cb1df"}
+{"timestamp":"2026-06-02T22:09:12.998Z","level":"INFO","message":"GET /api/health","reqId":"a8780a4e-f6f9-4039-9392-a0729a0ec35d"}
+{"timestamp":"2026-06-02T22:09:16.653Z","level":"INFO","message":"POST /api/pdf/upload","reqId":"cc00f1d9-e824-4dfb-b3ed-c1b468966c91"}
+{"timestamp":"2026-06-02T22:09:16.667Z","level":"INFO","message":"PDF Parse Start: 011138_com_866_female_without_photo_49_2025-11-24.pdf","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:16.864Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 68%) encoding=sutonny pages=51","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:17.265Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=141027","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:17.267Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=(none) union=বাইনতলা ward=(none) area=কুমলাই (৬নং ওয়ার্ডের অংশ) সর্বমোট ভোটার সংখ্যা১৭৪৫","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:19.098Z","level":"INFO","message":"Correction Pipeline: 467 total corrections (dict=28, name=439, geo=0)","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:19.099Z","level":"INFO","message":"PDF Parsed: 866 voters from 51 pages in 2433ms","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:19.099Z","level":"INFO","message":"Corrections applied: 467 (dict=28, name=439, geo=0)","reqId":"34b553b3-fef4-47bc-b21a-20ff39a4336c"}
+{"timestamp":"2026-06-02T22:09:19.162Z","level":"INFO","message":"GET /api/health","reqId":"b37fe7bb-a76b-4792-aa34-04723e3c13df"}
+{"timestamp":"2026-06-02T22:09:19.166Z","level":"INFO","message":"GET /api/pdf/list","reqId":"8850445a-1599-4c1d-b669-8f4c2c8ac94b"}
+{"timestamp":"2026-06-02T22:09:23.324Z","level":"INFO","message":"GET /api/health","reqId":"4249b04d-8b68-4d50-8b7d-98b820799886"}
+{"timestamp":"2026-06-02T22:09:28.015Z","level":"INFO","message":"GET /api/health","reqId":"f5ed3b20-b1f5-478b-93e0-7cc7aead2e99"}
+{"timestamp":"2026-06-02T22:09:28.118Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A6%BE%E0%A6%A7%E0%A6%A8%E0%A6%BE+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"93a188de-e1d7-4ab6-8ba6-bf76933cbcb0"}
+{"timestamp":"2026-06-02T22:09:28.161Z","level":"INFO","message":"Search: query=\"{\"name\":\"সাধনা বিশ্বাস\"}\" results=1 time=42ms","reqId":"93a188de-e1d7-4ab6-8ba6-bf76933cbcb0"}
+{"timestamp":"2026-06-02T22:09:32.999Z","level":"INFO","message":"GET /api/health","reqId":"8f64051d-209c-4465-81b6-9b2440b5451a"}
+{"timestamp":"2026-06-02T22:09:37.995Z","level":"INFO","message":"GET /api/health","reqId":"f523bb8a-e831-4b08-a7e1-0beb636cad99"}
+{"timestamp":"2026-06-02T22:09:39.666Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"3a9560ed-18ec-4294-a4f1-25722efba518"}
+{"timestamp":"2026-06-02T22:09:39.672Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"a7f2e9a5-45a7-435b-a4cc-32511d1c75ef"}
+{"timestamp":"2026-06-02T22:09:42.998Z","level":"INFO","message":"GET /api/health","reqId":"b7d07314-4a50-4c0c-a9df-8dc080eba2d8"}
+{"timestamp":"2026-06-02T22:09:48.000Z","level":"INFO","message":"GET /api/health","reqId":"3931a9c6-22f4-418a-8e0f-37fe279a006d"}
+{"timestamp":"2026-06-02T22:09:52.998Z","level":"INFO","message":"GET /api/health","reqId":"95069257-82e4-427a-a76e-eca6108ad2c7"}
+{"timestamp":"2026-06-02T22:09:57.999Z","level":"INFO","message":"GET /api/health","reqId":"14484d70-bf3b-4471-8373-8273b12980ca"}
+{"timestamp":"2026-06-02T22:10:02.997Z","level":"INFO","message":"GET /api/health","reqId":"8c0d84d7-1cd1-4002-b530-efa27b2cd1eb"}
+{"timestamp":"2026-06-02T22:10:07.993Z","level":"INFO","message":"GET /api/health","reqId":"e1212590-0348-4e4f-8346-ad6e69072078"}
+{"timestamp":"2026-06-02T22:10:12.996Z","level":"INFO","message":"GET /api/health","reqId":"84e53275-45f4-44db-a98d-3736409d7f49"}
+{"timestamp":"2026-06-02T22:10:18.005Z","level":"INFO","message":"GET /api/health","reqId":"2ec9d329-9180-4cd0-a3cb-2fa1d7af853a"}
+{"timestamp":"2026-06-02T22:10:22.708Z","level":"INFO","message":"GET /api/voters/search?voterNo=%E0%A7%A6%E0%A7%A7%E0%A7%A7%E0%A7%A7%E0%A7%A9%E0%A7%AE%E0%A7%AB%E0%A7%AE%E0%A7%AF%E0%A7%A8%E0%A7%AA%E0%A7%A9","reqId":"c83389f1-5d1f-46d1-b8b3-7ab7ab93e1fa"}
+{"timestamp":"2026-06-02T22:10:22.709Z","level":"INFO","message":"Search: query=\"{}\" results=1 time=1ms","reqId":"c83389f1-5d1f-46d1-b8b3-7ab7ab93e1fa"}
+{"timestamp":"2026-06-02T22:10:22.997Z","level":"INFO","message":"GET /api/health","reqId":"db5bd47c-3119-476e-87f6-e4cb5d9bacf4"}
+{"timestamp":"2026-06-02T22:10:27.999Z","level":"INFO","message":"GET /api/health","reqId":"86ece2d4-2389-4f46-bbac-331ccff7f48a"}
+{"timestamp":"2026-06-02T22:10:32.999Z","level":"INFO","message":"GET /api/health","reqId":"6be35c34-1aaf-4023-b211-0a5828b7b0d8"}
+{"timestamp":"2026-06-02T22:10:37.998Z","level":"INFO","message":"GET /api/health","reqId":"d6f1240a-c995-43c1-98fe-53ea23844667"}
+{"timestamp":"2026-06-02T22:10:43.000Z","level":"INFO","message":"GET /api/health","reqId":"2dbc85d9-7837-40c6-9669-9555424f64f8"}
+{"timestamp":"2026-06-02T22:10:48.000Z","level":"INFO","message":"GET /api/health","reqId":"1144fd6d-c83e-4cf9-98f6-3f68486763be"}
+{"timestamp":"2026-06-02T22:10:52.997Z","level":"INFO","message":"GET /api/health","reqId":"9af15dc3-e176-4241-a9e1-eed73bc0d890"}
+{"timestamp":"2026-06-02T22:10:57.997Z","level":"INFO","message":"GET /api/health","reqId":"574f1ea6-90e6-4e62-a0fe-eb3380af5abd"}
+{"timestamp":"2026-06-02T22:11:00.323Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"7d0cee57-2532-43ef-8f19-fbfb5957e2eb"}
+{"timestamp":"2026-06-02T22:11:00.324Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"ec7b6392-54f0-4e40-971a-deae7b2c39c7"}
+{"timestamp":"2026-06-02T22:11:02.991Z","level":"INFO","message":"GET /api/health","reqId":"8f270802-7b4d-45dc-b1a5-23801b785516"}
+{"timestamp":"2026-06-02T22:11:07.998Z","level":"INFO","message":"GET /api/health","reqId":"ff19aa5d-ebaf-4579-b572-a3e3c7db9ea7"}
+{"timestamp":"2026-06-02T22:11:12.997Z","level":"INFO","message":"GET /api/health","reqId":"f4f58451-39ff-47dc-8c36-050dd8d5dbb2"}
+{"timestamp":"2026-06-02T22:11:17.998Z","level":"INFO","message":"GET /api/health","reqId":"b5adaad2-fc81-40c2-abd6-3b955a4a995e"}
+{"timestamp":"2026-06-02T22:11:22.999Z","level":"INFO","message":"GET /api/health","reqId":"1223ad78-95d1-4d12-8ea6-f79c3458cf97"}
+{"timestamp":"2026-06-02T22:11:27.620Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%AC%E0%A6%BF%E0%A6%B2%E0%A7%8D%E0%A6%AA%E0%A6%AC+%E0%A6%9A%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"2398fe4b-c44d-4b51-9e5d-2d7a1bb3169b"}
+{"timestamp":"2026-06-02T22:11:27.623Z","level":"INFO","message":"Search: query=\"{\"name\":\"বিল্পব চন্দ্র বিশ্বাস\"}\" results=1 time=2ms","reqId":"2398fe4b-c44d-4b51-9e5d-2d7a1bb3169b"}
+{"timestamp":"2026-06-02T22:11:27.995Z","level":"INFO","message":"GET /api/health","reqId":"a3f953e1-e185-4b8e-9912-c7d636e746b1"}
+{"timestamp":"2026-06-02T22:11:32.997Z","level":"INFO","message":"GET /api/health","reqId":"16e8a419-f7ac-4826-a0d5-5b2a638e2e13"}
+{"timestamp":"2026-06-02T22:11:37.996Z","level":"INFO","message":"GET /api/health","reqId":"6a1f5826-3a73-4034-96b2-d77e97c0a75a"}
+{"timestamp":"2026-06-02T22:11:40.654Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B6%E0%A6%B0%E0%A7%8E+%E0%A6%9A%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%B8","reqId":"4e367211-be69-404e-a607-6f360a6b218a"}
+{"timestamp":"2026-06-02T22:11:40.657Z","level":"INFO","message":"Search: query=\"{\"name\":\"শরৎ চন্দ্র বিশ্বাস\"}\" results=0 time=2ms","reqId":"4e367211-be69-404e-a607-6f360a6b218a"}
+{"timestamp":"2026-06-02T22:11:43.005Z","level":"INFO","message":"GET /api/health","reqId":"a7f02f4d-d073-4796-8e5a-ab7eadccb1cb"}
+{"timestamp":"2026-06-02T22:11:47.995Z","level":"INFO","message":"GET /api/health","reqId":"f72e4c06-d8dd-43c5-9f83-5984426d7855"}
+{"timestamp":"2026-06-02T22:11:48.417Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B6%E0%A6%B0%E0%A7%8E","reqId":"a652dc08-f57b-43ff-86cf-b5c1e27f62c5"}
+{"timestamp":"2026-06-02T22:11:48.418Z","level":"INFO","message":"Search: query=\"{\"name\":\"শরৎ\"}\" results=2 time=1ms","reqId":"a652dc08-f57b-43ff-86cf-b5c1e27f62c5"}
+{"timestamp":"2026-06-02T22:11:52.998Z","level":"INFO","message":"GET /api/health","reqId":"21809219-775e-4368-a801-9fcd7b4d7922"}
+{"timestamp":"2026-06-02T22:11:57.992Z","level":"INFO","message":"GET /api/health","reqId":"bf7806dc-1691-4672-834c-a12a60a57a4f"}
+{"timestamp":"2026-06-02T22:12:02.995Z","level":"INFO","message":"GET /api/health","reqId":"61dd0047-606b-4ea7-9aa8-7984ef71731f"}
+{"timestamp":"2026-06-02T22:12:07.047Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B6%E0%A6%B0%E0%A7%8E","reqId":"c709b242-6bfa-4d19-8dc7-bd317b6227b3"}
+{"timestamp":"2026-06-02T22:12:07.050Z","level":"INFO","message":"Search: query=\"{\"name\":\"শরৎ\"}\" results=2 time=1ms","reqId":"c709b242-6bfa-4d19-8dc7-bd317b6227b3"}
+{"timestamp":"2026-06-02T22:12:08.000Z","level":"INFO","message":"GET /api/health","reqId":"f4441b66-633b-4816-9756-4df015d9d26e"}
+{"timestamp":"2026-06-02T22:12:13.001Z","level":"INFO","message":"GET /api/health","reqId":"f1719589-099f-4ae7-a3ab-9c7b5debbc34"}
+{"timestamp":"2026-06-02T22:12:18.000Z","level":"INFO","message":"GET /api/health","reqId":"0f4d4a5a-4982-48fb-aabb-090a38477f40"}
+{"timestamp":"2026-06-02T22:12:22.998Z","level":"INFO","message":"GET /api/health","reqId":"e9f1c3c9-4655-4f77-b378-17cb9fbd639b"}
+{"timestamp":"2026-06-02T22:12:27.999Z","level":"INFO","message":"GET /api/health","reqId":"3cddc8c1-b2e7-49ed-9e07-198aeb780971"}
+{"timestamp":"2026-06-02T22:12:32.994Z","level":"INFO","message":"GET /api/health","reqId":"6baf4215-45aa-4d00-86b3-4867049d3ab9"}
+{"timestamp":"2026-06-02T22:12:37.993Z","level":"INFO","message":"GET /api/health","reqId":"1b833336-5b63-4d25-ac58-d86a936dcb70"}
+{"timestamp":"2026-06-02T22:12:38.037Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"756ef8d1-c06a-48b1-b2f0-f8a0e0e25e3a"}
+{"timestamp":"2026-06-02T22:12:38.040Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"ff60907d-3491-4d5e-9aba-19bc477ed52a"}
+{"timestamp":"2026-06-02T22:12:42.992Z","level":"INFO","message":"GET /api/health","reqId":"48ddc1cf-c31f-497e-9e29-63a1dc27bed7"}
+{"timestamp":"2026-06-02T22:12:48.000Z","level":"INFO","message":"GET /api/health","reqId":"8beb2672-d193-47e3-a945-96aab1fd701b"}
+{"timestamp":"2026-06-02T22:12:53.000Z","level":"INFO","message":"GET /api/health","reqId":"ec2a5bf6-1c34-4cd6-8a49-86f32630c3b3"}
+{"timestamp":"2026-06-02T22:12:57.992Z","level":"INFO","message":"GET /api/health","reqId":"fcd2b94c-1a1e-4c5e-b086-bd0f18fe3142"}
+{"timestamp":"2026-06-02T22:13:02.999Z","level":"INFO","message":"GET /api/health","reqId":"830e9d71-e3ba-4533-8b8d-c3c5d8409513"}
+{"timestamp":"2026-06-02T22:13:07.993Z","level":"INFO","message":"GET /api/health","reqId":"c1be0672-b3be-4da5-8a47-c29d6ab87cf8"}
+{"timestamp":"2026-06-02T22:13:13.001Z","level":"INFO","message":"GET /api/health","reqId":"6a7b0327-4bf2-4fcd-bb5f-0b8464525684"}
+{"timestamp":"2026-06-02T22:13:17.999Z","level":"INFO","message":"GET /api/health","reqId":"34aef560-a9ff-43c1-b56a-1a03fc660521"}
+{"timestamp":"2026-06-02T22:13:22.997Z","level":"INFO","message":"GET /api/health","reqId":"05b88049-efb1-460f-acb1-8dccc745ffa5"}
+{"timestamp":"2026-06-02T22:13:27.998Z","level":"INFO","message":"GET /api/health","reqId":"bf207dc8-27e7-4f1b-8c5a-f70ac074cc39"}
+{"timestamp":"2026-06-02T22:13:32.995Z","level":"INFO","message":"GET /api/health","reqId":"27ee9dce-bf3f-4aa2-b121-a467a39b3d81"}
+{"timestamp":"2026-06-02T22:13:37.999Z","level":"INFO","message":"GET /api/health","reqId":"d664b99c-743c-4bae-8c81-cb2703376a6f"}
+{"timestamp":"2026-06-02T22:13:40.826Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B6%E0%A6%B0%E0%A7%8E&fatherName=%E0%A6%B6%E0%A7%87%E0%A6%96+%E0%A6%86%E0%A6%B9%E0%A6%A8%E0%A7%8D%E0%A6%A4%E0%A6%A6+%E0%A6%86%E0%A6%B2%E0%A7%80","reqId":"42a66fc4-1d76-4f98-8709-06b1c8922fda"}
+{"timestamp":"2026-06-02T22:13:40.828Z","level":"INFO","message":"Search: query=\"{\"name\":\"শরৎ\",\"fatherName\":\"শেখ আহন্তদ আলী\"}\" results=1 time=1ms","reqId":"42a66fc4-1d76-4f98-8709-06b1c8922fda"}
+{"timestamp":"2026-06-02T22:13:42.996Z","level":"INFO","message":"GET /api/health","reqId":"d1e5d870-1871-4ead-9309-19b932a691c1"}
+{"timestamp":"2026-06-02T22:13:46.399Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"378f5529-29ec-4f72-a444-b23d32e9efdf"}
+{"timestamp":"2026-06-02T22:13:46.401Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"e95abc8a-26c4-4bcc-a950-3776c139cbc3"}
+{"timestamp":"2026-06-02T22:13:47.997Z","level":"INFO","message":"GET /api/health","reqId":"473487de-e6d8-435e-be6c-05f5f35e91f1"}
+{"timestamp":"2026-06-02T22:13:52.996Z","level":"INFO","message":"GET /api/health","reqId":"7d243258-888d-454b-a286-831cd3996470"}
+{"timestamp":"2026-06-02T22:13:57.994Z","level":"INFO","message":"GET /api/health","reqId":"e326eff6-a12f-43c0-af4b-5ebad0ea8c37"}
+{"timestamp":"2026-06-02T22:14:03.000Z","level":"INFO","message":"GET /api/health","reqId":"2ff3ed0a-883d-4335-b854-6563ad30f1df"}
+{"timestamp":"2026-06-02T22:14:07.994Z","level":"INFO","message":"GET /api/health","reqId":"b3fb93c9-98b1-4fcd-87f8-0c798de0cc03"}
+{"timestamp":"2026-06-02T22:14:13.000Z","level":"INFO","message":"GET /api/health","reqId":"c960386f-fa51-4fa5-a050-23d0bec55d44"}
+{"timestamp":"2026-06-02T22:14:17.966Z","level":"INFO","message":"GET /api/health","reqId":"20ab2c71-2d09-4b70-86fc-6ac94f60aafa"}
+{"timestamp":"2026-06-02T22:14:17.968Z","level":"INFO","message":"GET /api/pdf/list","reqId":"9a4a3e6f-6c21-41b0-9443-ac4d66058b3b"}
+{"timestamp":"2026-06-02T22:14:17.970Z","level":"INFO","message":"GET /api/health","reqId":"187d7493-6ec8-4d75-935c-e0a1437d1ffb"}
+{"timestamp":"2026-06-02T22:14:17.973Z","level":"INFO","message":"GET /api/pdf/list","reqId":"9034e735-ff5b-4d9b-81e9-ee178bb6b442"}
+{"timestamp":"2026-06-02T22:14:17.991Z","level":"INFO","message":"GET /api/health","reqId":"3710b697-3cec-4de7-858b-f6a432836e87"}
+{"timestamp":"2026-06-02T22:14:20.931Z","level":"INFO","message":"GET /api/voters/search?","reqId":"5761fa5b-2b31-404d-bf88-2c94fc6179f2"}
+{"timestamp":"2026-06-02T22:14:20.932Z","level":"INFO","message":"Search: query=\"{}\" results=100 time=0ms","reqId":"5761fa5b-2b31-404d-bf88-2c94fc6179f2"}
+{"timestamp":"2026-06-02T22:14:22.969Z","level":"INFO","message":"GET /api/health","reqId":"5a8f46e5-efe4-4a20-8ba2-2f334d51e7d0"}
+{"timestamp":"2026-06-02T22:14:22.999Z","level":"INFO","message":"GET /api/health","reqId":"3351b766-9333-4c1d-bae4-c53246d813f1"}
+{"timestamp":"2026-06-02T22:14:27.969Z","level":"INFO","message":"GET /api/health","reqId":"37ed76f9-9fb5-45ff-9dd9-c3e9e079130f"}
+{"timestamp":"2026-06-02T22:14:27.999Z","level":"INFO","message":"GET /api/health","reqId":"9ef115b0-79c4-4c1b-86e6-3b5722e2b305"}
+{"timestamp":"2026-06-02T22:14:32.968Z","level":"INFO","message":"GET /api/health","reqId":"83e80a74-19d8-43c2-a423-23a05033e894"}
+{"timestamp":"2026-06-02T22:14:32.995Z","level":"INFO","message":"GET /api/health","reqId":"c51e48cd-a2c1-4524-9db7-03a116f4aad4"}
+{"timestamp":"2026-06-02T22:14:37.968Z","level":"INFO","message":"GET /api/health","reqId":"6b077f27-9970-4841-99ac-f25cead4788a"}
+{"timestamp":"2026-06-02T22:14:37.997Z","level":"INFO","message":"GET /api/health","reqId":"fcc0f904-e3af-4af0-86ae-c0b43a979d4e"}
+{"timestamp":"2026-06-02T22:14:42.969Z","level":"INFO","message":"GET /api/health","reqId":"6557e8d2-0534-446d-9416-fe090aa697f4"}
+{"timestamp":"2026-06-02T22:14:42.997Z","level":"INFO","message":"GET /api/health","reqId":"a3ff9552-23a2-4fd4-8b10-ebbd7a692407"}
+{"timestamp":"2026-06-02T22:14:47.970Z","level":"INFO","message":"GET /api/health","reqId":"3245a48e-41f9-4229-8e7b-98c7123510cc"}
+{"timestamp":"2026-06-02T22:14:47.996Z","level":"INFO","message":"GET /api/health","reqId":"598e9b30-de84-4eaf-a1a4-3a5cdef0189f"}
+{"timestamp":"2026-06-02T22:14:52.970Z","level":"INFO","message":"GET /api/health","reqId":"37e23943-5811-403b-a475-af7dd79485c2"}
+{"timestamp":"2026-06-02T22:14:52.996Z","level":"INFO","message":"GET /api/health","reqId":"e346f034-8eb4-477e-8a70-90b5e0f12fdf"}
+{"timestamp":"2026-06-02T22:14:57.969Z","level":"INFO","message":"GET /api/health","reqId":"28b141ea-bec1-4ffb-84a8-de39d61dc597"}
+{"timestamp":"2026-06-02T22:14:57.991Z","level":"INFO","message":"GET /api/health","reqId":"7d71a52d-ce71-459c-b82c-f8af8438c94a"}
+{"timestamp":"2026-06-02T22:15:02.973Z","level":"INFO","message":"GET /api/health","reqId":"a53b9995-4e1a-4c83-a400-8548867cf011"}
+{"timestamp":"2026-06-02T22:15:02.991Z","level":"INFO","message":"GET /api/health","reqId":"f60b355f-fead-41c8-aea3-2275678839cf"}
+{"timestamp":"2026-06-02T22:15:07.967Z","level":"INFO","message":"GET /api/health","reqId":"f58ee09b-199a-4bd3-8bc4-1378b175d391"}
+{"timestamp":"2026-06-02T22:15:07.999Z","level":"INFO","message":"GET /api/health","reqId":"023d1e11-b5e3-40b2-b71b-12c423c283b8"}
+{"timestamp":"2026-06-02T22:15:12.968Z","level":"INFO","message":"GET /api/health","reqId":"c04d7c86-217a-4823-a763-a13ead5996fe"}
+{"timestamp":"2026-06-02T22:15:12.997Z","level":"INFO","message":"GET /api/health","reqId":"26d5c6ab-7571-4080-8994-3578d69de3e6"}
+{"timestamp":"2026-06-02T22:15:16.402Z","level":"INFO","message":"GET /api/health","reqId":"fb4f1b88-4e33-4798-abc1-f5eb84d564f0"}
+{"timestamp":"2026-06-02T22:15:16.403Z","level":"INFO","message":"GET /api/pdf/list","reqId":"13e8de03-051c-477d-bc38-930d2b273d1c"}
+{"timestamp":"2026-06-02T22:15:16.405Z","level":"INFO","message":"GET /api/health","reqId":"8f786bcd-7983-4bbc-8e41-4413bcaaf199"}
+{"timestamp":"2026-06-02T22:15:16.406Z","level":"INFO","message":"GET /api/pdf/list","reqId":"4ac43cc0-0395-4721-8ccb-67026742ed01"}
+{"timestamp":"2026-06-02T22:15:21.418Z","level":"INFO","message":"GET /api/health","reqId":"99c1ce17-c9f8-488c-ac1c-6e5fc2ff30e1"}
+{"timestamp":"2026-06-02T22:15:21.900Z","level":"INFO","message":"GET /api/health","reqId":"468533eb-75af-4258-a98e-ff910593a5f1"}
+{"timestamp":"2026-06-02T22:15:21.901Z","level":"INFO","message":"GET /api/pdf/list","reqId":"75912a34-a260-4e1b-9869-f8f3c802fb8f"}
+{"timestamp":"2026-06-02T22:15:21.903Z","level":"INFO","message":"GET /api/health","reqId":"ddd51d16-b397-4a3e-9208-3f9f6629ce01"}
+{"timestamp":"2026-06-02T22:15:21.904Z","level":"INFO","message":"GET /api/pdf/list","reqId":"e9d56fef-71b7-4c66-adc7-c522e63066e1"}
+{"timestamp":"2026-06-02T22:15:26.406Z","level":"INFO","message":"GET /api/health","reqId":"1e6d1a67-c5e4-4e32-8add-8a504be22f04"}
+{"timestamp":"2026-06-02T22:15:26.904Z","level":"INFO","message":"GET /api/health","reqId":"4cbd7da3-33e7-4058-b690-00b75dff3b6d"}
+{"timestamp":"2026-06-02T22:15:31.412Z","level":"INFO","message":"GET /api/health","reqId":"22e57a4a-aff5-4ffd-85d9-2693082ece75"}
+{"timestamp":"2026-06-02T22:15:31.906Z","level":"INFO","message":"GET /api/health","reqId":"3935e0cb-3f01-4cdc-931f-f17ebe0d8c45"}
+{"timestamp":"2026-06-02T22:15:36.408Z","level":"INFO","message":"GET /api/health","reqId":"f6136c04-a59a-476d-90bf-36fd9b0cce9b"}
+{"timestamp":"2026-06-02T22:15:36.905Z","level":"INFO","message":"GET /api/health","reqId":"30b5366c-83ae-41b9-9fe9-2ce3200478cf"}
+{"timestamp":"2026-06-02T22:15:41.405Z","level":"INFO","message":"GET /api/health","reqId":"162c70c7-9313-4eac-9906-17296a158e6e"}
+{"timestamp":"2026-06-02T22:15:41.906Z","level":"INFO","message":"GET /api/health","reqId":"bee31835-29dc-4934-b216-4b32b1d09a9f"}
+{"timestamp":"2026-06-02T22:15:46.406Z","level":"INFO","message":"GET /api/health","reqId":"bb08858a-6155-4e58-ac6d-5f2680b3ff8e"}
+{"timestamp":"2026-06-02T22:15:46.904Z","level":"INFO","message":"GET /api/health","reqId":"228058d7-250f-4742-b2f7-a1e867ccc976"}
+{"timestamp":"2026-06-02T22:15:51.257Z","level":"INFO","message":"GET /api/health","reqId":"93b4604a-9889-4e82-af61-18e696482ed7"}
+{"timestamp":"2026-06-02T22:15:51.258Z","level":"INFO","message":"GET /api/pdf/list","reqId":"2800383a-37a3-430d-ad55-48944d8100a3"}
+{"timestamp":"2026-06-02T22:15:51.259Z","level":"INFO","message":"GET /api/health","reqId":"b4e1919b-7879-473c-a89a-32238857a54c"}
+{"timestamp":"2026-06-02T22:15:51.260Z","level":"INFO","message":"GET /api/pdf/list","reqId":"abff919a-c340-4e6c-924a-9155273cc057"}
+{"timestamp":"2026-06-02T22:15:56.260Z","level":"INFO","message":"GET /api/health","reqId":"5a83de6d-b635-4229-9ea9-dfea9ba88ebd"}
+{"timestamp":"2026-06-02T22:16:01.259Z","level":"INFO","message":"GET /api/health","reqId":"b454d924-a8b7-4cba-a91b-9e1e270918ed"}
+{"timestamp":"2026-06-02T22:16:06.262Z","level":"INFO","message":"GET /api/health","reqId":"91ede8f8-9749-4c50-a001-bba57cdcd6bb"}
+{"timestamp":"2026-06-02T22:16:11.265Z","level":"INFO","message":"GET /api/health","reqId":"60414621-97a5-402b-ad6e-f23af2d645f1"}
+{"timestamp":"2026-06-02T22:16:16.259Z","level":"INFO","message":"GET /api/health","reqId":"7d4c3c99-5839-4925-b0c5-a3c223a3161c"}
+{"timestamp":"2026-06-02T22:16:21.265Z","level":"INFO","message":"GET /api/health","reqId":"21d3f96e-e5a7-4c45-aad0-d64a42f59929"}
+{"timestamp":"2026-06-02T22:16:26.268Z","level":"INFO","message":"GET /api/health","reqId":"8a771b6f-62a3-49ff-8438-e257879d3ba3"}
+{"timestamp":"2026-06-02T22:16:31.267Z","level":"INFO","message":"GET /api/health","reqId":"f58f0c9f-70be-4bfb-8869-0bb5ef9debbd"}
+{"timestamp":"2026-06-02T22:16:36.266Z","level":"INFO","message":"GET /api/health","reqId":"dedf70c5-32c0-401b-a157-1b0d11d3f0d6"}
+{"timestamp":"2026-06-02T22:16:41.265Z","level":"INFO","message":"GET /api/health","reqId":"ef0c412f-50ff-49e5-aab9-ad9f6f4ba0f2"}
+{"timestamp":"2026-06-02T22:16:46.259Z","level":"INFO","message":"GET /api/health","reqId":"fc42b4eb-113c-49e5-ac9e-6ccf30227efc"}
+{"timestamp":"2026-06-02T22:16:51.265Z","level":"INFO","message":"GET /api/health","reqId":"d9711c08-2ef7-40e3-9205-23a0d3ce7816"}
+{"timestamp":"2026-06-02T22:16:56.267Z","level":"INFO","message":"GET /api/health","reqId":"03831a89-f576-499e-9bdc-fb70e9539fdf"}
+{"timestamp":"2026-06-02T22:17:01.272Z","level":"INFO","message":"GET /api/health","reqId":"36b6e1a9-af0e-4e10-b3c2-02bbb64d75f7"}
+{"timestamp":"2026-06-02T22:17:06.261Z","level":"INFO","message":"GET /api/health","reqId":"1125e69b-7033-41ce-8bc9-f977edc95513"}
+{"timestamp":"2026-06-02T22:17:11.261Z","level":"INFO","message":"GET /api/health","reqId":"9d806799-c380-4161-a6c7-9225069e472c"}
+{"timestamp":"2026-06-02T22:17:16.267Z","level":"INFO","message":"GET /api/health","reqId":"3087c522-6c7e-47ae-8590-4fe74b4a83c7"}
+{"timestamp":"2026-06-02T22:17:21.259Z","level":"INFO","message":"GET /api/health","reqId":"3734bf13-bd35-4b7f-a0a7-040b04a77c72"}
+{"timestamp":"2026-06-09T16:17:46.237Z","level":"INFO","message":"GET /api/health","reqId":"fc8ec1f5-e2b6-4c05-9d70-1b4f00fe6161"}
+{"timestamp":"2026-06-09T16:17:46.244Z","level":"INFO","message":"GET /api/pdf/list","reqId":"e587ad67-59f5-4dda-975a-2d4bde3c6419"}
+{"timestamp":"2026-06-09T16:17:46.298Z","level":"INFO","message":"GET /api/health","reqId":"958784ff-6e70-4c9d-92c8-537b53e0dba1"}
+{"timestamp":"2026-06-09T16:17:46.301Z","level":"INFO","message":"GET /api/pdf/list","reqId":"4c957ae1-f303-4f9a-acbb-9f5edb25f22d"}
+{"timestamp":"2026-06-09T16:17:50.934Z","level":"INFO","message":"GET /api/health","reqId":"f314583b-2987-46bf-8919-7d53894498d7"}
+{"timestamp":"2026-06-09T16:17:51.991Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6","reqId":"3d00c8e1-704c-4ca9-8709-6035f2cb28b0"}
+{"timestamp":"2026-06-09T16:17:51.994Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\"}\" results=4 time=2ms","reqId":"3d00c8e1-704c-4ca9-8709-6035f2cb28b0"}
+{"timestamp":"2026-06-09T16:17:55.939Z","level":"INFO","message":"GET /api/health","reqId":"2d50da93-d623-48cc-b34b-8601feca2776"}
+{"timestamp":"2026-06-09T16:18:00.936Z","level":"INFO","message":"GET /api/health","reqId":"0762ee37-375d-48d6-bf94-52304de60c2e"}
+{"timestamp":"2026-06-09T16:18:02.845Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6&fatherName=+%E0%A6%B6%E0%A7%87%E0%A6%96+%E0%A6%AE%E0%A7%8B%E0%A6%B8%E0%A7%8D%E0%A6%A4%E0%A6%AB%E0%A6%BE","reqId":"65cb4b52-bec4-41f9-a7f4-b885e6451719"}
+{"timestamp":"2026-06-09T16:18:02.847Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\",\"fatherName\":\" শেখ মোস্তফা\"}\" results=1 time=1ms","reqId":"65cb4b52-bec4-41f9-a7f4-b885e6451719"}
+{"timestamp":"2026-06-09T16:18:05.937Z","level":"INFO","message":"GET /api/health","reqId":"925fc2d9-9714-4201-aea7-c9e59d4c966e"}
+{"timestamp":"2026-06-09T16:18:05.941Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"cb472b8d-fe9d-4bbc-8bd2-f986c8ec51f0"}
+{"timestamp":"2026-06-09T16:18:05.952Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"18d84410-bc52-4302-89b2-44b15c95fccc"}
+{"timestamp":"2026-06-09T16:18:10.936Z","level":"INFO","message":"GET /api/health","reqId":"2e9e2246-0ef2-4074-9147-f83124557f42"}
+{"timestamp":"2026-06-09T16:18:16.801Z","level":"INFO","message":"GET /api/health","reqId":"b53298ad-f8b9-42c6-9efd-73997ceb61a7"}
+{"timestamp":"2026-06-09T16:18:21.804Z","level":"INFO","message":"GET /api/health","reqId":"cc05f6b7-c9d7-4caf-9b3c-de8b237abfc9"}
+{"timestamp":"2026-06-09T16:18:26.809Z","level":"INFO","message":"GET /api/health","reqId":"71f953bf-107e-4c11-92cd-232f0bbaae30"}
+{"timestamp":"2026-06-09T16:18:31.802Z","level":"INFO","message":"GET /api/health","reqId":"2fc76528-2c72-4364-9fab-ef59e0c413fa"}
+{"timestamp":"2026-06-09T16:18:36.802Z","level":"INFO","message":"GET /api/health","reqId":"0c448c4a-5782-4914-baf5-133f6eba272d"}
+{"timestamp":"2026-06-09T16:18:41.799Z","level":"INFO","message":"GET /api/health","reqId":"5d9f84a5-bf66-4baa-846d-6259252641fb"}
+{"timestamp":"2026-06-09T16:18:46.804Z","level":"INFO","message":"GET /api/health","reqId":"5a248005-55f5-4147-a475-b9a58177cd77"}
+{"timestamp":"2026-06-09T16:18:51.811Z","level":"INFO","message":"GET /api/health","reqId":"b8126cc5-f52c-4cc8-b23a-91d61cd50242"}
+{"timestamp":"2026-06-09T16:18:56.811Z","level":"INFO","message":"GET /api/health","reqId":"8decb1a5-cd20-4d31-b808-74432a2fe3a2"}
+{"timestamp":"2026-06-09T16:19:00.939Z","level":"INFO","message":"GET /api/health","reqId":"e2146703-d5e7-477b-972e-9999f1f5400f"}
+{"timestamp":"2026-06-09T16:19:05.935Z","level":"INFO","message":"GET /api/health","reqId":"7701d4eb-0b3b-4b44-b201-2f84e94e95aa"}
+{"timestamp":"2026-06-09T16:19:09.617Z","level":"INFO","message":"POST /api/auth/login","reqId":"d8a2c59d-d0ba-46fc-9bc2-22cd2824a733"}
+{"timestamp":"2026-06-09T16:19:10.973Z","level":"INFO","message":"GET /api/health","reqId":"79063d55-24d7-4590-a606-dd8e632df41e"}
+{"timestamp":"2026-06-09T16:19:15.939Z","level":"INFO","message":"GET /api/health","reqId":"0e2cae2c-f4c1-41c9-aef5-bfb50f7258df"}
+{"timestamp":"2026-06-09T16:19:21.807Z","level":"INFO","message":"GET /api/health","reqId":"24c5196b-6e9b-4f8c-bc82-31d323bc291c"}
+{"timestamp":"2026-06-09T16:19:25.938Z","level":"INFO","message":"GET /api/health","reqId":"0b96b92f-d497-4624-accb-dd6fd7ca5a92"}
+{"timestamp":"2026-06-09T16:19:31.810Z","level":"INFO","message":"GET /api/health","reqId":"b4afeeb4-344b-46f6-bd3e-709e91ce6a46"}
+{"timestamp":"2026-06-09T16:19:31.863Z","level":"INFO","message":"GET /api/health","reqId":"d7c3f1a0-23af-479b-a062-df0f0d75a690"}
+{"timestamp":"2026-06-09T16:19:36.805Z","level":"INFO","message":"GET /api/health","reqId":"a482503e-2a04-486d-b941-a2cbfca945a9"}
+{"timestamp":"2026-06-09T16:19:36.866Z","level":"INFO","message":"GET /api/health","reqId":"301c1b73-6d5d-43ad-8157-cce4dfa743c6"}
+{"timestamp":"2026-06-09T16:19:41.808Z","level":"INFO","message":"GET /api/health","reqId":"30ee7099-a823-47dc-be33-df148b0f5b8e"}
+{"timestamp":"2026-06-09T16:19:42.800Z","level":"INFO","message":"GET /api/health","reqId":"2d96f715-89d0-4e37-9a46-beaf39df88da"}
+{"timestamp":"2026-06-09T16:19:46.808Z","level":"INFO","message":"GET /api/health","reqId":"94812e39-cb76-46d3-b0cf-247730c27449"}
+{"timestamp":"2026-06-09T16:19:47.800Z","level":"INFO","message":"GET /api/health","reqId":"bea15c50-639b-4127-a2ab-a8b8360eb8bd"}
+{"timestamp":"2026-06-09T16:19:51.813Z","level":"INFO","message":"GET /api/health","reqId":"b6c9b574-3cb7-43e8-af5c-7aad4cca6103"}
+{"timestamp":"2026-06-09T16:19:52.806Z","level":"INFO","message":"GET /api/health","reqId":"feff95be-438e-459d-b4a5-5eb6a3d4329d"}
+{"timestamp":"2026-06-09T16:19:56.800Z","level":"INFO","message":"GET /api/health","reqId":"17c8f743-b215-487a-9ef4-b022c44ec505"}
+{"timestamp":"2026-06-09T16:19:57.797Z","level":"INFO","message":"GET /api/health","reqId":"dd79e01e-c504-4c7f-9523-dc6e07895a8c"}
+{"timestamp":"2026-06-09T16:20:01.808Z","level":"INFO","message":"GET /api/health","reqId":"b08e112d-afe8-496a-9c54-d322298aa08f"}
+{"timestamp":"2026-06-09T16:20:02.808Z","level":"INFO","message":"GET /api/health","reqId":"4d7b6f90-e23c-4ece-8912-f95711771ebf"}
+{"timestamp":"2026-06-09T16:20:06.800Z","level":"INFO","message":"GET /api/health","reqId":"a2b19a6d-dc3f-45d4-9946-324e1dcfa83d"}
+{"timestamp":"2026-06-09T16:20:06.862Z","level":"INFO","message":"GET /api/health","reqId":"e4c2fe39-784a-4b70-a578-f5662b229e29"}
+{"timestamp":"2026-06-09T16:20:11.804Z","level":"INFO","message":"GET /api/health","reqId":"494a051b-6d98-4732-bee9-a7ba5ee0b166"}
+{"timestamp":"2026-06-09T16:20:11.866Z","level":"INFO","message":"GET /api/health","reqId":"d214f3b9-7ab7-4d7d-b4c6-3f8d16215fc2"}
+{"timestamp":"2026-06-09T16:20:12.963Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B8%E0%A7%87%E0%A6%96+%E0%A6%AB%E0%A6%B0%E0%A6%BF%E0%A6%A6&fatherName=+%E0%A6%B6%E0%A7%87%E0%A6%96+%E0%A6%AE%E0%A7%8B%E0%A6%B8%E0%A7%8D%E0%A6%A4%E0%A6%AB%E0%A6%BE","reqId":"da492ec0-0b36-479e-90d7-60c941f67bd2"}
+{"timestamp":"2026-06-09T16:20:12.966Z","level":"INFO","message":"Search: query=\"{\"name\":\"সেখ ফরিদ\",\"fatherName\":\" শেখ মোস্তফা\"}\" results=1 time=2ms","reqId":"da492ec0-0b36-479e-90d7-60c941f67bd2"}
+{"timestamp":"2026-06-09T16:20:14.478Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"56e8288a-1946-4fb7-980e-cb1f5a48613c"}
+{"timestamp":"2026-06-09T16:20:14.481Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"e4359bb1-ddd6-450a-9afb-4766599af399"}
+{"timestamp":"2026-06-09T16:20:16.801Z","level":"INFO","message":"GET /api/health","reqId":"9e15e42e-e2e4-450e-9ea6-277409e81bb4"}
+{"timestamp":"2026-06-09T16:20:16.866Z","level":"INFO","message":"GET /api/health","reqId":"36321852-aacd-4173-87a2-dc6454648724"}
+{"timestamp":"2026-06-09T16:20:21.803Z","level":"INFO","message":"GET /api/health","reqId":"698b101b-819c-4fea-8fed-f08cdb793ca5"}
+{"timestamp":"2026-06-09T16:20:21.863Z","level":"INFO","message":"GET /api/health","reqId":"44bf9a09-0d3a-482f-af4f-07f40be8a1af"}
+{"timestamp":"2026-06-09T16:20:26.817Z","level":"INFO","message":"GET /api/health","reqId":"a0c8658e-0e62-4cf2-9eba-7c3f1c9dd188"}
+{"timestamp":"2026-06-09T16:20:27.809Z","level":"INFO","message":"GET /api/health","reqId":"541aa824-5527-45b5-9a7b-2be92e214637"}
+{"timestamp":"2026-06-09T16:20:32.806Z","level":"INFO","message":"GET /api/health","reqId":"346b9454-06cc-4712-bd4c-66b5c02e463c"}
+{"timestamp":"2026-06-09T16:20:37.808Z","level":"INFO","message":"GET /api/health","reqId":"f1d10e2f-4e83-498b-8209-34554fbd3861"}
+{"timestamp":"2026-06-09T16:20:42.798Z","level":"INFO","message":"GET /api/health","reqId":"9f6b344b-4625-4061-917e-2c4e19d2f987"}
+{"timestamp":"2026-06-09T16:20:45.811Z","level":"INFO","message":"GET /api/health","reqId":"f88b8514-688a-4a11-8682-37078dfe5702"}
+{"timestamp":"2026-06-09T16:20:47.815Z","level":"INFO","message":"GET /api/health","reqId":"51bca3db-85d7-40a2-b76e-cc838a77be65"}
+{"timestamp":"2026-06-09T16:20:52.811Z","level":"INFO","message":"GET /api/health","reqId":"29072991-1ff2-4bea-9af3-cfbb9240d5ec"}
+{"timestamp":"2026-06-09T16:20:57.806Z","level":"INFO","message":"GET /api/health","reqId":"107047da-5f54-460f-a066-5891267bfd0e"}
+{"timestamp":"2026-06-09T16:21:02.805Z","level":"INFO","message":"GET /api/health","reqId":"15d3b069-dec1-4eaf-95f4-bb720ac36be6"}
+{"timestamp":"2026-06-09T16:21:07.811Z","level":"INFO","message":"GET /api/health","reqId":"15f91cfb-6ce8-4700-94a0-fb63876fa6b8"}
+{"timestamp":"2026-06-09T16:21:12.810Z","level":"INFO","message":"GET /api/health","reqId":"047a27e0-492a-446d-bef1-070369a464b3"}
+{"timestamp":"2026-06-09T16:21:17.810Z","level":"INFO","message":"GET /api/health","reqId":"0f5f6b18-a055-487e-84ae-01f9c3e7bd9b"}
+{"timestamp":"2026-06-09T16:21:22.808Z","level":"INFO","message":"GET /api/health","reqId":"d5f11f1e-80f0-45df-bd8b-999c80f0880a"}
+{"timestamp":"2026-06-09T16:21:45.335Z","level":"INFO","message":"GET /api/health","reqId":"d4749651-55fb-4d19-818d-e188638c967c"}
+{"timestamp":"2026-06-09T16:21:45.805Z","level":"INFO","message":"GET /api/health","reqId":"5974da4d-0020-4f1f-9b9c-719fae516d01"}
+{"timestamp":"2026-06-09T16:21:46.861Z","level":"INFO","message":"GET /api/health","reqId":"a0c58abc-295a-49e6-acb1-77beb30d9366"}
+{"timestamp":"2026-06-09T16:21:51.863Z","level":"INFO","message":"GET /api/health","reqId":"38c44c9b-056d-475e-9836-a0e2907a1c22"}
+{"timestamp":"2026-06-09T16:21:56.864Z","level":"INFO","message":"GET /api/health","reqId":"5f26964a-6e6b-4ac2-901a-bea4e3972e2f"}
+{"timestamp":"2026-06-09T16:22:00.788Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"d7a0fd90-f233-477f-bb6f-0454e35fa0a7"}
+{"timestamp":"2026-06-09T16:22:00.790Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"176bef83-698e-47aa-a1c4-6fd161a5a264"}
+{"timestamp":"2026-06-09T16:22:01.860Z","level":"INFO","message":"GET /api/health","reqId":"81d875a7-abad-4aab-b389-addfedf2a394"}
+{"timestamp":"2026-06-09T16:22:06.421Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%95%E0%A6%BE%E0%A6%AE%E0%A6%A8%E0%A6%BE%E0%A6%B6%E0%A7%80%E0%A6%B7","reqId":"404e8e24-1e31-40e6-8619-92891ac67c59"}
+{"timestamp":"2026-06-09T16:22:06.425Z","level":"INFO","message":"Search: query=\"{\"name\":\"কামনাশীষ\"}\" results=1 time=2ms","reqId":"404e8e24-1e31-40e6-8619-92891ac67c59"}
+{"timestamp":"2026-06-09T16:22:06.859Z","level":"INFO","message":"GET /api/health","reqId":"4072440e-dd0f-4bf0-ad16-cc8b7bee9d52"}
+{"timestamp":"2026-06-09T16:22:08.793Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"2f26d560-a7ca-4bfe-87e2-e4158c81f6f6"}
+{"timestamp":"2026-06-09T16:22:08.797Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"073660e0-a1c2-4a8e-8543-1ac553c811ef"}
+{"timestamp":"2026-06-09T16:22:11.868Z","level":"INFO","message":"GET /api/health","reqId":"67435969-36fe-488a-ab85-57f3ff491564"}
+{"timestamp":"2026-06-09T16:22:16.864Z","level":"INFO","message":"GET /api/health","reqId":"5c9cf2d0-0889-4061-a1b8-0bb4a1afa90d"}
+{"timestamp":"2026-06-09T16:22:21.865Z","level":"INFO","message":"GET /api/health","reqId":"e9b514ff-37ef-4fd9-bcb5-d597041aa4a2"}
+{"timestamp":"2026-06-09T16:22:26.859Z","level":"INFO","message":"GET /api/health","reqId":"d3370a83-2c91-47e2-b603-9ff514c46cbb"}
+{"timestamp":"2026-06-09T16:22:31.862Z","level":"INFO","message":"GET /api/health","reqId":"22e9276b-ff65-4f2d-ba6d-0ef34ec93209"}
+{"timestamp":"2026-06-09T16:22:36.872Z","level":"INFO","message":"GET /api/health","reqId":"ae18a854-ebf3-459e-acec-2ff4e34925f5"}
+{"timestamp":"2026-06-09T16:22:37.366Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%95%E0%A6%BE%E0%A6%AE%E0%A6%A8%E0%A6%BE%E0%A6%B6%E0%A7%80%E0%A6%B7","reqId":"da3dc1d7-f2fd-4190-a6b5-afc340e33ee6"}
+{"timestamp":"2026-06-09T16:22:37.368Z","level":"INFO","message":"Search: query=\"{\"name\":\"কামনাশীষ\"}\" results=1 time=1ms","reqId":"da3dc1d7-f2fd-4190-a6b5-afc340e33ee6"}
+{"timestamp":"2026-06-09T16:22:41.857Z","level":"INFO","message":"GET /api/health","reqId":"07772837-2706-42b0-89e8-44b20d90ee18"}
+{"timestamp":"2026-06-09T16:22:45.077Z","level":"INFO","message":"GET /api/voters/search?voterNo=%E0%A7%A6%E0%A7%A7%E0%A7%A7%E0%A7%A7%E0%A7%A9%E0%A7%AE%E0%A7%A6%E0%A7%A6%E0%A7%A6%E0%A7%AB%E0%A7%A7%E0%A7%AA","reqId":"c45bceff-0e88-4136-be45-4c5baa4a0188"}
+{"timestamp":"2026-06-09T16:22:45.079Z","level":"INFO","message":"Search: query=\"{}\" results=1 time=0ms","reqId":"c45bceff-0e88-4136-be45-4c5baa4a0188"}
+{"timestamp":"2026-06-09T16:22:45.810Z","level":"INFO","message":"GET /api/health","reqId":"36c82ce5-f379-4bf0-a9dd-0a61b4bac3b6"}
+{"timestamp":"2026-06-09T16:22:46.869Z","level":"INFO","message":"GET /api/health","reqId":"af524166-15b0-4549-8bf2-8dfd85478515"}
+{"timestamp":"2026-06-09T16:22:51.861Z","level":"INFO","message":"GET /api/health","reqId":"a10c139e-d082-424c-a5cc-abada79b624c"}
+{"timestamp":"2026-06-09T16:22:56.859Z","level":"INFO","message":"GET /api/health","reqId":"de30ef5f-019e-4cca-8676-c02401032e08"}
+{"timestamp":"2026-06-09T16:23:02.806Z","level":"INFO","message":"GET /api/health","reqId":"4fef7fef-08ef-49a3-a3d1-0c8675c2e2a6"}
+{"timestamp":"2026-06-09T16:23:07.808Z","level":"INFO","message":"GET /api/health","reqId":"926975f0-5e57-4061-8e42-13761f384322"}
+{"timestamp":"2026-06-09T16:23:12.805Z","level":"INFO","message":"GET /api/health","reqId":"6c30ffd9-1531-480e-b613-38afdaee34e5"}
+{"timestamp":"2026-06-09T16:23:17.801Z","level":"INFO","message":"GET /api/health","reqId":"962f1f7c-b13d-423e-8c71-86c33347742a"}
+{"timestamp":"2026-06-09T16:23:22.808Z","level":"INFO","message":"GET /api/health","reqId":"e6eb07a5-44cf-4237-a4a7-c5d25379712d"}
+{"timestamp":"2026-06-09T16:23:27.806Z","level":"INFO","message":"GET /api/health","reqId":"be558847-1b97-4cda-8360-23489a26c152"}
+{"timestamp":"2026-06-09T16:23:32.811Z","level":"INFO","message":"GET /api/health","reqId":"804cff6f-33c7-4b41-aa47-4a86f891809a"}
+{"timestamp":"2026-06-09T16:23:37.807Z","level":"INFO","message":"GET /api/health","reqId":"ae43aaeb-1ae0-4947-bc5e-e6816dbd3258"}
+{"timestamp":"2026-06-09T16:23:41.686Z","level":"INFO","message":"GET /api/voters/search?voterNo=011138000514","reqId":"b2b8c7df-9e96-4c9e-be76-ac62b939ed05"}
+{"timestamp":"2026-06-09T16:23:41.688Z","level":"INFO","message":"Search: query=\"{}\" results=0 time=1ms","reqId":"b2b8c7df-9e96-4c9e-be76-ac62b939ed05"}
+{"timestamp":"2026-06-09T16:23:41.859Z","level":"INFO","message":"GET /api/health","reqId":"fea9ab91-aa92-436f-bcc1-67beb4cf0dcf"}
+{"timestamp":"2026-06-09T16:23:45.805Z","level":"INFO","message":"GET /api/health","reqId":"0a39d86a-2e2b-4e74-b441-c71002b82f11"}
+{"timestamp":"2026-06-09T16:23:46.860Z","level":"INFO","message":"GET /api/health","reqId":"c7a80e38-e62e-4137-8893-723e9deab911"}
+{"timestamp":"2026-06-09T16:23:51.869Z","level":"INFO","message":"GET /api/health","reqId":"dad2d800-8ae0-4932-8cf1-0a33fc0ce9f8"}
+{"timestamp":"2026-06-09T16:23:56.862Z","level":"INFO","message":"GET /api/health","reqId":"57116073-590b-442b-bbf9-6e5e41882cd8"}
+{"timestamp":"2026-06-09T16:24:01.859Z","level":"INFO","message":"GET /api/health","reqId":"871db48e-8373-459b-928e-31f3f3ba67ea"}
+{"timestamp":"2026-06-09T16:24:06.857Z","level":"INFO","message":"GET /api/health","reqId":"b8f48bbd-dbec-4e62-88d7-a87948a15bba"}
+{"timestamp":"2026-06-09T16:24:11.860Z","level":"INFO","message":"GET /api/health","reqId":"2c284848-d22a-4704-b12a-2ddc10936a4c"}
+{"timestamp":"2026-06-09T16:24:16.858Z","level":"INFO","message":"GET /api/health","reqId":"2b78add8-aac6-4bf8-9c09-2b51be233cd1"}
+{"timestamp":"2026-06-09T16:24:22.179Z","level":"INFO","message":"GET /api/health","reqId":"05c6f698-84bf-4a02-8c9c-552bfbc20a95"}
+{"timestamp":"2026-06-09T16:24:27.810Z","level":"INFO","message":"GET /api/health","reqId":"05c7f540-62ff-4f45-b657-0e1f7f299363"}
+{"timestamp":"2026-06-09T16:24:32.806Z","level":"INFO","message":"GET /api/health","reqId":"105343c8-4141-4a27-8625-1169c8115a97"}
+{"timestamp":"2026-06-09T16:24:37.813Z","level":"INFO","message":"GET /api/health","reqId":"bce59843-7660-4e66-8ade-d06990f40611"}
+{"timestamp":"2026-06-09T16:24:42.806Z","level":"INFO","message":"GET /api/health","reqId":"a89f13c8-52f9-4c8b-963a-2529196f459e"}
+{"timestamp":"2026-06-09T16:24:45.800Z","level":"INFO","message":"GET /api/health","reqId":"fdfdbc88-ecb3-49ae-a03a-a1462e36adc2"}
+{"timestamp":"2026-06-09T16:24:47.797Z","level":"INFO","message":"GET /api/health","reqId":"a991cd9c-2df2-4603-9a20-2e51d84d4954"}
+{"timestamp":"2026-06-09T16:24:52.047Z","level":"INFO","message":"GET /api/health","reqId":"6d9b21fb-f2d4-46f6-8f62-72e91636f697"}
+{"timestamp":"2026-06-09T16:24:56.595Z","level":"INFO","message":"GET /api/voters/search?voterNo=+%E0%A7%A6%E0%A7%A7%E0%A7%A7%E0%A7%A7%E0%A7%A9%E0%A7%AE%E0%A7%A6%E0%A7%A6%E0%A7%A6%E0%A7%AB%E0%A7%A7%E0%A7%AA","reqId":"a699d272-6578-4161-978a-8f880ea0950e"}
+{"timestamp":"2026-06-09T16:24:56.638Z","level":"INFO","message":"Search: query=\"{}\" results=1 time=38ms","reqId":"a699d272-6578-4161-978a-8f880ea0950e"}
+{"timestamp":"2026-06-09T16:24:56.872Z","level":"INFO","message":"GET /api/health","reqId":"2ce8ad03-8033-4ad2-87fc-5a3cfcb511d6"}
+{"timestamp":"2026-06-09T16:25:01.858Z","level":"INFO","message":"GET /api/health","reqId":"1001ce1f-b0ab-412d-ac65-4aeeb1c9384c"}
+{"timestamp":"2026-06-09T16:25:07.800Z","level":"INFO","message":"GET /api/health","reqId":"57e9f3d2-51a4-4651-a96b-02f31d68a38b"}
+{"timestamp":"2026-06-09T16:25:12.808Z","level":"INFO","message":"GET /api/health","reqId":"a04e4fac-1f47-418b-b924-6b47d5e2fa1d"}
+{"timestamp":"2026-06-09T16:25:17.807Z","level":"INFO","message":"GET /api/health","reqId":"573108ad-25d2-43c0-b75d-4509cb620c13"}
+{"timestamp":"2026-06-09T16:25:22.813Z","level":"INFO","message":"GET /api/health","reqId":"b3a7a411-0146-40a9-a49e-894f9bb38ecf"}
+{"timestamp":"2026-06-09T16:25:27.810Z","level":"INFO","message":"GET /api/health","reqId":"897bbcc1-337a-46fe-8716-8d5eb3dfa18e"}
+{"timestamp":"2026-06-09T16:25:32.810Z","level":"INFO","message":"GET /api/health","reqId":"7a5da060-ddc2-42ee-89cd-e9131e1016d9"}
+{"timestamp":"2026-06-09T16:25:37.808Z","level":"INFO","message":"GET /api/health","reqId":"84a500e6-7951-40b6-ad65-0f9d3c3ed375"}
+{"timestamp":"2026-06-09T16:25:42.813Z","level":"INFO","message":"GET /api/health","reqId":"a941505b-0194-4de9-8c41-f5b2e75242c5"}
+{"timestamp":"2026-06-09T16:25:45.805Z","level":"INFO","message":"GET /api/health","reqId":"26a3f185-32e5-49af-b092-25c2f01c7f02"}
+{"timestamp":"2026-06-09T16:25:47.799Z","level":"INFO","message":"GET /api/health","reqId":"76fdb7b6-52d8-47e9-99ec-06b642532ce1"}
+{"timestamp":"2026-06-09T16:25:53.118Z","level":"INFO","message":"GET /api/health","reqId":"c0725417-3fd8-4f10-bfe6-63798e492cb3"}
+{"timestamp":"2026-06-09T16:25:57.816Z","level":"INFO","message":"GET /api/health","reqId":"f0e59a12-72b1-4624-8fb3-1eaed81efacb"}
+{"timestamp":"2026-06-09T16:26:02.805Z","level":"INFO","message":"GET /api/health","reqId":"ea41416e-97e3-4836-b4e6-142d6339e4c1"}
+{"timestamp":"2026-06-09T16:26:19.041Z","level":"INFO","message":"GET /api/health","reqId":"a6a14a10-ccce-4528-b286-34f97e4b82b1"}
+{"timestamp":"2026-06-09T16:26:21.858Z","level":"INFO","message":"GET /api/health","reqId":"22f9bafe-9284-43c4-a8df-1a68390b167b"}
+{"timestamp":"2026-06-09T16:26:27.178Z","level":"INFO","message":"GET /api/health","reqId":"f5f1271e-9554-475d-8d0a-3340c22c9135"}
+{"timestamp":"2026-06-09T16:26:31.865Z","level":"INFO","message":"GET /api/health","reqId":"b7c7eca4-452e-4a04-83ee-a3efa4da5cba"}
+{"timestamp":"2026-06-09T16:26:46.126Z","level":"INFO","message":"GET /api/health","reqId":"75ef228e-935c-462e-a1c6-02da76f1ba12"}
+{"timestamp":"2026-06-09T16:26:47.806Z","level":"INFO","message":"GET /api/health","reqId":"78948211-a010-4b4c-8bb8-27b1334bb8c0"}
+{"timestamp":"2026-06-09T16:26:52.797Z","level":"INFO","message":"GET /api/health","reqId":"78f1fdc0-a497-46c7-a2a8-d4cc56009f81"}
+{"timestamp":"2026-06-09T16:26:57.812Z","level":"INFO","message":"GET /api/health","reqId":"2a0f8e45-12ae-41bf-9423-cd31c6c43e36"}
+{"timestamp":"2026-06-09T16:27:03.113Z","level":"INFO","message":"GET /api/health","reqId":"bb6e374d-9378-4db9-addd-1e4a8ceb75b5"}
+{"timestamp":"2026-06-09T16:27:07.809Z","level":"INFO","message":"GET /api/health","reqId":"5a65567f-2f66-4cb3-8a23-9651b5be871f"}
+{"timestamp":"2026-06-09T16:27:12.799Z","level":"INFO","message":"GET /api/health","reqId":"a273783f-b074-4982-9fa9-419a9a84d232"}
+{"timestamp":"2026-06-09T16:27:17.807Z","level":"INFO","message":"GET /api/health","reqId":"65fba28a-7fd3-4609-ac7d-925b32ac94de"}
+{"timestamp":"2026-06-09T16:27:21.859Z","level":"INFO","message":"GET /api/health","reqId":"14dc9689-cdd0-4764-bdfe-e92ff725662a"}
+{"timestamp":"2026-06-09T16:27:23.128Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%B6%E0%A7%87%E0%A6%96+%E0%A6%B8%E0%A6%AC%E0%A7%81%E0%A6%9C","reqId":"ad7fc0dc-c45f-4010-952c-c7376c0c0c57"}
+{"timestamp":"2026-06-09T16:27:23.181Z","level":"INFO","message":"Search: query=\"{\"name\":\"শেখ সবুজ\"}\" results=1 time=51ms","reqId":"ad7fc0dc-c45f-4010-952c-c7376c0c0c57"}
+{"timestamp":"2026-06-09T16:27:26.861Z","level":"INFO","message":"GET /api/health","reqId":"645290fb-0d9c-4d37-96be-62d03a2bc807"}
+{"timestamp":"2026-06-09T16:27:31.859Z","level":"INFO","message":"GET /api/health","reqId":"20604f92-dc59-4cab-97ca-56b3b119c1e0"}
+{"timestamp":"2026-06-09T16:27:37.807Z","level":"INFO","message":"GET /api/health","reqId":"bd5d4df3-7ee0-4675-b893-acda4e9d3b07"}
+{"timestamp":"2026-06-09T16:27:42.804Z","level":"INFO","message":"GET /api/health","reqId":"21247e17-961f-4f23-840d-e32fa0437d47"}
+{"timestamp":"2026-06-09T16:27:45.803Z","level":"INFO","message":"GET /api/health","reqId":"90509e8c-a8b9-49bc-85f5-4c7df2faabaa"}
+{"timestamp":"2026-06-09T16:27:47.803Z","level":"INFO","message":"GET /api/health","reqId":"3cb4efac-a34b-43ee-9f7b-d84a40fa7c95"}
+{"timestamp":"2026-06-09T16:27:52.808Z","level":"INFO","message":"GET /api/health","reqId":"1e559d63-ef52-46b3-8b85-c207e293631c"}
+{"timestamp":"2026-06-09T16:27:57.809Z","level":"INFO","message":"GET /api/health","reqId":"03dad752-d45f-4549-9874-9965e0ee9cf4"}
+{"timestamp":"2026-06-09T16:28:01.862Z","level":"INFO","message":"GET /api/health","reqId":"10f21890-89e1-4f27-bba1-de386b8996dd"}
+{"timestamp":"2026-06-09T16:28:03.393Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"6cbdd3d0-e29f-446d-a3c7-e6040af9ef29"}
+{"timestamp":"2026-06-09T16:28:03.398Z","level":"INFO","message":"GET /api/pdf/50b7228c-d0a2-4b9c-9acb-b7b10158d204/file","reqId":"6872c1e2-c219-4e05-80e6-51566994775f"}
+{"timestamp":"2026-06-09T16:28:06.865Z","level":"INFO","message":"GET /api/health","reqId":"de16a598-33bd-4de6-8c8f-ec57d882a687"}
+{"timestamp":"2026-06-09T16:28:11.860Z","level":"INFO","message":"GET /api/health","reqId":"d0ab71dd-ede8-4a59-929c-45aa0d1141a4"}
+{"timestamp":"2026-06-09T16:28:16.860Z","level":"INFO","message":"GET /api/health","reqId":"ad9d881f-a711-454c-8b31-880e677547dd"}
+{"timestamp":"2026-06-09T16:28:21.858Z","level":"INFO","message":"GET /api/health","reqId":"528e3924-ab5d-45ef-98de-093472205412"}
+{"timestamp":"2026-06-09T16:28:26.864Z","level":"INFO","message":"GET /api/health","reqId":"1549c1ba-02bf-485d-8029-50812e35c8cc"}
+{"timestamp":"2026-06-09T16:28:31.866Z","level":"INFO","message":"GET /api/health","reqId":"0ec7d938-9464-4364-a090-b93fb110dd92"}
+{"timestamp":"2026-06-09T16:28:36.859Z","level":"INFO","message":"GET /api/health","reqId":"09ed7970-e1d3-4f03-a143-87565a8490e7"}
+{"timestamp":"2026-06-09T16:28:41.863Z","level":"INFO","message":"GET /api/health","reqId":"73920424-815c-403c-932d-cbc67b086eb8"}
+{"timestamp":"2026-06-09T16:28:46.807Z","level":"INFO","message":"GET /api/health","reqId":"4435067f-f9e4-4e60-8f77-c33ed82842a4"}
+{"timestamp":"2026-06-09T16:28:46.873Z","level":"INFO","message":"GET /api/health","reqId":"02b8c0c1-3566-4316-ac47-5cbf35816c04"}
+{"timestamp":"2026-06-09T16:28:51.861Z","level":"INFO","message":"GET /api/health","reqId":"df1d1474-6154-43af-bef8-9be690974d60"}
+{"timestamp":"2026-06-09T16:28:56.871Z","level":"INFO","message":"GET /api/health","reqId":"e0fc6b5c-9e4c-46b2-81fc-14be9ba512a6"}
+{"timestamp":"2026-06-09T16:29:01.859Z","level":"INFO","message":"GET /api/health","reqId":"6fa61c73-2571-4dfa-83b0-5075b91a8e68"}
+{"timestamp":"2026-06-09T16:29:06.867Z","level":"INFO","message":"GET /api/health","reqId":"173c1588-c899-4eac-ae3a-a3d2d4985497"}
+{"timestamp":"2026-06-09T16:29:11.872Z","level":"INFO","message":"GET /api/health","reqId":"0f86385a-66fe-4028-b36a-e763dc66a9f3"}
+{"timestamp":"2026-06-09T16:29:16.860Z","level":"INFO","message":"GET /api/health","reqId":"3fd8960b-eea7-459a-ab0b-517fc3de70fc"}
+{"timestamp":"2026-06-09T16:29:21.864Z","level":"INFO","message":"GET /api/health","reqId":"af290bfc-e925-44a4-9148-52912302e7bb"}
+{"timestamp":"2026-06-09T16:29:26.858Z","level":"INFO","message":"GET /api/health","reqId":"64d7035e-3a9e-4162-b7a4-d77623847a22"}
+{"timestamp":"2026-06-09T16:29:31.860Z","level":"INFO","message":"GET /api/health","reqId":"0a757125-ff7a-44b2-baf2-38cd096324e6"}
+{"timestamp":"2026-06-09T16:29:36.862Z","level":"INFO","message":"GET /api/health","reqId":"c5f4af1b-888c-4f39-98ad-306346ea9905"}
+{"timestamp":"2026-06-09T16:29:41.861Z","level":"INFO","message":"GET /api/health","reqId":"91dde412-c0d9-475d-af13-d559a4c7bdb7"}
+{"timestamp":"2026-06-09T16:29:45.804Z","level":"INFO","message":"GET /api/health","reqId":"f54c350f-411f-4543-9069-580581d00600"}
+{"timestamp":"2026-06-09T16:29:46.865Z","level":"INFO","message":"GET /api/health","reqId":"9dbe6a22-0fcc-41ab-a267-adce6cdf30a5"}
+{"timestamp":"2026-06-09T16:29:51.862Z","level":"INFO","message":"GET /api/health","reqId":"c4355f3e-eae4-4427-a40e-0e1c3af7f5dd"}
+{"timestamp":"2026-06-09T16:29:57.808Z","level":"INFO","message":"GET /api/health","reqId":"196bb741-c6bc-40be-9a1a-77b4a8264ac1"}
+{"timestamp":"2026-06-09T16:30:02.810Z","level":"INFO","message":"GET /api/health","reqId":"0f5558f0-6442-4134-af8d-df590b60bec8"}
+{"timestamp":"2026-06-09T16:30:07.800Z","level":"INFO","message":"GET /api/health","reqId":"8d8bb891-cfd8-4e89-aa4f-87fb097dcba2"}
+{"timestamp":"2026-06-09T16:30:12.119Z","level":"INFO","message":"GET /api/health","reqId":"b5147301-2f93-406b-b1ea-8366f991f7a5"}
+{"timestamp":"2026-06-09T16:30:16.871Z","level":"INFO","message":"GET /api/health","reqId":"fd7a4d25-297b-44b5-b796-91034b6ff23a"}
+{"timestamp":"2026-06-09T16:30:21.864Z","level":"INFO","message":"GET /api/health","reqId":"fb1f0dc1-adef-4c6d-b68b-c19e62b52675"}
+{"timestamp":"2026-06-09T16:30:26.859Z","level":"INFO","message":"GET /api/health","reqId":"54ea1812-dc3d-4559-a4db-ac7818cf15e9"}
+{"timestamp":"2026-06-09T16:30:31.859Z","level":"INFO","message":"GET /api/health","reqId":"06302cea-d0ee-468e-b42f-b6dede774057"}
+{"timestamp":"2026-06-09T16:30:36.866Z","level":"INFO","message":"GET /api/health","reqId":"ed1e0ca1-5805-443e-9d6e-7a0bed550001"}
+{"timestamp":"2026-06-09T16:30:41.450Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%9B%E0%A6%95%E0%A6%BF","reqId":"fc6e906e-78b1-492b-8135-5dc1f6dd11d0"}
+{"timestamp":"2026-06-09T16:30:41.452Z","level":"INFO","message":"Search: query=\"{\"name\":\"ছকি\"}\" results=7 time=0ms","reqId":"fc6e906e-78b1-492b-8135-5dc1f6dd11d0"}
+{"timestamp":"2026-06-09T16:30:41.863Z","level":"INFO","message":"GET /api/health","reqId":"a1ff6d3c-9624-40c0-96b8-b4977790d316"}
+{"timestamp":"2026-06-09T16:30:45.808Z","level":"INFO","message":"GET /api/health","reqId":"77153835-7a7f-4ca6-ab02-daf96a5b258b"}
+{"timestamp":"2026-06-09T16:30:46.865Z","level":"INFO","message":"GET /api/health","reqId":"43168e21-06a6-42c3-9fd7-68ca107bc4f4"}
+{"timestamp":"2026-06-09T16:30:51.857Z","level":"INFO","message":"GET /api/health","reqId":"3f6fee4e-369c-41c2-9ca6-fbf765b32f64"}
+{"timestamp":"2026-06-09T16:30:52.485Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%9B%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%BE","reqId":"b2b255f6-3b54-4d07-8d14-6ace6526927a"}
+{"timestamp":"2026-06-09T16:30:52.488Z","level":"INFO","message":"Search: query=\"{\"name\":\"ছকিনা\"}\" results=7 time=2ms","reqId":"b2b255f6-3b54-4d07-8d14-6ace6526927a"}
+{"timestamp":"2026-06-09T16:30:56.859Z","level":"INFO","message":"GET /api/health","reqId":"db76e8f5-138d-450b-8210-2a4e9ef1639e"}
+{"timestamp":"2026-06-09T16:31:01.862Z","level":"INFO","message":"GET /api/health","reqId":"a8854758-79b9-46b6-86da-25d9314bdddb"}
+{"timestamp":"2026-06-09T16:31:07.802Z","level":"INFO","message":"GET /api/health","reqId":"407ae857-5cff-40bc-9f65-8e14012f91f9"}
+{"timestamp":"2026-06-09T16:31:12.803Z","level":"INFO","message":"GET /api/health","reqId":"821033b6-6391-4ced-954c-5fc4b29dc5a5"}
+{"timestamp":"2026-06-09T16:31:17.808Z","level":"INFO","message":"GET /api/health","reqId":"8da89e70-faca-4869-bc7f-f6bbcef1d2e8"}
+{"timestamp":"2026-06-09T16:31:22.801Z","level":"INFO","message":"GET /api/health","reqId":"3e881ea2-8e2f-4b07-810a-f08f1e37f6f9"}
+{"timestamp":"2026-06-09T16:31:27.815Z","level":"INFO","message":"GET /api/health","reqId":"2f4232a8-7da8-432c-a1bb-594c9f3c39d8"}
+{"timestamp":"2026-06-09T16:31:32.806Z","level":"INFO","message":"GET /api/health","reqId":"1f2b8e6a-0834-4700-ba6c-43bc1468ca62"}
+{"timestamp":"2026-06-09T16:31:37.807Z","level":"INFO","message":"GET /api/health","reqId":"ee00bc3c-dd58-4430-9a43-c251f7db6bf8"}
+{"timestamp":"2026-06-09T16:31:42.799Z","level":"INFO","message":"GET /api/health","reqId":"32ae1df4-9591-425f-b388-d83b3674ce3f"}
+{"timestamp":"2026-06-09T16:31:45.810Z","level":"INFO","message":"GET /api/health","reqId":"99866dc0-3365-4026-8638-df71f2a1baf0"}
+{"timestamp":"2026-06-09T16:31:47.807Z","level":"INFO","message":"GET /api/health","reqId":"63face28-85ea-4be5-9351-477db1c7c6cb"}
+{"timestamp":"2026-06-09T16:31:52.811Z","level":"INFO","message":"GET /api/health","reqId":"8d61f074-dfc6-4b2f-b4c6-230f0db86a00"}
+{"timestamp":"2026-06-09T16:31:57.808Z","level":"INFO","message":"GET /api/health","reqId":"4208ca4e-f672-45e4-b4e3-df998a5cd1d7"}
+{"timestamp":"2026-06-09T16:32:02.808Z","level":"INFO","message":"GET /api/health","reqId":"6b01b76c-45b6-4e26-9acd-f677e33c048a"}
+{"timestamp":"2026-06-09T16:32:13.078Z","level":"INFO","message":"GET /api/health","reqId":"8bfa4813-69f8-4129-92a6-0419315cb6f8"}
+{"timestamp":"2026-06-09T16:32:16.859Z","level":"INFO","message":"GET /api/health","reqId":"2b054b36-040e-4927-92a6-6b56b3a8bd00"}
+{"timestamp":"2026-06-09T16:32:17.503Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"91a9b51b-46d9-4b2c-9c15-89b4775bc288"}
+{"timestamp":"2026-06-09T16:32:17.509Z","level":"INFO","message":"GET /api/pdf/34b553b3-fef4-47bc-b21a-20ff39a4336c/file","reqId":"42c8e058-3bd7-4e81-b89e-9d9b933b6880"}
+{"timestamp":"2026-06-09T16:32:21.866Z","level":"INFO","message":"GET /api/health","reqId":"0ec4b675-26a3-4aa9-8cb1-297b33f39b93"}
+{"timestamp":"2026-06-09T16:32:26.870Z","level":"INFO","message":"GET /api/health","reqId":"43025326-15ac-4ee3-9670-0c884287513d"}
+{"timestamp":"2026-06-09T16:32:31.870Z","level":"INFO","message":"GET /api/health","reqId":"3ca56a56-03a0-4ad9-9c51-3fd6cdb77c8d"}
+{"timestamp":"2026-06-09T16:32:36.859Z","level":"INFO","message":"GET /api/health","reqId":"aa4f8ccd-1153-4317-aee5-ae1de79506c2"}
+{"timestamp":"2026-06-09T16:32:41.870Z","level":"INFO","message":"GET /api/health","reqId":"22679631-6c6d-4015-a5a0-f14d320a98a9"}
+{"timestamp":"2026-06-09T16:32:45.834Z","level":"INFO","message":"GET /api/health","reqId":"4a63470d-a9fd-40fa-b6fe-42099bca316b"}
+{"timestamp":"2026-06-09T16:32:46.860Z","level":"INFO","message":"GET /api/health","reqId":"a8ed1de9-f088-40c1-a1a4-ddba1f025091"}
+{"timestamp":"2026-06-09T16:32:51.864Z","level":"INFO","message":"GET /api/health","reqId":"038263ec-56e7-4ff8-8c55-b2f9109bc09e"}
+{"timestamp":"2026-06-09T16:32:57.807Z","level":"INFO","message":"GET /api/health","reqId":"ada7acd5-76dd-4603-9ae1-2a282b519068"}
+{"timestamp":"2026-06-09T16:33:02.811Z","level":"INFO","message":"GET /api/health","reqId":"767faf0d-1c64-401b-95d1-fd035c32e202"}
+{"timestamp":"2026-06-09T16:33:07.811Z","level":"INFO","message":"GET /api/health","reqId":"76a63e7d-87a6-414d-a156-4601bb7809db"}
+{"timestamp":"2026-06-09T16:33:12.801Z","level":"INFO","message":"GET /api/health","reqId":"99d34ca5-d4a9-475c-9a19-d91103dad348"}
+{"timestamp":"2026-06-09T16:33:17.809Z","level":"INFO","message":"GET /api/health","reqId":"1c9ffdb6-91f9-41ac-8ee7-a44bb0a9b553"}
+{"timestamp":"2026-06-09T16:33:22.803Z","level":"INFO","message":"GET /api/health","reqId":"0ddf75f5-6149-4f24-a359-3fbb033ee638"}
+{"timestamp":"2026-06-09T16:33:27.801Z","level":"INFO","message":"GET /api/health","reqId":"61d15872-8f61-45f6-b150-58b82a658a0c"}
+{"timestamp":"2026-06-09T16:33:32.807Z","level":"INFO","message":"GET /api/health","reqId":"9872ac92-738e-4f29-b44a-8f21578a13fb"}
+{"timestamp":"2026-06-09T16:33:37.802Z","level":"INFO","message":"GET /api/health","reqId":"10011bf8-8975-46b8-82e0-8096687ca75f"}
+{"timestamp":"2026-06-09T16:33:42.803Z","level":"INFO","message":"GET /api/health","reqId":"31a084e8-8745-4b95-a144-af067023020d"}
+{"timestamp":"2026-06-09T16:33:45.816Z","level":"INFO","message":"GET /api/health","reqId":"d724f7eb-c8bf-4b4d-973f-8bd8f93b950a"}
+{"timestamp":"2026-06-09T16:33:47.808Z","level":"INFO","message":"GET /api/health","reqId":"1d601229-72c3-4fd6-a1bc-1e4d0584b472"}
+{"timestamp":"2026-06-09T16:33:52.801Z","level":"INFO","message":"GET /api/health","reqId":"03070fe9-2fbd-4f43-90d6-3e43cd019ee5"}
+{"timestamp":"2026-06-09T16:34:27.980Z","level":"INFO","message":"GET /api/health","reqId":"6873eac2-7ff3-479d-b90e-de1777dc20a3"}
+{"timestamp":"2026-06-10T13:25:55.811Z","level":"INFO","message":"GET /api/pdf/list","reqId":"8faf6450-f79d-49a3-9222-7d86f3d0535a"}
+{"timestamp":"2026-06-10T13:25:55.872Z","level":"INFO","message":"GET /api/pdf/list","reqId":"e7286f47-3e9d-48e1-b9df-16628182aeb6"}
+{"timestamp":"2026-06-10T13:25:55.875Z","level":"INFO","message":"GET /api/health","reqId":"7570f746-7446-4e7d-9504-61418db9783b"}
+{"timestamp":"2026-06-10T13:25:55.881Z","level":"INFO","message":"GET /api/health","reqId":"f04e2839-8097-4749-ae3a-c4bec76864cc"}
+{"timestamp":"2026-06-10T13:26:00.501Z","level":"INFO","message":"GET /api/health","reqId":"751ffe92-49e5-4f58-8d15-95e9adee2379"}
+{"timestamp":"2026-06-10T13:26:05.508Z","level":"INFO","message":"GET /api/health","reqId":"d6cf0032-b016-4607-b8e3-6a7b9d8b0753"}
+{"timestamp":"2026-06-10T13:26:10.504Z","level":"INFO","message":"GET /api/health","reqId":"8bc492ee-f4ba-4d84-b0e4-07d65b6f4f48"}
+{"timestamp":"2026-06-10T13:26:15.500Z","level":"INFO","message":"GET /api/health","reqId":"9476b958-4c8d-4dbb-a01e-f4dae37535ec"}
+{"timestamp":"2026-06-10T13:26:20.494Z","level":"INFO","message":"GET /api/health","reqId":"0996be3b-47ec-492b-85fc-3469886bce0c"}
+{"timestamp":"2026-06-10T13:26:25.502Z","level":"INFO","message":"GET /api/health","reqId":"5020294c-61ac-4954-934d-a4abd4bec177"}
+{"timestamp":"2026-06-10T13:26:30.505Z","level":"INFO","message":"GET /api/health","reqId":"1c6c2ecc-d9e0-487c-bd20-98138eadb860"}
+{"timestamp":"2026-06-10T13:26:35.496Z","level":"INFO","message":"GET /api/health","reqId":"e4cb8b3b-f4ca-4c09-a875-b95edea56a37"}
+{"timestamp":"2026-06-10T13:26:40.495Z","level":"INFO","message":"GET /api/health","reqId":"c5ecc1f3-901a-4061-8c6f-0a9c39549ad3"}
+{"timestamp":"2026-06-10T13:26:41.057Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%9B%E0%A6%BF%E0%A6%95%E0%A6%A8%E0%A6%BE+%E0%A6%AC%E0%A6%97%E0%A6%AE","reqId":"4fb1839c-8cd3-4b84-be75-3217627e100c"}
+{"timestamp":"2026-06-10T13:26:41.060Z","level":"INFO","message":"Search: query=\"{\"name\":\"ছিকনা বগম\"}\" results=0 time=2ms","reqId":"4fb1839c-8cd3-4b84-be75-3217627e100c"}
+{"timestamp":"2026-06-10T13:26:45.506Z","level":"INFO","message":"GET /api/health","reqId":"e17c15f1-7779-4bfc-ad70-080bdf92a897"}
+{"timestamp":"2026-06-10T13:26:50.495Z","level":"INFO","message":"GET /api/health","reqId":"0f70226a-e45e-4c66-857b-8c80003e6891"}
+{"timestamp":"2026-06-10T13:26:55.499Z","level":"INFO","message":"GET /api/health","reqId":"3b19f7cf-24ab-4d8f-8191-1557a81d6157"}
+{"timestamp":"2026-06-10T13:27:00.494Z","level":"INFO","message":"GET /api/health","reqId":"1f01ea79-dac4-43aa-ba6f-c67a345bbc26"}
+{"timestamp":"2026-06-10T13:27:05.507Z","level":"INFO","message":"GET /api/health","reqId":"e945d224-4872-42d8-a58e-aad399843643"}
+{"timestamp":"2026-06-10T13:27:10.495Z","level":"INFO","message":"GET /api/health","reqId":"3f6df69c-8aeb-40c0-926a-41091d4e399c"}
+{"timestamp":"2026-06-10T13:27:10.725Z","level":"INFO","message":"GET /api/voters/search?name=%E0%A6%9B%E0%A6%95%E0%A6%BF%E0%A6%A8%E0%A6%BE+%E0%A6%AC%E0%A7%87%E0%A6%97%E0%A6%AE","reqId":"d088e044-6730-41fa-8597-362631f90d88"}
+{"timestamp":"2026-06-10T13:27:10.728Z","level":"INFO","message":"Search: query=\"{\"name\":\"ছকিনা বেগম\"}\" results=7 time=1ms","reqId":"d088e044-6730-41fa-8597-362631f90d88"}
+{"timestamp":"2026-06-10T13:27:15.501Z","level":"INFO","message":"GET /api/health","reqId":"ec702753-05e6-4a06-b98b-1f3056bf8c49"}
+{"timestamp":"2026-06-10T13:27:20.501Z","level":"INFO","message":"GET /api/health","reqId":"b0845b96-751b-42c8-b57a-b081f07d227c"}
+{"timestamp":"2026-06-10T13:27:25.499Z","level":"INFO","message":"GET /api/health","reqId":"217051e3-b5a8-419b-b37a-4596e4a29635"}
+{"timestamp":"2026-06-10T13:27:30.508Z","level":"INFO","message":"GET /api/health","reqId":"af035085-a6d2-4536-9218-7277f9909c9a"}
+{"timestamp":"2026-06-10T13:27:35.505Z","level":"INFO","message":"GET /api/health","reqId":"b91b215d-fbfd-4794-8d17-1b149156fcca"}
+{"timestamp":"2026-06-10T13:27:40.505Z","level":"INFO","message":"GET /api/health","reqId":"ec3e7611-bf2a-44c7-aac9-c5fac00663a0"}
+{"timestamp":"2026-06-10T13:27:45.495Z","level":"INFO","message":"GET /api/health","reqId":"f24468ac-a2ff-4638-a343-9f61826fa5a2"}
+{"timestamp":"2026-06-10T13:27:50.506Z","level":"INFO","message":"GET /api/health","reqId":"7fe9da7e-106a-4500-9401-0c1fb949c138"}
+{"timestamp":"2026-06-10T13:27:55.502Z","level":"INFO","message":"GET /api/health","reqId":"2348cec4-dea4-4460-9244-358d4316ae2c"}
+{"timestamp":"2026-06-10T13:28:00.496Z","level":"INFO","message":"GET /api/health","reqId":"884bf045-cfbf-4aae-9e64-0fbc21acb7fd"}
+{"timestamp":"2026-06-10T13:28:05.507Z","level":"INFO","message":"GET /api/health","reqId":"fa3f0276-bc88-45c8-811b-afd490dadf66"}
+{"timestamp":"2026-06-10T13:28:10.506Z","level":"INFO","message":"GET /api/health","reqId":"ea2ecda5-fde6-463f-9665-80fa9e0b8172"}
+{"timestamp":"2026-06-10T13:28:15.497Z","level":"INFO","message":"GET /api/health","reqId":"50de658d-4f71-487d-aa14-1c4e75ef02c0"}
+{"timestamp":"2026-06-10T13:28:20.501Z","level":"INFO","message":"GET /api/health","reqId":"9649222d-5549-4540-85c2-fdcf07930ddb"}
+{"timestamp":"2026-06-10T13:28:25.507Z","level":"INFO","message":"GET /api/health","reqId":"fda6c16c-51e0-44c1-b6da-8cf81adea954"}
+{"timestamp":"2026-06-10T13:28:30.507Z","level":"INFO","message":"GET /api/health","reqId":"125aaefa-fe7b-4424-b706-84f68810d873"}
+{"timestamp":"2026-06-10T13:28:35.507Z","level":"INFO","message":"GET /api/health","reqId":"4cdd170d-c1b9-4688-85ff-30044ee5f75b"}
+{"timestamp":"2026-06-10T13:28:40.506Z","level":"INFO","message":"GET /api/health","reqId":"280141a0-9127-4a80-aa0a-4a95b4de6f53"}
+{"timestamp":"2026-06-10T13:28:45.496Z","level":"INFO","message":"GET /api/health","reqId":"a56221c6-bd0f-41f2-b5c0-391cf56f34a8"}
+{"timestamp":"2026-06-10T13:28:50.501Z","level":"INFO","message":"GET /api/health","reqId":"692c5b6e-b800-4167-aebf-429bd91917d3"}
+{"timestamp":"2026-06-10T13:28:55.509Z","level":"INFO","message":"GET /api/health","reqId":"4f846feb-cc49-42e9-829d-5457e960c600"}
+{"timestamp":"2026-06-10T13:29:00.506Z","level":"INFO","message":"GET /api/health","reqId":"e058588c-782e-4bdd-85ed-3455ec7bd327"}
+{"timestamp":"2026-06-10T13:29:05.505Z","level":"INFO","message":"GET /api/health","reqId":"982dcea4-aa83-432b-82ba-a753a40273b8"}
+{"timestamp":"2026-06-10T13:29:10.499Z","level":"INFO","message":"GET /api/health","reqId":"2feed93f-c3a9-441e-82f1-4c9b983f090e"}
+{"timestamp":"2026-06-10T13:29:15.498Z","level":"INFO","message":"GET /api/health","reqId":"06ab8525-8bf2-4146-827c-822695420f96"}
+{"timestamp":"2026-06-10T13:29:20.505Z","level":"INFO","message":"GET /api/health","reqId":"7dfed5b4-e907-4a3f-a1e3-d4ac043d0f9c"}
+{"timestamp":"2026-06-10T13:29:25.505Z","level":"INFO","message":"GET /api/health","reqId":"6c2ee78c-0d66-4624-bcf1-12a0b9ace0e0"}
+{"timestamp":"2026-06-10T13:29:30.507Z","level":"INFO","message":"GET /api/health","reqId":"0e8cf316-8626-4aaa-982d-4ce96b5b5675"}

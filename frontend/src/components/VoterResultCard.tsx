@@ -69,7 +69,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const [error, setError] = useState('');
   const [zoom, setZoom] = useState(1.2);
   const [pdfReady, setPdfReady] = useState(false);
-  const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties | null>(null);
 
   const pdfUrl = voter.pdfUploadId ? `${API_BASE}/api/pdf/${voter.pdfUploadId}/file` : '';
 
@@ -178,80 +177,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         renderTaskRef.current = task;
 
         await task.promise;
-        if (cancelled) return;
-
-        // ── Highlight Position Coordinate Processing ──
-        const voterPageNumber = voter.pdfPageNumber || 3;
-        if (currentPage === voterPageNumber) {
-          if (voter.boundingBox) {
-            const bbox = voter.boundingBox;
-            // The visual coordinates represent the first line (serial/name) of the voter's cell.
-            // A standard voter card cell in the EC list layout is about 245 points wide and 80 points tall.
-            // Since the serial line is at the top left, the cell starts at bbox.x - 5 and extends 245 points wide.
-            // The top of the cell is at bbox.y + 12, and the cell extends 80 points downwards (so bottom is bbox.y - 68).
-            const cellPdfX = bbox.x - 5;
-            const cellPdfY = bbox.y - 68; // bottom boundary of the cell
-            const cellPdfW = 245;
-            const cellPdfH = 80;
-
-            // Convert bottom-up Cartesian PDF points into top-down viewport canvas pixels
-            const [left, top] = viewport.convertToViewportPoint(cellPdfX, cellPdfY + cellPdfH);
-            const [right, bottom] = viewport.convertToViewportPoint(cellPdfX + cellPdfW, cellPdfY);
-
-            // Establish overlay dimensions
-            setOverlayStyle({
-              position: 'absolute',
-              left: `${left}px`,
-              top: `${top}px`,
-              width: `${right - left}px`,
-              height: `${bottom - top}px`,
-              border: '2px solid red',
-              backgroundColor: 'rgba(255, 0, 0, 0.2)',
-              zIndex: 10,
-              pointerEvents: 'none',
-              borderRadius: '6px',
-            });
-          } else {
-            // FALLBACK SCHEME: Mathematical grid calculations (3 columns x 5 rows)
-            const serialNum = voter.serialNum || 0;
-            const serialOnPage = voter.serialOnPage || ((serialNum - 1) % 15) + 1;
-
-            const COLS = 3;
-            const ROWS_PER_PAGE = 5;
-
-            const col = ((serialOnPage - 1) % COLS);
-            const row = Math.floor((serialOnPage - 1) / COLS);
-
-            const W = viewport.width;
-            const H = viewport.height;
-
-            // Static margins based on layout sheets
-            const GRID_TOP = H * 0.22;
-            const GRID_BOTTOM = H * 0.93;
-            const GRID_LEFT = W * 0.01;
-            const GRID_RIGHT = W * 0.99;
-
-            const cellW = (GRID_RIGHT - GRID_LEFT) / COLS;
-            const cellH = (GRID_BOTTOM - GRID_TOP) / ROWS_PER_PAGE;
-
-            const left = GRID_LEFT + col * cellW;
-            const top = GRID_TOP + row * cellH;
-
-            setOverlayStyle({
-              position: 'absolute',
-              left: `${left}px`,
-              top: `${top}px`,
-              width: `${cellW}px`,
-              height: `${cellH}px`,
-              border: '2px solid red',
-              backgroundColor: 'rgba(255, 0, 0, 0.2)',
-              zIndex: 10,
-              pointerEvents: 'none',
-            });
-          }
-        } else {
-          setOverlayStyle(null);
-        }
       } catch (e: any) {
         if (e?.name !== 'RenderingCancelledException' && !cancelled) {
           console.error('Render error:', e);
@@ -317,10 +242,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           <div><span className="text-amber-600 font-bold">পিতা:</span> <span className="font-semibold text-slate-800">{voter.fatherName}</span></div>
           <div><span className="text-amber-600 font-bold">মাতা:</span> <span className="font-semibold text-slate-800">{voter.motherName}</span></div>
           <div><span className="text-amber-600 font-bold">ভোটার নং:</span> <span className="font-mono font-semibold text-slate-800">{voter.voterNo}</span></div>
-          <div className="flex items-center gap-1 text-red-700 font-bold">
-            <div className="w-3 h-3 bg-red-600 rounded-sm opacity-70"></div>
-            লাল বর্ডার = এই ভোটারের অবস্থান
-          </div>
         </div>
 
         {/* PDF Canvas Area */}
@@ -341,14 +262,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           {!loading && !error && (
             <div className="relative shadow-2xl border border-slate-300 rounded-lg overflow-hidden">
               <canvas ref={canvasRef} className="block bg-white"/>
-              {overlayStyle && (
-                <div style={overlayStyle} className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]">
-                  {/* Floating Name Badge */}
-                  <div className="absolute -top-7 left-0 bg-red-600 text-white font-bold text-[10px] px-1.5 py-0.5 rounded shadow-md flex items-center gap-1 font-serif whitespace-nowrap pointer-events-none">
-                    <Check className="w-3 h-3 text-white" /> {voter.nameBn}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
