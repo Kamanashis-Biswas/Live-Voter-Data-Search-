@@ -129,6 +129,15 @@ export default function App() {
             };
           });
           setSearchLogs(mappedLogs);
+
+          // Populate the sidebar's recentActions array with search actions from database
+          const actions = mappedLogs.slice(0, 5).map((log) => ({
+            id: Number(log.id.replace(/\D/g, '').slice(0, 9)) || Date.now() + Math.random(),
+            text: log.query || 'সাধারণ অনুসন্ধান',
+            time: log.dateTime,
+            type: log.status === 'Success' ? 'blue' as const : 'red' as const
+          }));
+          setRecentActions(actions);
         }
       }
     } catch (err) {
@@ -228,10 +237,11 @@ export default function App() {
     }
   }, []);
 
-  // Fetch PDFs catalog on initial assembly mount
+  // Fetch PDFs and search logs on initial assembly mount
   useEffect(() => {
     loadPdfs();
-  }, [loadPdfs]);
+    loadSearchLogs();
+  }, [loadPdfs, loadSearchLogs]);
 
   /**
    * Queries the search API endpoint using client filters.
