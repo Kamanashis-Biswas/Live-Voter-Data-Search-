@@ -40,11 +40,7 @@ export const VoterSearchForm: React.FC<VoterSearchFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(filters);
-  };
-
-  const handleResetClick = () => {
     setFilters(initialFilters);
-    onReset();
   };
 
   return (
@@ -156,23 +152,6 @@ export const VoterSearchForm: React.FC<VoterSearchFormProps> = ({
             />
           </div>
 
-          {/* Gender Select Input */}
-          <div className="col-span-1">
-            <label htmlFor="gender-input" className="block text-xs font-bold text-slate-600 mb-1.5 uppercase">
-              লিঙ্গ (Gender)
-            </label>
-            <select
-              id="gender-input"
-              name="gender"
-              value={filters.gender}
-              onChange={handleInputChange}
-              className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-slate-900 cursor-pointer"
-            >
-              <option value="all">সব লিঙ্গ</option>
-              <option value="male">পুরুষ</option>
-              <option value="female">মহিলা</option>
-            </select>
-          </div>
 
           {/* District Input */}
           <div className="col-span-1">
@@ -224,18 +203,6 @@ export const VoterSearchForm: React.FC<VoterSearchFormProps> = ({
 
           {/* Form Actions Section with exact visual specifications from design */}
           <div className="col-span-1 md:col-span-2 pt-4 flex flex-col sm:flex-row gap-4 justify-end">
-            <button
-              type="button"
-              id="reset-filter-button"
-              onClick={handleResetClick}
-              disabled={searching}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-50 text-red-700 font-bold rounded-lg border border-red-200 hover:bg-red-100 transition-colors w-full sm:w-auto cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              রিসেট
-            </button>
             <button
               type="submit"
               id="submit-search-button"

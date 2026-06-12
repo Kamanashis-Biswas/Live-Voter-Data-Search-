@@ -283,7 +283,7 @@ function fixMisplacedPreMatras(str) {
     'রিফক': 'রফিক', 'লিতফ': 'লতিফ', 'লিতফা': 'লতিফা',
     'সিফউদ্দিন': 'সফিউদ্দিন', 'সিফউন্নীন': 'সফিউন্নীন',
     'শিহতুল': 'শহিদুল', 'মিতয়ার': 'মতিয়ার', 'তসিলম': 'তসলিম',
-    'ইত্নাহিম': 'ইব্রাহিম', 'মিহতুল': 'মহিতুল', 'ছিবর': 'ছবির',
+    'ইত্নাহিম': 'ইব্রাহিম', 'ইত্নাহীম': 'ইব্রাহিম', 'মিহতুল': 'মহিতুল', 'ছিবর': 'ছবির',
     'ছিবরুন': 'ছবিরুন', 'জিমর': 'জমির', 'তাছিলমা': 'তাসলিমা',
     'জমেশদ': 'জমশেদ', 'জোমেশদ': 'জমশেদ', 'জমেসদ': 'জমশেদ',
     'শাহিতুল': 'শাহিদুল', 'তাহিতুল': 'তাহিদুল', 'মুরিশদা': 'মুরশিদা',
@@ -381,14 +381,20 @@ function fixECExtractionArtifacts(str) {
 
   // ── Title prefix normalization ──
   s = s.replace(/মোঃ\s*/g, 'মোহাম্মদ ');
-  s = s.replace(/মোসাঃ\s*/g, 'মোসাম্মৎ ');
-  s = s.replace(/মোছাঃ\s*/g, 'মোসাম্মৎ ');
-  s = s.replace(/আঃ\s*/g, 'আব্দুল ');
+  s = s.replace(/মোসাম্মৎ\s*/g, 'মোসাঃ ');
+  s = s.replace(/মোছাঃ\s*/g, 'মোসাঃ ');
+  s = s.replace(/মোসাঃ\s*/g, 'মোসাঃ ');
+  s = s.replace(/শেখ আব্দুল\s*/g, 'শেখ আঃ ');
   s = s.replace(/মোঃ/g, 'মোহাম্মদ');
-  s = s.replace(/মোসাঃ/g, 'মোসাম্মৎ');
-  s = s.replace(/মোছাঃ/g, 'মোসাম্মৎ');
+  s = s.replace(/মোসাম্মৎ/g, 'মোসাঃ');
+  s = s.replace(/মোছাঃ/g, 'মোসাঃ');
+  s = s.replace(/মোসাঃ/g, 'মোসাঃ');
+  s = s.replace(/শেখ আব্দুল/g, 'শেখ আঃ');
   
   // ── Additional common EC corruption fixes ──
+  s = s.replace(/(^|[\s,;:।\-\(])বিব($|[\s,;:।\-\)])/g, '$1বিবি$2');
+  s = s.replace(/মিল্লক/g, 'মল্লিক');
+  s = s.replace(/ছল্পার/g, 'ছব্দার');
   s = s.replace(/বগম/g, 'বেগম');
   s = s.replace(/মহমদ/g, 'মোহাম্মদ');
   s = s.replace(/মোহামদ/g, 'মোহাম্মদ');
@@ -536,17 +542,16 @@ function normalizeForSearch(str) {
   
   // 2. Map homophones to unified consonant classes
   s = s.replace(/[ষস]/g, 'শ');
-  s = s.replace(/[ড়ঢ়]/g, 'র');
+  s = s.replace(/[\u09DC\u09DD]/g, 'র');
   s = s.replace(/ণ/g, 'ন');
   s = s.replace(/ঈ/g, 'ই');
   s = s.replace(/ঊ/g, 'উ');
   s = s.replace(/ঙ/g, 'ং');
   s = s.replace(/ৎ/g, 'ত');
   
-  // 3. Strip ONLY hasanta (্), nukta (়), and au-length mark (ৗ)
-  //    PRESERVE all vowel matras (া-ৌ) and nasal marks (ঁ, ং, ঃ) for readable, precise indexes
+  // 3. Strip all vowel matras, hasanta, nukta, and au-length mark
   return s
-    .replace(/[\u09CD\u09BC\u09D7]/gu, '')
+    .replace(/[\u09BE-\u09CD\u09BC\u09D7]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
 }

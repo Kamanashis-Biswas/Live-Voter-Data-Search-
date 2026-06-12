@@ -195,42 +195,72 @@ export default function App() {
       let results = data.results || [];
 
       // Normalize search results mapping standard database schemas
-      const mappedResults: VoterRecord[] = results.map((v: any) => ({
-        id: v.id,
-        nid: v.nid || '',
-        voterNo: v.voterNo || v.voter_no || '',
-        nameBn: v.nameBn || v.name_bn || '',
-        nameEn: v.nameEn || v.name_en || '',
-        fatherName: v.fatherName || v.father_name || '',
-        motherName: v.motherName || v.mother_name || '',
-        dob: v.dob || '',
-        village: v.village || '',
-        gender: v.gender || 'পুরুষ',
-        bloodGroup: v.bloodGroup || v.blood_group || '',
-        photoUrl: v.photoUrl || v.photo_url || '',
-        status: v.status || 'সক্রিয়',
-        page_number: v.page_number || v.pdfPageNumber || '',
-        serialNo: v.serialNo || v.serial_no || '',
-        serialNum: v.serialNum || 0,
-        serialOnPage: v.serialOnPage || 1,
-        pdfPageNumber: v.pdfPageNumber || 2,
-        occupation: v.occupation || '',
-        unionName: v.unionName || v.union_name || '',
-        wardNo: v.wardNo || v.ward_no || '',
-        voterArea: v.voterArea || v.voter_area || '',
-        voterAreaNo: v.voterAreaNo || v.voter_area_no || '',
-        upazila: v.upazila || '',
-        district: v.district || '',
-        postCode: v.postCode || v.post_code || '',
-        publicationDate: v.publicationDate || v.publication_date || '',
-        pdfUploadId: v.pdfUploadId || v.pdf_upload_id || '',
-        address: {
-          village: v.address?.village || v.village || '',
-          postOffice: v.address?.postOffice || v.voterArea || v.voter_area || '',
-          upazila: v.address?.upazila || v.upazila || '',
-          district: v.address?.district || v.district || ''
+      const mappedResults: VoterRecord[] = results.map((v: any) => {
+        let resolvedUpazila = v.upazila || '';
+        let resolvedDistrict = v.district || '';
+        let resolvedVillage = v.village || '';
+        let resolvedUnion = v.unionName || v.union_name || '';
+
+        if (typeof v.address === 'string' && v.address) {
+          const parts = v.address.split(/[,|]/).map((s: string) => s.trim()).filter(Boolean);
+          if (parts.length >= 3) {
+            resolvedUpazila = resolvedUpazila || parts[parts.length - 2] || '';
+            resolvedDistrict = resolvedDistrict || parts[parts.length - 1] || '';
+            resolvedVillage = resolvedVillage || parts[0] || '';
+          }
+        } else if (v.address && typeof v.address === 'object') {
+          resolvedUpazila = resolvedUpazila || v.address.upazila || '';
+          resolvedDistrict = resolvedDistrict || v.address.district || '';
+          resolvedVillage = resolvedVillage || v.address.village || '';
         }
-      }));
+
+        // Also extract ward number from voter area text if wardNo is empty
+        let resolvedWard = v.wardNo || v.ward_no || '';
+        const voterAreaText = v.voterArea || v.voter_area || '';
+        if (!resolvedWard && voterAreaText) {
+          const match = voterAreaText.match(/([0-9\u09E6-\u09EF]+)\s*(?:নং)?\s*(?:ওয়ার্ড|ওয়ার্ডের|ওয়ার্ড|ওয়ার্ডের)/);
+          if (match) {
+            resolvedWard = match[1];
+          }
+        }
+
+        return {
+          id: v.id,
+          nid: v.nid || '',
+          voterNo: v.voterNo || v.voter_no || '',
+          nameBn: v.nameBn || v.name_bn || '',
+          nameEn: v.nameEn || v.name_en || '',
+          fatherName: v.fatherName || v.father_name || '',
+          motherName: v.motherName || v.mother_name || '',
+          dob: v.dob || '',
+          village: resolvedVillage || v.village || '',
+          gender: v.gender || 'পুরুষ',
+          bloodGroup: v.bloodGroup || v.blood_group || '',
+          photoUrl: v.photoUrl || v.photo_url || '',
+          status: v.status || 'সক্রিয়',
+          page_number: v.page_number || v.pdfPageNumber || '',
+          serialNo: v.serialNo || v.serial_no || '',
+          serialNum: v.serialNum || 0,
+          serialOnPage: v.serialOnPage || 1,
+          pdfPageNumber: v.pdfPageNumber || 2,
+          occupation: v.occupation || '',
+          unionName: resolvedUnion,
+          wardNo: resolvedWard,
+          voterArea: voterAreaText,
+          voterAreaNo: v.voterAreaNo || v.voter_area_no || '',
+          upazila: resolvedUpazila,
+          district: resolvedDistrict,
+          postCode: v.postCode || v.post_code || '',
+          publicationDate: v.publicationDate || v.publication_date || '',
+          pdfUploadId: v.pdfUploadId || v.pdf_upload_id || '',
+          address: {
+            village: resolvedVillage || v.village || '',
+            postOffice: voterAreaText || '',
+            upazila: resolvedUpazila,
+            district: resolvedDistrict
+          }
+        };
+      });
 
       setFilteredVoters(mappedResults);
       setSearchPerformed(true);
@@ -536,7 +566,7 @@ export default function App() {
 
               {/* Search result cards lists */}
               <div id="voter-results-section" className="transition-all duration-300">
-                <VoterResultCard voters={filteredVoters} searchPerformed={searchPerformed} />
+                <VoterResultCard voters={filteredVoters} searchPerformed={searchPerformed} uploadedPdfs={uploadedPdfs} />
               </div>
 
             </section>
