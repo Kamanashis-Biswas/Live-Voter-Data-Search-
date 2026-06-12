@@ -168,8 +168,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Render Authentication Modal if user session is unestablished
   if (!isAuth) return (
-    <div className="max-w-md mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 shadow-xl text-center">
-      <div className="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
+    <div className="max-w-md mx-auto my-12 p-8 backdrop-blur-md bg-white/75 rounded-2xl border border-white/30 shadow-2xl text-center">
+      <div className="w-16 h-16 bg-teal-50 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-6 border border-teal-100/80 shadow-sm">
         <Lock className="w-7 h-7" />
       </div>
       <h2 className="text-xl font-bold text-slate-800 font-serif">অ্যাডমিন অ্যাক্সেস</h2>
@@ -201,19 +201,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <form onSubmit={handleAuth} className="mt-6 space-y-4 text-left">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Email</label>
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="admin@example.com" required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"/>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="admin@example.com" required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"/>
         </div>
         {authMode === 'reset_password' && (
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Reset Token</label>
-            <input type="text" value={token} onChange={e=>setToken(e.target.value)} required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"/>
+            <input type="text" value={token} onChange={e=>setToken(e.target.value)} required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"/>
           </div>
         )}
         {(authMode==='login'||authMode==='signup'||authMode==='reset_password') && (
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest font-mono">{authMode==='reset_password'?'New Password':'Password'}</label>
-              {authMode==='login' && <button type="button" onClick={()=>{setAuthMode('forgot_password'); setGeneratedToken(''); setAuthOk(''); setAuthErr('');}} className="text-[10px] text-blue-600 hover:underline">Forgot?</button>}
+              {authMode==='login' && <button type="button" onClick={()=>{setAuthMode('forgot_password'); setGeneratedToken(''); setAuthOk(''); setAuthErr('');}} className="text-[10px] text-teal-600 hover:underline">Forgot?</button>}
             </div>
             <div className="relative">
               <input 
@@ -222,7 +222,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 onChange={e=>setPassword(e.target.value)} 
                 placeholder="••••••••" 
                 required 
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"
+                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"
               />
               <button 
                 type="button" 
@@ -236,7 +236,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         )}
         {authErr && <p className="text-xs text-rose-600 flex items-center gap-1.5 bg-rose-50 p-2.5 rounded-lg border border-rose-100"><AlertCircle className="w-4 h-4 shrink-0"/>{authErr}</p>}
         {authOk && <p className="text-xs text-emerald-600 flex items-center gap-1.5 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100"><CheckCircle2 className="w-4 h-4 shrink-0"/>{authOk}</p>}
-        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
+        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed border-none shadow-lg shadow-teal-500/10 hover:shadow-teal-500/35">
           {authBusy ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -248,7 +248,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </button>
       </form>
       <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500">
-        {authMode==='login' ? <p>নেই? <button onClick={()=>setAuthMode('signup')} className="text-blue-600 font-bold hover:underline">সাইন আপ</button></p> : <p><button onClick={()=>setAuthMode('login')} className="text-blue-600 font-bold hover:underline">লগইনে ফিরুন</button></p>}
+        {authMode==='login' ? <p>নেই? <button onClick={()=>setAuthMode('signup')} className="text-teal-600 font-bold hover:underline">সাইন আপ</button></p> : <p><button onClick={()=>setAuthMode('login')} className="text-teal-600 font-bold hover:underline">লগইনে ফিরুন</button></p>}
       </div>
     </div>
   );
@@ -258,7 +258,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Horizontal navigation tabs */}
       <div className="flex border-b border-slate-200 overflow-x-auto no-scrollbar">
         {[{k:'overview',l:'ওভারভিউ',i:<Activity className="w-4 h-4"/>},{k:'pdf-list',l:'PDF আপলোড',i:<UploadCloud className="w-4 h-4"/>},{k:'ip-logs',l:'সার্চ লগ',i:<Globe className="w-4 h-4"/>}].map(t=>(
-          <button key={t.k} onClick={()=>setTab(t.k as any)} className={`px-5 py-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 whitespace-nowrap transition-all cursor-pointer ${tab===t.k?'border-blue-700 text-blue-700 bg-blue-50/10':'border-transparent text-slate-500 hover:text-slate-800'}`}>
+          <button key={t.k} onClick={()=>setTab(t.k as any)} className={`px-5 py-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 whitespace-nowrap transition-all cursor-pointer ${tab===t.k?'border-teal-600 text-teal-600 bg-teal-50/10':'border-transparent text-slate-500 hover:text-slate-800'}`}>
             {t.i}{t.l}
           </button>
         ))}
@@ -277,7 +277,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{c.label}</span>
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    c.color === 'blue' ? 'bg-blue-50 text-blue-600' :
+                    c.color === 'blue' ? 'bg-teal-50 text-teal-600' :
                     c.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
                     'bg-amber-50 text-amber-600'
                   }`}>{c.icon}</div>
@@ -291,7 +291,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* Area Summary Panels */}
           {uploadedPdfs.length > 0 && (
             <div className="bg-white rounded-xl border border-slate-200/80 p-6">
-              <h3 className="font-bold text-slate-800 font-serif flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-blue-700"/>আপলোডকৃত এলাকার সারসংক্ষেপ</h3>
+              <h3 className="font-bold text-slate-800 font-serif flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-teal-600"/>আপলোডকৃত এলাকার সারসংক্ষেপ</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {uploadedPdfs.map(p=>(
                   <div key={p.id} className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs space-y-1">
@@ -312,7 +312,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* Setup Informational Strip */}
           <div className="p-6 bg-white rounded-xl border border-slate-200/80 flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 max-w-2xl">
-              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><Unlock className="w-5 h-5 text-blue-700"/>Local Storage Mode — কোনো Supabase Setup লাগবে না</h3>
+              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><Unlock className="w-5 h-5 text-teal-600"/>Local Storage Mode — কোনো Supabase Setup লাগবে না</h3>
               <p className="text-xs text-slate-500 leading-relaxed">PDF আপলোড করলে সার্ভার স্বয়ংক্রিয়ভাবে ভোটারদের তথ্য extract করে local database-এ সংরক্ষণ করে। তারপর নাম, পিতার নাম, গ্রামের নাম দিয়ে তাৎক্ষণিক অনুসন্ধান করা যাবে।</p>
             </div>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shrink-0 text-center min-w-[180px]">
@@ -329,7 +329,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-slate-800 font-serif flex items-center gap-2"><Database className="w-4 h-4 text-blue-700"/>ভোটার তালিকা PDF ({toBangla(uploadedPdfs.length)} টি)</h2>
+              <h2 className="text-base font-bold text-slate-800 font-serif flex items-center gap-2"><Database className="w-4 h-4 text-teal-600"/>ভোটার তালিকা PDF ({toBangla(uploadedPdfs.length)} টি)</h2>
               <p className="text-xs text-slate-400">PDF আপলোড করলে স্বয়ংক্রিয়ভাবে ভোটার তথ্য extract হবে</p>
             </div>
             <div className="flex gap-2">
@@ -341,7 +341,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <RefreshCw className={`w-3.5 h-3.5 ${pdfsLoading?'animate-spin':''}`}/>
                 {pdfsLoading ? 'রিফ্রেশ হচ্ছে...' : 'রিফ্রেশ'}
               </button>
-              <button onClick={()=>setModalOpen(true)} className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md cursor-pointer">
+              <button onClick={()=>setModalOpen(true)} className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md cursor-pointer border-none">
                 <Plus className="w-4 h-4"/>PDF আপলোড করুন
               </button>
             </div>
@@ -369,7 +369,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <td className="p-3 font-serif">{pdf.district}</td>
                       <td className="p-3 font-serif">{pdf.upazila}</td>
                       <td className="p-3 font-serif text-slate-600">{pdf.unionName||'-'}</td>
-                      <td className="p-3"><span className="px-2 py-0.5 rounded bg-blue-50 border border-blue-100 text-blue-700 font-bold">{pdf.voterArea||'-'}</span></td>
+                      <td className="p-3"><span className="px-2 py-0.5 rounded bg-teal-50 border border-teal-100/80 text-teal-700 font-bold">{pdf.voterArea||'-'}</span></td>
                       <td className="p-3 font-mono text-slate-600">{pdf.voterAreaNo||'-'}</td>
                       <td className="p-3 text-center font-bold">{pdf.totalVoters||'-'}</td>
                       <td className="p-3 text-center"><span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold"><UserCheck className="w-3 h-3"/>{pdf.voterCount} জন</span></td>
@@ -401,7 +401,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-700">
+          <div className="flex items-start gap-2.5 bg-teal-50 border border-teal-200 rounded-xl p-4 text-xs text-teal-700">
             <Info className="w-4 h-4 shrink-0 mt-0.5"/>
             <p><strong>কিভাবে কাজ করে:</strong> আপনার ভোটার তালিকার PDF আপলোড করুন → backend স্বয়ংক্রিয়ভাবে সকল ভোটারের নাম, পিতা, মাতা, ভোটার নং, পেশা, জন্মতারিখ extract করবে → পাবলিক পোর্টালে search করলে সঙ্গে সঙ্গে ফলাফল আসবে → Verify বাটনে ক্লিক করলে আসল PDF-এর সেই পাতায় ভোটারের তথ্য highlighted দেখাবে।</p>
           </div>
@@ -426,7 +426,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <tr key={log.id} className="hover:bg-slate-50/50">
                       <td className="p-4 font-mono text-slate-500">{log.dateTime}</td>
                       <td className="p-4"><code className="bg-slate-100 text-slate-800 font-mono px-2 py-0.5 rounded">{log.ipAddress}</code></td>
-                      <td className="p-4"><span className="font-mono text-[10px] font-bold bg-blue-50 border border-blue-100 px-1.5 py-0.5 text-blue-700 rounded">{log.method}</span></td>
+                      <td className="p-4"><span className="font-mono text-[10px] font-bold bg-teal-50 border border-teal-100 px-1.5 py-0.5 text-teal-700 rounded">{log.method}</span></td>
                       <td className="p-4 font-serif font-semibold truncate max-w-xs">{log.query}</td>
                       <td className="p-4 font-mono text-slate-400">{log.responseTime}</td>
                       <td className="p-4 text-center">
@@ -441,7 +441,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <p>মোট <strong className="font-mono">{searchLogs.length}</strong> টি সার্চ</p>
               <div className="flex items-center gap-2">
                 <button className="p-2 border border-slate-200 rounded-lg bg-white text-slate-400" disabled><ChevronLeft className="w-3.5 h-3.5"/></button>
-                <button className="px-2.5 py-1 border border-slate-300 rounded-lg bg-blue-600 text-white font-bold font-mono">১</button>
+                <button className="px-2.5 py-1 border border-teal-600 rounded-lg bg-teal-600 text-white font-bold font-mono">১</button>
                 <button className="p-2 border border-slate-200 rounded-lg bg-white text-slate-500" disabled><ChevronRight className="w-3.5 h-3.5"/></button>
               </div>
             </div>
@@ -454,11 +454,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
           <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-100 p-5">
-              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><UploadCloud className="w-5 h-5 text-blue-700"/>ভোটার তালিকা PDF আপলোড</h3>
+              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><UploadCloud className="w-5 h-5 text-teal-600"/>ভোটার তালিকা PDF আপলোড</h3>
               <button onClick={()=>{setModalOpen(false);setSelectedFile(null);setUploadErr('');setUploadMsg('');}} className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer"><X className="w-5 h-5"/></button>
             </div>
             <form onSubmit={handleUpload} className="p-5 space-y-4">
-              <div onClick={()=>fileRef.current?.click()} className="border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 hover:bg-slate-100 rounded-xl p-6 text-center cursor-pointer transition-colors">
+              <div onClick={()=>fileRef.current?.click()} className="border-2 border-dashed border-slate-300 hover:border-teal-500 bg-slate-50 hover:bg-slate-100 rounded-xl p-6 text-center cursor-pointer transition-colors">
                 <input type="file" ref={fileRef} accept=".pdf" className="hidden" onChange={e=>{ if(e.target.files?.[0]) setSelectedFile(e.target.files[0]); }}/>
                 {selectedFile ? (
                   <div className="space-y-1">
@@ -468,14 +468,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 ) : (
                   <div className="text-slate-500 space-y-2">
-                    <UploadCloud className="w-10 h-10 text-blue-600 mx-auto animate-bounce"/>
+                    <UploadCloud className="w-10 h-10 text-teal-600 mx-auto animate-bounce"/>
                     <p className="text-sm font-semibold">ক্লিক করে PDF সিলেক্ট করুন</p>
                     <p className="text-xs">.pdf • সর্বোচ্চ ৫০ MB</p>
                   </div>
                 )}
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-700">
                 <strong>স্বয়ংক্রিয় extract হবে:</strong> নির্বাচন কমিশনের ভোটার তালিকা PDF আপলোড করুন। সার্ভার নিজেই সকল ভোটারের নাম, পিতা, মাতা, ভোটার নম্বর, পেশা, জন্মতারিখ বের করে নেবে।
               </div>
 
@@ -487,7 +487,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button 
                   type="submit" 
                   disabled={uploading||!selectedFile} 
-                  className="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-none shadow-md shadow-teal-500/10"
                 >
                   {uploading ? (
                     <>

@@ -12,6 +12,8 @@
     "reparse:dry": "node scripts/reparsePdfs.js --dry-run",
     "repair": "node scripts/databaseRepair.js",
     "repair:dry": "node scripts/databaseRepair.js --dry-run",
+    "repair:gemini": "node scripts/databaseRepairWithGemini.js",
+    "repair:gemini:dry": "node scripts/databaseRepairWithGemini.js --dry-run",
     "benchmark": "node scripts/benchmarkParser.js"
   },
   "dependencies": {

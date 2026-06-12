@@ -7,6 +7,7 @@ import {
   FileText, Check, ZoomIn, ZoomOut, ChevronLeft, ChevronRightIcon,
   Loader2
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * @file VoterResultCard.tsx
@@ -68,7 +69,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [zoom, setZoom] = useState(1.2);
+  const [zoom, setZoom] = useState(typeof window !== 'undefined' && window.innerWidth < 640 ? 0.65 : 1.2);
   const [pdfReady, setPdfReady] = useState(false);
 
   const pdfUrl = voter.pdfUploadId ? `${API_BASE}/api/pdf/${voter.pdfUploadId}/file` : '';
@@ -210,11 +211,22 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
   }, [onClose, totalPages]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-900/70 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[95vh] flex flex-col">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-3 bg-slate-900/70 backdrop-blur-sm"
+    >
+      <motion.div 
+        initial={{ scale: 0.95, y: 15, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, y: 15, opacity: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+        className="bg-white w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-5xl shadow-2xl border-0 sm:border border-slate-200 overflow-hidden flex flex-col rounded-none sm:rounded-2xl"
+      >
         
         {/* Header */}
-        <div className="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between shrink-0">
+        <div className="bg-slate-900 text-white px-4 py-3 sm:px-5 sm:py-3.5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 bg-red-600 rounded-lg"><FileText className="w-5 h-5"/></div>
             <div>
@@ -227,81 +239,126 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Zoom Controls */}
+            {/* Desktop-only Header Zoom Controls */}
             <div className="hidden sm:flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-0.5 text-xs mr-2">
-              <button onClick={()=>setZoom(z=>Math.max(0.5,z-0.1))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomOut className="w-4 h-4"/></button>
+              <button onClick={()=>setZoom(z=>Math.max(0.4,z-0.15))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomOut className="w-4 h-4"/></button>
               <span className="font-mono px-1.5 w-12 text-center">{Math.round(zoom*100)}%</span>
-              <button onClick={()=>setZoom(z=>Math.min(2.5,z+0.1))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomIn className="w-4 h-4"/></button>
+              <button onClick={()=>setZoom(z=>Math.min(3.0,z+0.15))} className="p-1 hover:text-blue-400 cursor-pointer"><ZoomIn className="w-4 h-4"/></button>
             </div>
             <button onClick={onClose} className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg cursor-pointer"><X className="w-5 h-5"/></button>
           </div>
         </div>
 
         {/* Voter Details Bar */}
-        <div className="bg-amber-50 border-b border-amber-200 px-5 py-2.5 flex flex-wrap gap-4 text-xs">
-          <div><span className="text-amber-600 font-bold">নাম:</span> <span className="font-semibold text-slate-800">{voter.nameBn}</span></div>
-          <div><span className="text-amber-600 font-bold">পিতা:</span> <span className="font-semibold text-slate-800">{voter.fatherName}</span></div>
-          <div><span className="text-amber-600 font-bold">মাতা:</span> <span className="font-semibold text-slate-800">{voter.motherName}</span></div>
-          <div><span className="text-amber-600 font-bold">ভোটার নং:</span> <span className="font-mono font-semibold text-slate-800">{voter.voterNo}</span></div>
+        <div className="bg-amber-50/80 backdrop-blur-xs border-b border-amber-200/50 px-4 py-2 sm:px-5 sm:py-2.5 grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-1.5 text-[11px] sm:text-xs text-slate-700">
+          <div><span className="text-amber-700 font-bold">নাম:</span> <span className="font-bold text-slate-900">{voter.nameBn}</span></div>
+          <div><span className="text-amber-700 font-bold">পিতা:</span> <span className="font-medium text-slate-800">{voter.fatherName}</span></div>
+          <div><span className="text-amber-700 font-bold">মাতা:</span> <span className="font-medium text-slate-800">{voter.motherName}</span></div>
+          <div><span className="text-amber-700 font-bold">ভোটার নং:</span> <span className="font-mono font-bold text-slate-900">{voter.voterNo}</span></div>
         </div>
 
-        {/* PDF Canvas Area */}
-        <div className="flex-1 overflow-auto bg-slate-200 flex items-start justify-center p-4 min-h-0">
-          {loading && (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-              <Loader2 className="w-10 h-10 animate-spin mb-3 text-blue-600"/>
-              <p className="text-sm font-semibold">PDF লোড হচ্ছে...</p>
-            </div>
-          )}
-          {error && (
-            <div className="flex flex-col items-center justify-center h-64 text-rose-600 text-center max-w-sm">
-              <XOctagon className="w-10 h-10 mb-3"/>
-              <p className="text-sm font-semibold">{error}</p>
-              <p className="text-xs text-slate-500 mt-2">Backend server चालू আছে কিনা নিশ্চিত করুন।</p>
-            </div>
-          )}
+        {/* PDF Canvas Area Container */}
+        <div className="relative flex-1 min-h-0 bg-slate-200 flex flex-col">
+          {/* Scrollable Canvas Box */}
+          <div 
+            className="flex-1 overflow-auto flex items-start justify-start sm:justify-center p-2 sm:p-4 touch-auto overscroll-contain"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {loading && (
+              <div className="flex flex-col items-center justify-center m-auto text-slate-500 py-12">
+                <Loader2 className="w-10 h-10 animate-spin mb-3 text-blue-600"/>
+                <p className="text-sm font-semibold">PDF লোড হচ্ছে...</p>
+              </div>
+            )}
+            {error && (
+              <div className="flex flex-col items-center justify-center m-auto text-rose-600 text-center max-w-sm py-12 px-4">
+                <XOctagon className="w-10 h-10 mb-3"/>
+                <p className="text-sm font-semibold">{error}</p>
+                <p className="text-xs text-slate-500 mt-2">Backend server चालू আছে কিনা নিশ্চিত করুন।</p>
+              </div>
+            )}
+            {!loading && !error && (
+              <div className="relative shadow-2xl border border-slate-300 rounded-lg overflow-hidden m-auto">
+                <canvas ref={canvasRef} className="block bg-white"/>
+              </div>
+            )}
+          </div>
+
+          {/* Floating Zoom Controls for Mobile & Desktop */}
           {!loading && !error && (
-            <div className="relative shadow-2xl border border-slate-300 rounded-lg overflow-hidden">
-              <canvas ref={canvasRef} className="block bg-white"/>
+            <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-xl p-1 shadow-lg z-10">
+              <button 
+                onClick={() => setZoom(z => Math.max(0.4, z - 0.15))} 
+                className="p-2 hover:bg-slate-800 text-white rounded-lg cursor-pointer transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4"/>
+              </button>
+              <span className="font-mono text-xs text-slate-200 px-1.5 min-w-[44px] text-center select-none font-semibold">
+                {Math.round(zoom*100)}%
+              </span>
+              <button 
+                onClick={() => setZoom(z => Math.min(3.0, z + 0.15))} 
+                className="p-2 hover:bg-slate-800 text-white rounded-lg cursor-pointer transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4"/>
+              </button>
             </div>
           )}
         </div>
 
         {/* Page Navigation Footer */}
-        <div className="bg-slate-50 border-t border-slate-200 px-6 py-3.5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
+        <div className="bg-slate-50 border-t border-slate-200 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-between w-full sm:w-auto gap-2">
             <button
               onClick={()=>setCurrentPage(p=>Math.max(1,p-1))}
               disabled={currentPage<=1||loading}
-              className="px-3 py-1.5 text-xs font-bold border border-slate-200 rounded-lg bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+              className="px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-xl bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer transition-colors"
             >
-              <ChevronLeft className="w-3.5 h-3.5"/>আগের পৃষ্ঠা
+              <ChevronLeft className="w-3.5 h-3.5"/>
+              <span>আগের <span className="hidden sm:inline">পৃষ্ঠা</span></span>
             </button>
-            <span className="text-xs text-slate-600 font-mono font-semibold">
+            
+            <span className="text-xs text-slate-600 font-mono font-semibold px-2 py-1 bg-slate-100 rounded-lg border border-slate-200/50">
               পৃষ্ঠা <strong>{currentPage}</strong> / {totalPages}
             </span>
+            
             <button
               onClick={()=>setCurrentPage(p=>Math.min(totalPages,p+1))}
               disabled={currentPage>=totalPages||loading}
-              className="px-3 py-1.5 text-xs font-bold border border-slate-200 rounded-lg bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+              className="px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-xl bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer transition-colors"
             >
-              পরের পৃষ্ঠা<ChevronRightIcon className="w-3.5 h-3.5"/>
+              <span>পরের <span className="hidden sm:inline">পৃষ্ঠা</span></span>
+              <ChevronRightIcon className="w-3.5 h-3.5"/>
             </button>
           </div>
 
-          {voter.pdfPageNumber && (
-            <button
-              onClick={()=>setCurrentPage(voter.pdfPageNumber!)}
-              className="px-4 py-1.5 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white rounded-lg flex items-center gap-1.5 cursor-pointer"
-            >
-              <MapPin className="w-3.5 h-3.5"/>ভোটারের পৃষ্ঠায় যান (পৃষ্ঠা {voter.pdfPageNumber})
-            </button>
-          )}
+          {/* Action Buttons (Go to page and Close) */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {voter.pdfPageNumber && (
+              <button
+                onClick={()=>setCurrentPage(voter.pdfPageNumber!)}
+                className="flex-1 sm:flex-initial px-4 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-amber-500/10 hover:shadow-amber-500/25 transition-all"
+              >
+                <MapPin className="w-3.5 h-3.5"/>
+                <span className="hidden sm:inline">ভোটারের পৃষ্ঠায় যান (পৃষ্ঠা {voter.pdfPageNumber})</span>
+                <span className="sm:hidden">ভোটারের পৃষ্ঠা ({voter.pdfPageNumber})</span>
+              </button>
+            )}
 
-          <button onClick={onClose} className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg cursor-pointer">বন্ধ করুন</button>
+            <button 
+              onClick={onClose} 
+              className="px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white text-xs font-bold rounded-xl shadow-md shadow-red-500/10 hover:shadow-red-500/25 transition-all cursor-pointer"
+            >
+              বন্ধ করুন
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -645,44 +702,56 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
 
   if (!searchPerformed) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-8 md:p-12 text-center max-w-2xl mx-auto shadow-sm">
-        <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6"><Info className="w-8 h-8"/></div>
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="backdrop-blur-md bg-white/70 rounded-2xl border border-white/30 p-8 md:p-12 text-center max-w-2xl mx-auto shadow-2xl"
+      >
+        <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6"><Info className="w-8 h-8"/></div>
         <h3 className="text-xl font-bold text-slate-800 mb-2 font-serif">অনুসন্ধান শুরু করুন</h3>
         <p className="text-slate-600 text-sm leading-relaxed mb-4">ভোটারের নাম, পিতার নাম, মাতার নাম, বা গ্রামের নাম দিয়ে অনুসন্ধান করুন।</p>
         <div className="flex justify-center gap-6 text-xs text-slate-400 font-mono">
           <span>● লাইভ ডাটাবেজ</span><span>● তাৎক্ষণিক ফলাফল</span>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Search statistics header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 text-white p-5 rounded-2xl shadow-xs">
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-md bg-slate-900/80 border border-white/10 text-white p-5 rounded-2xl shadow-xl"
+      >
         <div>
-          <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider font-mono">অনুসন্ধান ফলাফল</p>
+          <p className="text-xs font-semibold text-teal-400 uppercase tracking-wider font-mono">অনুসন্ধান ফলাফল</p>
           <h3 className="text-lg font-bold font-serif">{voters.length > 0 ? `${voters.length} জন ভোটার পাওয়া গেছে` : 'কোন ভোটার রেকর্ড পাওয়া যায়নি'}</h3>
         </div>
-        <div className="text-xs bg-slate-800 border border-slate-700 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
+        <div className="text-xs bg-slate-800/80 border border-slate-700/80 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>লাইভ সার্ভার
         </div>
-      </div>
+      </motion.div>
 
       {voters.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-xs">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="backdrop-blur-md bg-white/70 rounded-2xl border border-white/30 p-12 text-center shadow-2xl"
+        >
           <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4"><XOctagon className="w-8 h-8"/></div>
           <p className="text-slate-800 font-bold mb-1 font-serif text-lg">কোনো মিল পাওয়া যায়নি</p>
           <p className="text-slate-500 text-sm max-w-md mx-auto">নাম বা গ্রামের সঠিক বানান লিখুন এবং আবার চেষ্টা করুন।</p>
-        </div>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {voters.map(voter => {
+          {voters.map((voter, index) => {
             const borderClass = voter.status === 'সক্রিয়' 
-              ? 'border-emerald-100 hover:border-emerald-300 shadow-emerald-50/40 hover:shadow-emerald-100/50' 
+              ? 'border-emerald-500/20 hover:border-emerald-500/50 shadow-emerald-500/5 hover:shadow-emerald-500/15' 
               : voter.status === 'স্থগিত' 
-              ? 'border-rose-100 hover:border-rose-300 shadow-rose-50/40 hover:shadow-rose-100/50' 
-              : 'border-amber-100 hover:border-amber-300 shadow-amber-50/40 hover:shadow-amber-100/50';
+              ? 'border-rose-500/20 hover:border-rose-500/50 shadow-rose-500/5 hover:shadow-rose-500/15' 
+              : 'border-amber-500/20 hover:border-amber-500/50 shadow-amber-500/5 hover:shadow-amber-500/15';
 
             const statusBadge = getStatusBadge(voter.status);
             const pdf = uploadedPdfs?.find(p => p.id === voter.pdfUploadId);
@@ -694,12 +763,15 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
             const genderType = pdf?.genderType ? `ভোটার তালিকা - (${pdf.genderType})` : '';
 
             return (
-              <div 
+              <motion.div 
                 key={voter.id} 
-                className={`bg-white rounded-2xl border ${borderClass} shadow-md hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
+                className={`backdrop-blur-md bg-white/75 rounded-2xl border ${borderClass} shadow-lg hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col`}
               >
                 {/* Card Top Title Bar */}
-                <div className="bg-slate-900 text-white px-4 py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0 select-none">
+                <div className="bg-slate-900/90 text-white px-4 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 select-none">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-emerald-400"/>
                     <div>
@@ -777,11 +849,11 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                 </div>
 
                 {/* Actions buttons footer (Address block removed, clean footer layout) */}
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex gap-2 shrink-0 mt-auto">
+                <div className="p-4 bg-white/40 border-t border-white/20 flex gap-2 shrink-0 mt-auto backdrop-blur-xs">
                   {voter.pdfUploadId && (
                     <button
                       onClick={() => setPdfViewVoter(voter)}
-                      className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-sm transition-all duration-200 text-xs shadow-blue-100 hover:shadow-md"
+                      className="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/25 transition-all duration-200 text-xs"
                       title="PDF-এ ভেরিফাই করুন"
                     >
                       <Eye className="w-3.5 h-3.5"/>ভেরিফাই করুন
@@ -790,7 +862,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                   <button
                     onClick={() => handleDownloadJpg(voter)}
                     disabled={isDownloading === voter.id}
-                    className={`${voter.pdfUploadId ? 'flex-1' : 'w-full'} py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-sm transition-all duration-200 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-emerald-100 hover:shadow-md`}
+                    className={`${voter.pdfUploadId ? 'flex-1' : 'w-full'} py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-teal-500/10 hover:shadow-teal-500/25 transition-all duration-200 text-xs disabled:opacity-50 disabled:cursor-not-allowed`}
                     title="ভোটার আইডি কার্ড ডাউনলোড করুন"
                   >
                     {isDownloading === voter.id ? (
@@ -806,14 +878,16 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                     )}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       )}
 
       {/* Embedded PDF Canvas modal popup viewer */}
-      {pdfViewVoter && <PdfViewer voter={pdfViewVoter} onClose={() => setPdfViewVoter(null)}/>}
+      <AnimatePresence>
+        {pdfViewVoter && <PdfViewer voter={pdfViewVoter} onClose={() => setPdfViewVoter(null)}/>}
+      </AnimatePresence>
     </div>
   );
 };
