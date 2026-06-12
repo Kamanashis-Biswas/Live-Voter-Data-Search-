@@ -160,7 +160,31 @@ exports.servePdfFile = async (req, res, next) => {
         return res.status(404).json({ success: false, message: 'PDF ফাইল ক্লাউড স্টোরেজে পাওয়া যায়নি।' });
       }
 
-      const buffer = Buffer.from(await data.arrayBuffer());
+      if (!data) {
+        logger.error('Supabase download returned null data', null);
+        return res.status(404).json({ success: false, message: 'PDF ফাইল ক্লাউড স্টোরেজে পাওয়া যায়নি।' });
+      }
+
+      let buffer;
+      try {
+        if (Buffer.isBuffer(data)) {
+          buffer = data;
+        } else if (typeof data.arrayBuffer === 'function') {
+          const ab = await data.arrayBuffer();
+          buffer = Buffer.from(ab);
+        } else if (typeof data.text === 'function') {
+          const text = await data.text();
+          buffer = Buffer.from(text, 'binary');
+        } else if (data.buffer && Buffer.isBuffer(data.buffer)) {
+          buffer = data.buffer;
+        } else {
+          buffer = Buffer.from(data);
+        }
+      } catch (bufErr) {
+        logger.error('Failed to convert downloaded Blob to Buffer', bufErr);
+        return res.status(500).json({ success: false, message: 'PDF ফাইল প্রসেস করতে সমস্যা হয়েছে।' });
+      }
+
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
       res.setHeader('Access-Control-Allow-Origin', '*');
