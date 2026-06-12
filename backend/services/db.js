@@ -122,6 +122,11 @@ const mapSearchLogFromDb = (db) => ({
   method: db.method
 });
 
+// In-memory cache for search log count to prevent overloading Supabase with polling
+let cachedSearchLogsCount = null;
+let lastCountFetchTime = 0;
+const COUNT_CACHE_TTL_MS = 30000; // 30 seconds
+
 const db = {
   // ── Voters Actions ─────────────────────────────────────────────────────────
   async addVoters(newVoters) {
@@ -344,7 +349,11 @@ const db = {
   // ── Search Logs Actions ──────────────────────────────────────────────────
   async addSearchLog(log) {
     if (!hasSupabase) {
-      return localDb.addSearchLog(log);
+      const saved = await localDb.addSearchLog(log);
+      if (cachedSearchLogsCount !== null) {
+        cachedSearchLogsCount++;
+      }
+      return saved;
     }
     
     logger.info(`[DB] Inserting search log ${log.id} to Supabase...`);
@@ -354,6 +363,11 @@ const db = {
       logger.error('[DB] Supabase addSearchLog error:', error);
       throw error;
     }
+    
+    if (cachedSearchLogsCount !== null) {
+      cachedSearchLogsCount++;
+    }
+    
     return log;
   },
 
@@ -381,6 +395,11 @@ const db = {
       return (localDb.getSearchLogs() || []).length;
     }
     
+    const now = Date.now();
+    if (cachedSearchLogsCount !== null && (now - lastCountFetchTime < COUNT_CACHE_TTL_MS)) {
+      return cachedSearchLogsCount;
+    }
+    
     logger.debug('[DB] Fetching search logs count from Supabase...');
     const { count, error } = await supabaseAdmin
       .from('search_logs')
@@ -388,9 +407,15 @@ const db = {
       
     if (error) {
       logger.error('[DB] Supabase getSearchLogsCount error:', error);
+      if (cachedSearchLogsCount !== null) {
+        return cachedSearchLogsCount; // Fallback to stale cache on network/DB failure
+      }
       throw error;
     }
-    return count || 0;
+    
+    cachedSearchLogsCount = count || 0;
+    lastCountFetchTime = now;
+    return cachedSearchLogsCount;
   },
 
   invalidateCache() {

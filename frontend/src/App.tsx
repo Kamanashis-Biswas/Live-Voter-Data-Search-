@@ -154,52 +154,31 @@ export default function App() {
   }, []);
 
   /**
-   * Transmits periodic heartbeat requests to track active online sessions.
+   * Periodically registers heartbeat and polls server health and analytics metrics.
+   * Consolidated into a single 15-second request to reduce traffic and prevent rate limiting.
    */
   useEffect(() => {
-    const sendHeartbeat = async () => {
+    const pollStatusAndHeartbeat = async () => {
       try {
-        await fetch(`${API_BASE}/api/health/heartbeat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId })
-        });
-      } catch (err) {
-        console.warn('Heartbeat transmission failed:', err);
-      }
-    };
-    sendHeartbeat();
-    const interval = setInterval(sendHeartbeat, 10000);
-    return () => clearInterval(interval);
-  }, [sessionId]);
+        const statsRes = await fetch(`${API_BASE}/api/health/stats?sessionId=${sessionId}`);
+        setServerOnline(statsRes.ok);
 
-  /**
-   * Periodically polls the server health and analytics stats.
-   */
-  useEffect(() => {
-    const checkHealthAndStats = async () => {
-      try {
-        const healthRes = await fetch(`${API_BASE}/api/health`);
-        setServerOnline(healthRes.ok);
-
-        if (healthRes.ok) {
-          const statsRes = await fetch(`${API_BASE}/api/health/stats`);
-          if (statsRes.ok) {
-            const data = await statsRes.json();
-            if (data.success) {
-              setOnlineUsers(data.onlineUsers || 1);
-              setSearchCount(data.totalSearches || 0);
-            }
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          if (data.success) {
+            setOnlineUsers(data.onlineUsers || 1);
+            setSearchCount(data.totalSearches || 0);
           }
         }
       } catch {
         setServerOnline(false);
       }
     };
-    checkHealthAndStats();
-    const interval = setInterval(checkHealthAndStats, 10000);
+
+    pollStatusAndHeartbeat();
+    const interval = setInterval(pollStatusAndHeartbeat, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [sessionId]);
 
   /**
    * Fetches metadata for uploaded PDFs and maps the results into the frontend interface structure.

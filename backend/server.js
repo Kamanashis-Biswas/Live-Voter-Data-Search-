@@ -28,6 +28,14 @@ const logger = require('./utils/logger');
 
 dotenv.config();
 
+// Global Crash Protection: Catch all unhandled rejections and exceptions
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection detected at promise', reason);
+});
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception detected', error);
+});
+
 // Override default warning logs: Suppress harmless PDF.js warnings
 // regarding canvas rendering when canvas is unavailable or un-polyfilled in headless environments.
 const _origWarn = console.warn.bind(console);
@@ -86,11 +94,11 @@ app.use(cors(corsOptions));
 // In-memory registry for tracking online user sessions
 const activeSessions = new Map();
 
-// Background cleaning interval: remove sessions inactive for > 25 seconds
+// Background cleaning interval: remove sessions inactive for > 35 seconds
 setInterval(() => {
   const now = Date.now();
   for (const [sessId, lastSeen] of activeSessions.entries()) {
-    if (now - lastSeen > 25000) {
+    if (now - lastSeen > 35000) {
       activeSessions.delete(sessId);
     }
   }
@@ -109,6 +117,41 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Diagnostics and Status Check (Excluded from Rate Limiting) ───────────────
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString(), uptime: process.uptime() });
+});
+
+// Heartbeat API: tracks online users
+app.post('/api/health/heartbeat', (req, res) => {
+  const { sessionId } = req.body;
+  if (sessionId) {
+    activeSessions.set(sessionId, Date.now());
+  }
+  res.json({ success: true, onlineUsers: activeSessions.size });
+});
+
+// Real-time metrics API: online users and total search logs
+// Supports query parameter sessionId to register heartbeat and fetch stats in a single request
+app.get('/api/health/stats', async (req, res, next) => {
+  try {
+    const { sessionId } = req.query;
+    if (sessionId) {
+      activeSessions.set(sessionId, Date.now());
+    }
+    const db = require('./services/db');
+    const onlineCount = activeSessions.size;
+    const totalSearches = await db.getSearchLogsCount();
+    res.json({ 
+      success: true, 
+      onlineUsers: onlineCount, 
+      totalSearches 
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Rate Limiter: Enforces safe usage bounds (max 200 requests/15 minutes per IP)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -124,36 +167,6 @@ app.use('/api/', apiLimiter);
 
 // STATIC FILES MOUNT: Serves uploaded PDFs securely to client viewport canvas
 app.use('/uploads', express.static(UPLOADS_DIR));
-
-// ── Diagnostics and Status Check ─────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString(), uptime: process.uptime() });
-});
-
-// Heartbeat API: tracks online users
-app.post('/api/health/heartbeat', (req, res) => {
-  const { sessionId } = req.body;
-  if (sessionId) {
-    activeSessions.set(sessionId, Date.now());
-  }
-  res.json({ success: true, onlineUsers: activeSessions.size });
-});
-
-// Real-time metrics API: online users and total search logs
-app.get('/api/health/stats', async (req, res, next) => {
-  try {
-    const db = require('./services/db');
-    const onlineCount = activeSessions.size;
-    const totalSearches = await db.getSearchLogsCount();
-    res.json({ 
-      success: true, 
-      onlineUsers: onlineCount, 
-      totalSearches 
-    });
-  } catch (err) {
-    next(err);
-  }
-});
 
 app.get('/', (req, res) => res.send('Live Voter Search API - Local Storage Mode'));
 
