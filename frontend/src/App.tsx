@@ -33,6 +33,14 @@ import bgShapes from './assets/bg-shapes.png';
  * @version 5.0.0
  */
 
+/**
+ * Utility helper that translates English digits to Bengali digits.
+ */
+const toBangla = (n: number | string): string => {
+  const d = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+  return String(n).split('').map(c => { const i = parseInt(c); return isNaN(i) ? c : d[i]; }).join('');
+};
+
 export default function App() {
   // Navigation states
   const [currentView, setCurrentView] = useState<'search' | 'dashboard'>('search');
@@ -476,10 +484,18 @@ export default function App() {
         <div className="flex items-center gap-3">
           {/* Active Server Health Indicator Pin */}
           {serverOnline ? (
-            <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-emerald-400 bg-emerald-950/50 backdrop-blur-xs rounded-full border border-emerald-500/30 flex items-center gap-1.5 font-mono select-none">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              SECURE ACCESS
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-emerald-400 bg-emerald-950/40 backdrop-blur-xs rounded-full border border-emerald-500/30 flex items-center gap-1.5 font-mono select-none">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                অনলাইন: {toBangla(onlineUsers)} জন
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-slate-350 bg-slate-800/40 backdrop-blur-xs rounded-full border border-white/10 flex items-center gap-1.5 font-mono select-none">
+                SECURE ACCESS
+              </span>
+            </div>
           ) : (
             <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-rose-400 bg-rose-950/50 backdrop-blur-xs rounded-full border border-rose-500/30 flex items-center gap-1.5 font-mono select-none">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
