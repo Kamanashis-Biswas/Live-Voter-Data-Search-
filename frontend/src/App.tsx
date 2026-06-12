@@ -475,9 +475,9 @@ export default function App() {
             </svg>
           </div>
           <span className="text-white font-extrabold tracking-wider text-base sm:text-lg flex items-center gap-2">
-            VOTER DATABASE
-            <span className="font-light opacity-80 uppercase text-[10px] sm:text-xs tracking-widest border-l border-teal-500/40 pl-2 hidden sm:inline">
-              Personal Voter Registry
+            লাইভ ভোটার পোর্টাল
+            <span className="font-light opacity-80 uppercase text-[10px] sm:text-xs tracking-widest border-l border-teal-500/40 pl-2 hidden sm:inline font-mono">
+              Live Voter Search Portal
             </span>
           </span>
         </div>
@@ -492,7 +492,7 @@ export default function App() {
                 </span>
                 অনলাইন: {toBangla(onlineUsers)} জন
               </span>
-              <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-slate-350 bg-slate-800/40 backdrop-blur-xs rounded-full border border-white/10 flex items-center gap-1.5 font-mono select-none">
+              <span className="text-[10px] sm:text-xs font-bold px-3 py-1 text-slate-300 bg-slate-800/40 backdrop-blur-xs rounded-full border border-white/10 flex items-center gap-1.5 font-mono select-none">
                 SECURE ACCESS
               </span>
             </div>
@@ -662,14 +662,14 @@ export default function App() {
                 <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
                 <div className="z-10">
                   <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-widest font-mono ${serverOnline ? 'bg-teal-500/20 border border-teal-500/30 text-teal-200' : 'bg-rose-500/20 border border-rose-500/30 text-rose-200'}`}>
-                    {serverOnline ? 'ভোটার ডাটাবেজ পোর্টাল' : 'সিস্টেম অফলাইন'}
+                    {serverOnline ? 'ডিজিটাল লাইভ ভোটার অনুসন্ধান পোর্টাল' : 'সিস্টেম অফলাইন'}
                   </span>
                   <h3 className="text-lg font-bold mt-1.5 leading-tight">
-                    {serverOnline ? 'ব্যক্তিগত ভোটার ডাটাবেস অনুসন্ধান' : 'ডাটাবেস সার্ভার অফলাইন'}
+                    {serverOnline ? 'ডিজিটাল লাইভ ভোটার অনুসন্ধান পোর্টাল' : 'ডাটাবেস সার্ভার অফলাইন'}
                   </h3>
                   <p className="text-xs text-teal-100/90 leading-relaxed max-w-xl mt-1">
                     {serverOnline 
-                      ? 'ব্যক্তিগত ভোটার তালিকা সার্ভার সচল রয়েছে। বাংলা বানান অনুযায়ী সঠিকভাবে নাম বা গ্রাম লিখে অনুসন্ধান শুরু করুন।'
+                      ? 'নির্বাচন কমিশনের ভোটার তালিকা PDF ফাইল থেকে স্বয়ংক্রিয়ভাবে ভোটারদের নাম, পিতা, মাতা, গ্রাম এবং ভোটার নম্বর অনুসন্ধান ও যাচাই করার অনলাইন প্ল্যাটফর্ম।'
                       : 'সার্ভার অফলাইন বা ক্র্যাশ করেছে! অনুগ্রহ করে ব্যাকএন্ড সার্ভার চালু করুন (npm run dev)।'}
                   </p>
                 </div>
