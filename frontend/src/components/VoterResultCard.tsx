@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { VoterRecord, UploadedPdf } from '../types';
 import * as pdfjs from 'pdfjs-dist';
+import { API_BASE } from '../config';
 import { 
   CreditCard, Printer, CheckCircle, AlertTriangle, XOctagon,
   MapPin, ChevronRight, UserCheck, Download, Info, Eye, X,
@@ -38,8 +39,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-// API base URL — matches backend port
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 interface Props {
   voters: VoterRecord[];

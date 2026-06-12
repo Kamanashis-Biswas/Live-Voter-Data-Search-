@@ -58,25 +58,43 @@ app.use(helmet({
   contentSecurityPolicy: false,                          // Keep disabled to let CDN unpkg scripts run freely
 }));
 
-// CORS Whitelist: Restrict incoming network queries to trusted local dev servers
+// CORS Whitelist: Restrict incoming network queries to trusted local dev servers and Vercel frontends
 const corsOptions = {
   origin: (origin, callback) => {
-    const whitelist = [
-      'http://localhost:5173', 
-      'http://127.0.0.1:5173', 
-      'http://localhost:3000', 
-      'http://127.0.0.1:3000', 
-      'http://localhost:5000'
-    ];
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Blocked by CORS policy'));
+    if (!origin) {
+      return callback(null, true);
+    }
+    try {
+      const hostname = new URL(origin).hostname;
+      const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
+      const isVercel = hostname.endsWith('.vercel.app');
+      
+      if (isLocal || isVercel) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    } catch (err) {
+      callback(null, false);
     }
   },
   credentials: true,
+  optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// In-memory registry for tracking online user sessions
+const activeSessions = new Map();
+
+// Background cleaning interval: remove sessions inactive for > 25 seconds
+setInterval(() => {
+  const now = Date.now();
+  for (const [sessId, lastSeen] of activeSessions.entries()) {
+    if (now - lastSeen > 25000) {
+      activeSessions.delete(sessId);
+    }
+  }
+}, 10000);
 
 // Parsing parameters with explicit payload boundary safeguards
 app.use(express.json({ limit: '10mb' }));
@@ -110,6 +128,31 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 // ── Diagnostics and Status Check ─────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString(), uptime: process.uptime() });
+});
+
+// Heartbeat API: tracks online users
+app.post('/api/health/heartbeat', (req, res) => {
+  const { sessionId } = req.body;
+  if (sessionId) {
+    activeSessions.set(sessionId, Date.now());
+  }
+  res.json({ success: true, onlineUsers: activeSessions.size });
+});
+
+// Real-time metrics API: online users and total search logs
+app.get('/api/health/stats', async (req, res, next) => {
+  try {
+    const db = require('./services/db');
+    const onlineCount = activeSessions.size;
+    const totalSearches = await db.getSearchLogsCount();
+    res.json({ 
+      success: true, 
+      onlineUsers: onlineCount, 
+      totalSearches 
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get('/', (req, res) => res.send('Live Voter Search API - Local Storage Mode'));

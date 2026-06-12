@@ -75,15 +75,28 @@ CREATE INDEX IF NOT EXISTS idx_voters_district ON voters(district);
 CREATE INDEX IF NOT EXISTS idx_voters_voter_area ON voters(voter_area);
 CREATE INDEX IF NOT EXISTS idx_voters_pdf_upload_id ON voters(pdf_upload_id);
 
+-- ৩. search_logs table তৈরি করুন
+CREATE TABLE IF NOT EXISTS search_logs (
+  id uuid PRIMARY KEY,
+  date_time timestamptz DEFAULT now(),
+  ip_address text,
+  query text,
+  response_time text,
+  status text,
+  method text DEFAULT 'GET'
+);
+
 -- ৫. RLS disable করুন (development এর জন্য)
 ALTER TABLE voters DISABLE ROW LEVEL SECURITY;
 ALTER TABLE pdf_uploads DISABLE ROW LEVEL SECURITY;
+ALTER TABLE search_logs DISABLE ROW LEVEL SECURITY;
 
 -- ৬. Public access grant করুন
 GRANT ALL ON voters TO anon, authenticated;
 GRANT ALL ON pdf_uploads TO anon, authenticated;
+GRANT ALL ON search_logs TO anon, authenticated;
 
 -- Verify: Check if tables exist
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' 
-AND table_name IN ('voters', 'pdf_uploads');
+AND table_name IN ('voters', 'pdf_uploads', 'search_logs');

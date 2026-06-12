@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { VoterRecord, UploadedPdf, SearchLog } from '../types';
+import { API_BASE } from '../config';
 import { 
   Activity, CheckCircle2, XCircle, AlertCircle, Globe, 
   UploadCloud, Database, Lock, Unlock, FileText, Trash2, 
@@ -24,8 +25,6 @@ import {
  * @version 5.0.0
  */
 
-// API base URL — matches backend configurations
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 /**
  * Utility helper that translates English digits to Bengali digits.
@@ -50,12 +49,14 @@ interface AdminDashboardProps {
   totalVotersInSystem: number;
   pdfsLoading: boolean;
   showToast?: (message: string, type?: 'success' | 'error' | 'info') => void;
+  onlineUsers?: number;
+  totalSearches?: number;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   voters, uploadedPdfs, setUploadedPdfs, searchLogs,
   onAddVoter, onRemoveVoter, onRefreshPdfs, totalVotersInSystem, pdfsLoading,
-  showToast
+  showToast, onlineUsers = 1, totalSearches = 0
 }) => {
   // Authentication states
   const [isAuth, setIsAuth] = useState(false);
@@ -267,18 +268,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* OVERVIEW PANEL */}
       {tab==='overview' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {label:'সিস্টেমের মোট ভোটার',val:`${toBangla(totalVotersInSystem)} জন`,icon:<Database className="w-5 h-5"/>,color:'blue',sub:'লোকাল ডাটাবেজ'},
               {label:'আপলোডকৃত PDF',val:`${toBangla(uploadedPdfs.length)} টি`,icon:<FileText className="w-5 h-5"/>,color:'emerald',sub:'সিস্টেমে যুক্ত'},
-              {label:'মোট অনুসন্ধান',val:`${toBangla(searchLogs.length)} বার`,icon:<Globe className="w-5 h-5"/>,color:'amber',sub:'এই সেশনে'},
+              {label:'মোট অনুসন্ধান',val:`${toBangla(totalSearches)} বার`,icon:<Globe className="w-5 h-5"/>,color:'amber',sub:'ডাটাবেজে সংরক্ষিত'},
+              {
+                label:'অনলাইন ব্যবহারকারী',
+                val:`${toBangla(onlineUsers)} জন`,
+                icon: (
+                  <div className="relative flex items-center justify-center">
+                    <Globe className="w-5 h-5"/>
+                    <span className="absolute -top-1.5 -right-1.5 flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                  </div>
+                ),
+                color:'emerald-pulse',
+                sub:'হার্টবিট ট্র্যাকিং'
+              },
             ].map((c,i)=>(
               <div key={i} className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-xs relative overflow-hidden hover:shadow-md transition-all">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{c.label}</span>
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     c.color === 'blue' ? 'bg-teal-50 text-teal-600' :
-                    c.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
+                    (c.color === 'emerald' || c.color === 'emerald-pulse') ? 'bg-emerald-50 text-emerald-600' :
                     'bg-amber-50 text-amber-600'
                   }`}>{c.icon}</div>
                 </div>
@@ -412,8 +428,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {tab==='ip-logs' && (
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-xl border border-slate-200/80 flex items-center justify-between">
-            <div><h2 className="text-base font-bold text-slate-800 font-serif">সার্চ লগ</h2><p className="text-xs text-slate-400">এই সেশনের অনুসন্ধান কার্যক্রম</p></div>
-            <span className="text-xs font-semibold px-2.5 py-1 text-slate-600 bg-slate-100 rounded-lg border border-slate-200">সেশন ট্র্যাকিং</span>
+            <div><h2 className="text-base font-bold text-slate-800 font-serif">সার্চ লগ</h2><p className="text-xs text-slate-400">ডাটাবেজে সংরক্ষিত অনুসন্ধান কার্যক্রম</p></div>
+            <span className="text-xs font-semibold px-2.5 py-1 text-slate-600 bg-slate-100 rounded-lg border border-slate-200">সিস্টেম ট্র্যাকিং</span>
           </div>
           <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
@@ -422,7 +438,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   {['সময়','IP','পদ্ধতি','কোয়েরি','লেটেন্সি','স্ট্যাটাস'].map(h=><th key={h} className="p-4">{h}</th>)}
                 </tr></thead>
                 <tbody className="divide-y divide-slate-100">
-                  {searchLogs.length===0 ? <tr><td colSpan={6} className="p-12 text-center text-slate-400">এখনো কোনো অনুসন্ধান হয়নি।</td></tr> : searchLogs.slice(0,20).map(log=>(
+                  {searchLogs.length===0 ? <tr><td colSpan={6} className="p-12 text-center text-slate-400">এখনো কোনো অনুসন্ধান হয়নি।</td></tr> : searchLogs.slice(0,50).map(log=>(
                     <tr key={log.id} className="hover:bg-slate-50/50">
                       <td className="p-4 font-mono text-slate-500">{log.dateTime}</td>
                       <td className="p-4"><code className="bg-slate-100 text-slate-800 font-mono px-2 py-0.5 rounded">{log.ipAddress}</code></td>
@@ -438,7 +454,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </table>
             </div>
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <p>মোট <strong className="font-mono">{searchLogs.length}</strong> টি সার্চ</p>
+              <p>সাম্প্রতিক <strong className="font-mono">{searchLogs.length}</strong> টি সার্চ (মোট: <strong className="font-mono">{toBangla(totalSearches)}</strong>)</p>
               <div className="flex items-center gap-2">
                 <button className="p-2 border border-slate-200 rounded-lg bg-white text-slate-400" disabled><ChevronLeft className="w-3.5 h-3.5"/></button>
                 <button className="px-2.5 py-1 border border-teal-600 rounded-lg bg-teal-600 text-white font-bold font-mono">১</button>

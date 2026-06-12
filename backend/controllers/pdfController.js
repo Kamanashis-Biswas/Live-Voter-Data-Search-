@@ -1,60 +1,69 @@
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const db = require('../services/localDb');
+const db = require('../services/db');
 const { parsePdfBuffer } = require('../services/pdfParserService');
 const logger = require('../utils/logger');
+const { supabaseAdmin } = require('../config/supabaseClient');
+
+const hasSupabase = !!supabaseAdmin;
 
 /**
  * @file pdfController.js
  * @description Controller managing uploaded PDF records, invoking the extraction parser service, 
  * writing parsed datasets to the database, and serving PDF buffers inline.
  * 
- * DESIGN DECISIONS:
- *   - Serves files inline (`Content-Disposition: inline`) to allow the React PDF canvas overlay
- *     to render documents without prompting file downloads.
- *   - Cascade deletion: Deleting a PDF record deletes the static file from the uploads directory
- *     and deletes all associated voters from `db.json` in a single transaction.
- * 
  * @author Kamanashis Biswas
- * @version 5.0.0
+ * @version 6.0.0
  */
 
 const UPLOADS_DIR = path.join(__dirname, '../uploads');
 
-// Automatically create uploads directory if missing
-if (!fs.existsSync(UPLOADS_DIR)) {
+// Automatically create uploads directory if missing (only needed for local backup)
+if (!hasSupabase && !fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   logger.info(`Created uploads directory: ${UPLOADS_DIR}`);
 }
 
 /**
  * Handles PDF uploads, invokes the extraction pipeline, and saves results.
- * 
- * @param {object} req - Express request holding file bytes in `req.file`.
- * @param {object} res - Express response.
- * @param {function} next - Express next callback.
  */
 exports.uploadPdf = async (req, res, next) => {
   let filePath = null;
+  const pdfId = uuidv4();
+  const safeFileName = `${pdfId}.pdf`;
 
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'কোনো PDF ফাইল পাঠানো হয়নি।' });
     }
 
-    const pdfId = uuidv4();
-    // Re-encode original filenames to support UTF-8 Bengali characters
     const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
-    const safeFileName = `${pdfId}.pdf`;
     filePath = path.join(UPLOADS_DIR, safeFileName);
 
-    // Save the PDF file to disk
-    try {
-      fs.writeFileSync(filePath, req.file.buffer);
-    } catch (writeErr) {
-      logger.error('Failed to save PDF file', writeErr, pdfId);
-      return res.status(500).json({ success: false, message: 'PDF ফাইল সেভ করতে সমস্যা হয়েছে।' });
+    if (hasSupabase) {
+      // 1. Upload the PDF file to Supabase Storage bucket 'voter-pdfs'
+      try {
+        const { error: uploadErr } = await supabaseAdmin.storage
+          .from('voter-pdfs')
+          .upload(safeFileName, req.file.buffer, {
+            contentType: 'application/pdf',
+            upsert: true
+          });
+        if (uploadErr) throw uploadErr;
+        logger.info(`PDF uploaded to Supabase Storage: ${safeFileName}`, pdfId);
+      } catch (err) {
+        logger.error('Failed to upload PDF to Supabase Storage', err, pdfId);
+        return res.status(500).json({ success: false, message: 'Supabase Cloud Storage-এ PDF আপলোড করতে সমস্যা হয়েছে।' });
+      }
+    } else {
+      // Local disk fallback
+      try {
+        fs.writeFileSync(filePath, req.file.buffer);
+      } catch (writeErr) {
+        logger.error('Failed to save PDF file locally', writeErr, pdfId);
+        return res.status(500).json({ success: false, message: 'PDF ফাইল সেভ করতে সমস্যা হয়েছে।' });
+      }
     }
 
     const fileSizeMB = (req.file.size / (1024 * 1024)).toFixed(2);
@@ -65,7 +74,6 @@ exports.uploadPdf = async (req, res, next) => {
       parseResult = await parsePdfBuffer(req.file.buffer, pdfId, originalName);
     } catch (parseErr) {
       logger.warn(`PDF parse warning for ${originalName}: ${parseErr.message}`, pdfId);
-      // Continue processing even if layout extraction encounters minor warning anomalies
     }
 
     const { coverMeta, voters, totalPages } = parseResult;
@@ -95,11 +103,11 @@ exports.uploadPdf = async (req, res, next) => {
     };
 
     // Save PDF record
-    db.addPdf(pdfRecord);
+    await db.addPdf(pdfRecord);
 
     // Save extracted voters
     if (voters.length > 0) {
-      db.addVoters(voters);
+      await db.addVoters(voters);
     }
 
     return res.status(201).json({
@@ -111,7 +119,9 @@ exports.uploadPdf = async (req, res, next) => {
 
   } catch (err) {
     // Clean up uploaded file on error to prevent stray files
-    if (filePath && fs.existsSync(filePath)) {
+    if (hasSupabase) {
+      supabaseAdmin.storage.from('voter-pdfs').remove([safeFileName]).catch(() => {});
+    } else if (filePath && fs.existsSync(filePath)) {
       try { fs.unlinkSync(filePath); } catch (_) {}
     }
     next(err);
@@ -120,38 +130,53 @@ exports.uploadPdf = async (req, res, next) => {
 
 /**
  * Returns a list of all uploaded PDFs.
- * 
- * @param {object} req - Express request.
- * @param {object} res - Express response.
  */
-exports.getPdfList = (req, res) => {
-  const pdfs = db.getPdfs();
-  res.json({ success: true, count: pdfs.length, pdfs });
+exports.getPdfList = async (req, res, next) => {
+  try {
+    const pdfs = await db.getPdfs();
+    res.json({ success: true, count: pdfs.length, pdfs });
+  } catch (err) {
+    next(err);
+  }
 };
 
 /**
  * Serves raw PDF file streams for display in the frontend PDF.js canvas viewer.
- * 
- * @param {object} req - Express request with the target PDF ID in parameters.
- * @param {object} res - Express response.
- * @param {function} next - Express next callback.
  */
-exports.servePdfFile = (req, res, next) => {
+exports.servePdfFile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const pdf = db.getPdfById(id);
+    const pdf = await db.getPdfById(id);
     if (!pdf) return res.status(404).json({ success: false, message: 'PDF পাওয়া যায়নি।' });
 
-    const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ success: false, message: 'PDF ফাইল সার্ভারে পাওয়া যায়নি।' });
-    }
+    if (hasSupabase) {
+      // Download the PDF from Supabase storage and send buffer inline
+      const { data, error } = await supabaseAdmin.storage
+        .from('voter-pdfs')
+        .download(pdf.safeFileName);
+        
+      if (error) {
+        logger.error('Failed to download PDF from Supabase Storage', error);
+        return res.status(404).json({ success: false, message: 'PDF ফাইল ক্লাউড স্টোরেজে পাওয়া যায়নি।' });
+      }
 
-    // Set inline content-disposition and content-type to allow the canvas to view the PDF directly
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.sendFile(filePath);
+      const buffer = Buffer.from(await data.arrayBuffer());
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.send(buffer);
+    } else {
+      // Local disk file serving
+      const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ success: false, message: 'PDF ফাইল সার্ভারে পাওয়া যায়নি।' });
+      }
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(pdf.fileName)}"`);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.sendFile(filePath);
+    }
   } catch (err) {
     next(err);
   }
@@ -159,26 +184,34 @@ exports.servePdfFile = (req, res, next) => {
 
 /**
  * Cascade deletion: Removes PDF metadata, deletes physical file, and purges all associated voters.
- * 
- * @param {object} req - Express request holding PDF target ID.
- * @param {object} res - Express response.
- * @param {function} next - Express next callback.
  */
-exports.deletePdf = (req, res, next) => {
+exports.deletePdf = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const pdf = db.getPdfById(id);
+    const pdf = await db.getPdfById(id);
 
     if (pdf) {
-      // Delete the physical file
-      const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
-      if (fs.existsSync(filePath)) {
-        try { fs.unlinkSync(filePath); } catch (_) {}
+      if (hasSupabase) {
+        // Delete from Supabase Storage
+        const { error } = await supabaseAdmin.storage
+          .from('voter-pdfs')
+          .remove([pdf.safeFileName]);
+        if (error) {
+          logger.warn(`Failed to delete PDF from Supabase Storage: ${pdf.safeFileName}`, error);
+        }
+      } else {
+        // Delete the physical local file
+        const filePath = path.join(UPLOADS_DIR, pdf.safeFileName);
+        if (fs.existsSync(filePath)) {
+          try { fs.unlinkSync(filePath); } catch (_) {}
+        }
       }
-      // Purge associated voters from local db
-      const deletedVoters = db.deleteVotersByPdf(id);
+      
+      // Purge associated voters
+      const deletedVoters = await db.deleteVotersByPdf(id);
       // Purge the PDF metadata record
-      db.deletePdf(id);
+      await db.deletePdf(id);
+      
       return res.json({ success: true, message: `PDF এবং ${deletedVoters} জন ভোটার মুছে ফেলা হয়েছে।` });
     }
 

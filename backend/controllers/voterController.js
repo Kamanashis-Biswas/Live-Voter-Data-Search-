@@ -1,5 +1,6 @@
-const db = require('../services/localDb');
+const db = require('../services/db');
 const logger = require('../utils/logger');
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * @file voterController.js
@@ -17,7 +18,7 @@ const logger = require('../utils/logger');
  * @param {object} res - Express response containing paginated result sets.
  * @param {function} next - Express next callback.
  */
-exports.searchVoters = (req, res, next) => {
+exports.searchVoters = async (req, res, next) => {
   try {
     const startTime = Date.now();
     const {
@@ -27,7 +28,7 @@ exports.searchVoters = (req, res, next) => {
     } = req.query;
 
     // Invoke the high-speed phonetic indexed search engine
-    const { results, total, page: currentPage, limit: currentLimit } = db.searchVoters({
+    const { results, total, page: currentPage, limit: currentLimit } = await db.searchVoters({
       name, fatherName, motherName, village, voterArea,
       upazila, district, nid, voterNo, occupation, gender,
       page, limit
@@ -35,6 +36,31 @@ exports.searchVoters = (req, res, next) => {
 
     const duration = Date.now() - startTime;
     logger.logSearch({ name, fatherName, village, district }, results.length, duration, req.id);
+
+    // Save search log to DB asynchronously
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    const queryParts = [];
+    if (name) queryParts.push(`নাম: ${name}`);
+    if (fatherName) queryParts.push(`পিতা: ${fatherName}`);
+    if (motherName) queryParts.push(`মাতা: ${motherName}`);
+    if (village) queryParts.push(`গ্রাম/মহল্লা: ${village}`);
+    if (voterArea) queryParts.push(`এলাকা: ${voterArea}`);
+    if (upazila) queryParts.push(`উপজেলা: ${upazila}`);
+    if (district) queryParts.push(`জেলা: ${district}`);
+    if (voterNo) queryParts.push(`ভোটার নম্বর: ${voterNo}`);
+    if (nid) queryParts.push(`NID: ${nid}`);
+    const querySummary = queryParts.join(', ') || 'সাধারণ অনুসন্ধান';
+
+    const logEntry = {
+      id: uuidv4(),
+      dateTime: new Date().toISOString(),
+      ipAddress: ip.split(',')[0].trim(), // Extract client IP if multiple proxies exist
+      query: querySummary,
+      responseTime: `${duration}ms`,
+      status: results.length > 0 ? 'Success' : 'Failed',
+      method: village ? 'VILLAGE_SEARCH' : 'NAME_SEARCH'
+    };
+    db.addSearchLog(logEntry).catch(err => logger.error('[DB] Failed to save search log', err));
 
     res.json({
       success: true,
@@ -56,10 +82,10 @@ exports.searchVoters = (req, res, next) => {
  * @param {object} res - Express response.
  * @param {function} next - Express next callback.
  */
-exports.deleteVotersByPdf = (req, res, next) => {
+exports.deleteVotersByPdf = async (req, res, next) => {
   try {
     const { pdfUploadId } = req.params;
-    const count = db.deleteVotersByPdf(pdfUploadId);
+    const count = await db.deleteVotersByPdf(pdfUploadId);
     res.json({ success: true, message: `${count} জন ভোটার মুছে ফেলা হয়েছে।`, count });
   } catch (err) {
     next(err);
@@ -73,10 +99,10 @@ exports.deleteVotersByPdf = (req, res, next) => {
  * @param {object} res - Express response.
  * @param {function} next - Express next callback.
  */
-exports.deleteVoter = (req, res, next) => {
+exports.deleteVoter = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deleted = db.deleteVoterById(id);
+    const deleted = await db.deleteVoterById(id);
     if (deleted === 0) {
       return res.status(404).json({ success: false, message: 'ভোটার পাওয়া যায়নি।' });
     }
@@ -85,3 +111,16 @@ exports.deleteVoter = (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * Fetches recent search logs from the system.
+ */
+exports.getSearchLogs = async (req, res, next) => {
+  try {
+    const logs = await db.getSearchLogs(100);
+    res.json({ success: true, logs });
+  } catch (err) {
+    next(err);
+  }
+};
+

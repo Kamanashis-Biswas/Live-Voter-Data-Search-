@@ -14,6 +14,9 @@ const voterController = require('../controllers/voterController');
 // GET /api/voters/search — Invokes fast fuzzy phonetic searches on voter records
 router.get('/search', voterController.searchVoters);
 
+// GET /api/voters/search-logs — Exposes logged search activity
+router.get('/search-logs', voterController.getSearchLogs);
+
 // DELETE /api/voters/by-pdf/:pdfUploadId — Deletes all voter records associated with a parent PDF
 router.delete('/by-pdf/:pdfUploadId', voterController.deleteVotersByPdf);
 

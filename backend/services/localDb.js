@@ -65,6 +65,7 @@ function readDb() {
     if (fs.existsSync(DB_PATH)) {
       const raw = fs.readFileSync(DB_PATH, { encoding: 'utf8' });
       _cache = JSON.parse(raw);
+      if (!_cache.searchLogs) _cache.searchLogs = [];
       rebuildIndexes();
       return _cache;
     }
@@ -75,6 +76,7 @@ function readDb() {
       if (fs.existsSync(BACKUP_PATH)) {
         const raw = fs.readFileSync(BACKUP_PATH, { encoding: 'utf8' });
         _cache = JSON.parse(raw);
+        if (!_cache.searchLogs) _cache.searchLogs = [];
         // Repair the primary database file instantly
         fs.writeFileSync(DB_PATH, raw, { encoding: 'utf8' });
         console.log('[DB] Database recovery successful: restored from db.json.bak');
@@ -87,7 +89,7 @@ function readDb() {
   }
 
   // Fallback to fresh database state if both files are missing or unreadable
-  _cache = { voters: [], pdfs: [] };
+  _cache = { voters: [], pdfs: [], searchLogs: [] };
   rebuildIndexes();
   return _cache;
 }
@@ -357,6 +359,33 @@ const db = {
     const data = readDb();
     data.pdfs = data.pdfs.filter(p => p.id !== id);
     writeDb(data);
+  },
+
+  // ── Search Logs Collection Actions ─────────────────────────────────────────
+
+  /**
+   * Saves a new search log entry to cache and triggers disk write.
+   * @param {object} log - Search log entry.
+   * @returns {object} The saved log object.
+   */
+  addSearchLog(log) {
+    const data = readDb();
+    if (!data.searchLogs) data.searchLogs = [];
+    data.searchLogs = [log, ...data.searchLogs];
+    // Cap at 1000 items to prevent db.json growing too large
+    if (data.searchLogs.length > 1000) {
+      data.searchLogs = data.searchLogs.slice(0, 1000);
+    }
+    writeDb(data);
+    return log;
+  },
+
+  /**
+   * Retrieves all search logs from cache.
+   * @returns {object[]} Search logs list.
+   */
+  getSearchLogs() {
+    return readDb().searchLogs || [];
   },
 
   // ── Cache Operational Hooks ────────────────────────────────────────────────

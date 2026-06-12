@@ -4,6 +4,7 @@ import { VoterSearchForm } from './components/VoterSearchForm';
 import { VoterResultCard } from './components/VoterResultCard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { DeveloperModal } from './components/DeveloperModal';
+import { API_BASE } from './config';
 import {
   Lock,
   Loader2,
@@ -32,8 +33,6 @@ import bgShapes from './assets/bg-shapes.png';
  * @version 5.0.0
  */
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
-
 export default function App() {
   // Navigation states
   const [currentView, setCurrentView] = useState<'search' | 'dashboard'>('search');
@@ -49,10 +48,21 @@ export default function App() {
   const [recentActions, setRecentActions] = useState<Array<{ id: number; text: string; time: string; type: 'red' | 'blue' }>>([]);
   const [searchLogs, setSearchLogs] = useState<SearchLog[]>([]);
 
-  // Page loader and health status
+  // Page loader, health, and online tracking states
   const [searching, setSearching] = useState<boolean>(false);
   const [serverOnline, setServerOnline] = useState<boolean>(true);
   const [showDevModal, setShowDevModal] = useState<boolean>(false);
+  const [onlineUsers, setOnlineUsers] = useState<number>(1);
+
+  // Generate or retrieve session ID for heartbeat tracking
+  const [sessionId] = useState(() => {
+    let id = sessionStorage.getItem('voter_session_id');
+    if (!id) {
+      id = 'sess-' + Math.random().toString(36).substring(2, 15) + '-' + Date.now().toString(36);
+      sessionStorage.setItem('voter_session_id', id);
+    }
+    return id;
+  });
 
   /**
    * Mobile Sidebar Drawer State
@@ -96,20 +106,81 @@ export default function App() {
   const [uploadedPdfs, setUploadedPdfs] = useState<UploadedPdf[]>([]);
   const [pdfsLoading, setPdfsLoading] = useState<boolean>(false);
 
+/**
+   * Fetches recent search logs from the backend server.
+   */
+  const loadSearchLogs = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/voters/search-logs`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.logs) {
+          const mappedLogs: SearchLog[] = data.logs.map((log: any) => {
+            const date = new Date(log.dateTime || log.date_time);
+            const timeStr = date.toLocaleTimeString('bn-BD') + ' ' + date.toLocaleDateString('bn-BD');
+            return {
+              id: log.id,
+              dateTime: timeStr,
+              ipAddress: log.ipAddress || log.ip_address || '127.0.0.1',
+              query: log.query || '',
+              responseTime: log.responseTime || log.response_time || '0ms',
+              status: log.status === 'Success' ? 'Success' : 'Failed',
+              method: log.method || 'GET'
+            };
+          });
+          setSearchLogs(mappedLogs);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load search logs:', err);
+    }
+  }, []);
+
   /**
-   * Periodically polls the server health endpoint to update state indicators and handle offline failures.
+   * Transmits periodic heartbeat requests to track active online sessions.
    */
   useEffect(() => {
-    const checkHealth = async () => {
+    const sendHeartbeat = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/health`);
-        setServerOnline(res.ok);
+        await fetch(`${API_BASE}/api/health/heartbeat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        });
+      } catch (err) {
+        console.warn('Heartbeat transmission failed:', err);
+      }
+    };
+    sendHeartbeat();
+    const interval = setInterval(sendHeartbeat, 10000);
+    return () => clearInterval(interval);
+  }, [sessionId]);
+
+  /**
+   * Periodically polls the server health and analytics stats.
+   */
+  useEffect(() => {
+    const checkHealthAndStats = async () => {
+      try {
+        const healthRes = await fetch(`${API_BASE}/api/health`);
+        setServerOnline(healthRes.ok);
+
+        if (healthRes.ok) {
+          const statsRes = await fetch(`${API_BASE}/api/health/stats`);
+          if (statsRes.ok) {
+            const data = await statsRes.json();
+            if (data.success) {
+              setOnlineUsers(data.onlineUsers || 1);
+              setSearchCount(data.totalSearches || 0);
+            }
+          }
+        }
       } catch {
         setServerOnline(false);
       }
     };
-    checkHealth();
-    const interval = setInterval(checkHealth, 5000);
+    checkHealthAndStats();
+    const interval = setInterval(checkHealthAndStats, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -318,12 +389,23 @@ export default function App() {
   };
 
   /**
-   * Toggles the active view routing and resets state caches.
+   * Toggles the active view routing, resets state caches, and loads search logs if entering admin dashboard.
    */
   const handleViewChange = (view: 'search' | 'dashboard') => {
     handleReset();
     setCurrentView(view);
+    if (view === 'dashboard') {
+      loadSearchLogs();
+    }
   };
+
+  /**
+   * Triggers a full dashboard refresh.
+   */
+  const handleRefreshDashboard = useCallback(async () => {
+    await loadPdfs();
+    await loadSearchLogs();
+  }, [loadPdfs, loadSearchLogs]);
 
   /**
    * Core callback synced to update local state upon inserting manual entries.
@@ -414,7 +496,7 @@ export default function App() {
 
               <div className="flex gap-2.5">
                 <button
-                  onClick={loadPdfs}
+                  onClick={handleRefreshDashboard}
                   disabled={pdfsLoading}
                   className="px-4 py-2 text-xs font-bold backdrop-blur-md bg-white/70 text-slate-900 hover:bg-white/95 border border-white/40 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-black/5"
                 >
@@ -443,10 +525,12 @@ export default function App() {
               searchLogs={searchLogs}
               onAddVoter={handleAddVoter}
               onRemoveVoter={handleRemoveVoter}
-              onRefreshPdfs={loadPdfs}
+              onRefreshPdfs={handleRefreshDashboard}
               totalVotersInSystem={totalVotersInSystem}
               pdfsLoading={pdfsLoading}
               showToast={showToast}
+              onlineUsers={onlineUsers}
+              totalSearches={searchCount}
             />
           </div>
         ) : (
