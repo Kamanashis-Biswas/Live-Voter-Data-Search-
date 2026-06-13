@@ -543,6 +543,7 @@ function normalizeForSearch(str) {
   s = s.replace(/বিল্পব/g, 'বিপ্লব');
   
   // 2. Map homophones to unified consonant classes
+  s = s.replace(/য়/g, 'য');
   s = s.replace(/[ষস]/g, 'শ');
   s = s.replace(/[\u09DC\u09DD]/g, 'র');
   s = s.replace(/ণ/g, 'ন');
