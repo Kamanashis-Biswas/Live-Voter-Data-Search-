@@ -4,6 +4,8 @@ import { VoterSearchForm } from './components/VoterSearchForm';
 import { VoterResultCard } from './components/VoterResultCard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { DeveloperModal } from './components/DeveloperModal';
+import { LoadingScreen } from './components/LoadingScreen';
+import { AnimatePresence } from 'framer-motion';
 import { API_BASE } from './config';
 import {
   Lock,
@@ -42,6 +44,10 @@ const toBangla = (n: number | string): string => {
 };
 
 export default function App() {
+  // Fullscreen loading states
+  const [appLoading, setAppLoading] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0);
+
   // Navigation states
   const [currentView, setCurrentView] = useState<'search' | 'dashboard'>('search');
   
@@ -223,6 +229,80 @@ export default function App() {
       setPdfsLoading(false);
     }
   }, []);
+
+  // Dynamic Cold-Start Health Polling
+  useEffect(() => {
+    let progressTimer: NodeJS.Timeout;
+    let healthTimer: NodeJS.Timeout;
+    let isFinished = false;
+
+    // 1. Progress simulation count-up
+    const runProgressSimulation = () => {
+      progressTimer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 95) {
+            clearInterval(progressTimer);
+            return 95; // Cap at 95% until server answers
+          }
+          // Dynamic increments for a smooth curve
+          let step = 3;
+          if (prev > 30) step = 1.5;
+          if (prev > 70) step = 0.8;
+          return parseFloat((prev + step).toFixed(1));
+        });
+      }, 400);
+    };
+
+    // 2. Fast count-up to 100% when server becomes healthy
+    const fastForwardToComplete = () => {
+      isFinished = true;
+      clearInterval(progressTimer);
+      clearInterval(healthTimer);
+
+      const completeTimer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(completeTimer);
+            setTimeout(() => {
+              setAppLoading(false);
+            }, 500); // Allow fadeout animation to complete
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 30);
+    };
+
+    // 3. Health ping request
+    const checkServerHealth = async () => {
+      if (isFinished) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/health`);
+        if (res.ok) {
+          fastForwardToComplete();
+        }
+      } catch (err) {
+        // Backend still down or starting up
+      }
+    };
+
+    // Begin check cycle
+    runProgressSimulation();
+    checkServerHealth(); // Initial check
+
+    // Poll health endpoint every 2 seconds
+    healthTimer = setInterval(checkServerHealth, 2000);
+
+    return () => {
+      clearInterval(progressTimer);
+      clearInterval(healthTimer);
+    };
+  }, []);
+
+  const handleBypassLoading = () => {
+    setProgress(100);
+    setAppLoading(false);
+  };
 
   // Fetch PDFs and search logs on initial assembly mount
   useEffect(() => {
@@ -441,9 +521,16 @@ export default function App() {
   const totalVotersInSystem = uploadedPdfs.reduce((sum, p) => sum + (p.voterCount || 0), 0);
 
   return (
-    <div 
-      id="voter-app-root" 
-      className="min-h-screen font-sans text-slate-100 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-100 leading-normal relative overflow-hidden bg-slate-950 bg-fixed"
+    <>
+      <AnimatePresence>
+        {appLoading && (
+          <LoadingScreen progress={progress} onBypass={handleBypassLoading} />
+        )}
+      </AnimatePresence>
+
+      <div 
+        id="voter-app-root" 
+        className="min-h-screen font-sans text-slate-100 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-100 leading-normal relative overflow-hidden bg-slate-950 bg-fixed"
       style={{
         backgroundImage: `linear-gradient(rgba(10, 15, 30, 0.65), rgba(10, 15, 30, 0.85)), url(${bgShapes})`,
         backgroundSize: 'cover',
@@ -729,5 +816,6 @@ export default function App() {
       )}
 
     </div>
+    </>
   );
 }
