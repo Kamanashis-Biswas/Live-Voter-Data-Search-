@@ -3713,3 +3713,21 @@
 {"timestamp":"2026-06-13T11:04:45.757Z","level":"INFO","message":"Corrections applied: 474 (dict=146, name=328, geo=0)","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
 {"timestamp":"2026-06-13T11:04:45.757Z","level":"INFO","message":"[DB] Purging voters for PDF 2a9b06e8-e223-4333-a710-4b490039c999 from Supabase...","reqId":null}
 {"timestamp":"2026-06-13T11:04:45.901Z","level":"INFO","message":"[DB] Inserting 866 voters to Supabase...","reqId":null}
+{"timestamp":"2026-06-13T11:51:29.209Z","level":"INFO","message":"PDF Parse Start: 011138_com_879_male_without_photo_50_2025-11-24.pdf","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:29.341Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 69%) encoding=sutonny pages=52","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:29.648Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=144892","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:29.650Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=রামপাল union=বাইনতলা ward=৬ area=কুমলাই (৬নং ওয়ার্ডের অংশ) সর্বমোট ভোটার সংখ্যা","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:31.522Z","level":"INFO","message":"Correction Pipeline: 689 total corrections (dict=191, name=498, geo=0)","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:31.522Z","level":"INFO","message":"PDF Parsed: 879 voters from 52 pages in 2313ms","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:31.523Z","level":"INFO","message":"Corrections applied: 689 (dict=191, name=498, geo=0)","reqId":"07b35593-89d7-4d33-9c3a-4ab0ea431401"}
+{"timestamp":"2026-06-13T11:51:31.523Z","level":"INFO","message":"[DB] Purging voters for PDF 07b35593-89d7-4d33-9c3a-4ab0ea431401 from Supabase...","reqId":null}
+{"timestamp":"2026-06-13T11:51:31.702Z","level":"INFO","message":"[DB] Inserting 879 voters to Supabase...","reqId":null}
+{"timestamp":"2026-06-13T11:51:33.904Z","level":"INFO","message":"PDF Parse Start: 011138_com_866_female_without_photo_49_2025-11-24.pdf","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:33.923Z","level":"INFO","message":"PDF Type: legacy_font (confidence: 68%) encoding=sutonny pages=51","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:34.199Z","level":"INFO","message":"Bengali Conversion: encoding=sutonny chars=140892","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:34.201Z","level":"INFO","message":"Cover Meta: district=বাগেরহাট upazila=রামপাল union=বাইনতলা ward=৬ area=কুমলাই (৬নং ওয়ার্ডের অংশ) সর্বমোট ভোটার সংখ্যা","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:35.920Z","level":"INFO","message":"Correction Pipeline: 504 total corrections (dict=174, name=330, geo=0)","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:35.920Z","level":"INFO","message":"PDF Parsed: 866 voters from 51 pages in 2016ms","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:35.921Z","level":"INFO","message":"Corrections applied: 504 (dict=174, name=330, geo=0)","reqId":"2a9b06e8-e223-4333-a710-4b490039c999"}
+{"timestamp":"2026-06-13T11:51:35.921Z","level":"INFO","message":"[DB] Purging voters for PDF 2a9b06e8-e223-4333-a710-4b490039c999 from Supabase...","reqId":null}
+{"timestamp":"2026-06-13T11:51:36.073Z","level":"INFO","message":"[DB] Inserting 866 voters to Supabase...","reqId":null}
