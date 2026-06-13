@@ -169,18 +169,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Render Authentication Modal if user session is unestablished
   if (!isAuth) return (
-    <div className="max-w-md mx-auto my-12 p-8 backdrop-blur-md bg-white/75 rounded-2xl border border-white/30 shadow-2xl text-center">
-      <div className="w-16 h-16 bg-teal-50 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-6 border border-teal-100/80 shadow-sm">
+    <div className="max-w-md mx-auto my-12 p-8 glass-card rounded-2xl text-center text-slate-100">
+      <div className="w-16 h-16 bg-teal-500/10 text-teal-400 rounded-full flex items-center justify-center mx-auto mb-6 border border-teal-500/20 shadow-sm">
         <Lock className="w-7 h-7" />
       </div>
-      <h2 className="text-xl font-bold text-slate-800 font-serif">অ্যাডমিন অ্যাক্সেস</h2>
+      <h2 className="text-xl font-bold text-white font-serif">অ্যাডমিন অ্যাক্সেস</h2>
       
       {/* Dynamic Password Reset Token copyable widget */}
       {generatedToken && (
-        <div className="mt-6 mb-2 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-left">
+        <div className="mt-6 mb-2 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between text-left">
           <div>
-            <p className="text-xs font-bold text-emerald-800 mb-1">আপনার টোকেন:</p>
-            <p className="text-xl font-mono font-bold text-emerald-600 tracking-widest">{generatedToken}</p>
+            <p className="text-xs font-bold text-emerald-400 mb-1">আপনার টোকেন:</p>
+            <p className="text-xl font-mono font-bold text-emerald-400 tracking-widest">{generatedToken}</p>
           </div>
           <button 
             type="button"
@@ -189,7 +189,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               // COPY HOOK FEEDBACK: Invokes modern portal toast alerts replacing standard browser alert() boxes
               if (showToast) showToast('টোকেন কপি করা হয়েছে!', 'success');
             }}
-            className="p-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg flex flex-col items-center gap-1 transition-colors"
+            className="p-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg flex flex-col items-center gap-1 transition-colors"
             title="Copy Token"
           >
             <Copy className="w-5 h-5" />
@@ -201,20 +201,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Access credentials inputs */}
       <form onSubmit={handleAuth} className="mt-6 space-y-4 text-left">
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Email</label>
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="admin@example.com" required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"/>
+          <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-widest font-mono">Email</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="admin@example.com" required className="w-full glass-input px-4 py-2.5 text-sm font-mono"/>
         </div>
         {authMode === 'reset_password' && (
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-widest font-mono">Reset Token</label>
-            <input type="text" value={token} onChange={e=>setToken(e.target.value)} required className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"/>
+            <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-widest font-mono">Reset Token</label>
+            <input type="text" value={token} onChange={e=>setToken(e.target.value)} required className="w-full glass-input px-4 py-2.5 text-sm font-mono"/>
           </div>
         )}
         {(authMode==='login'||authMode==='signup'||authMode==='reset_password') && (
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-widest font-mono">{authMode==='reset_password'?'New Password':'Password'}</label>
-              {authMode==='login' && <button type="button" onClick={()=>{setAuthMode('forgot_password'); setGeneratedToken(''); setAuthOk(''); setAuthErr('');}} className="text-[10px] text-teal-600 hover:underline">Forgot?</button>}
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest font-mono">{authMode==='reset_password'?'New Password':'Password'}</label>
+              {authMode==='login' && <button type="button" onClick={()=>{setAuthMode('forgot_password'); setGeneratedToken(''); setAuthOk(''); setAuthErr('');}} className="text-[10px] text-teal-400 hover:text-teal-300 hover:underline">Forgot?</button>}
             </div>
             <div className="relative">
               <input 
@@ -223,21 +223,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 onChange={e=>setPassword(e.target.value)} 
                 placeholder="••••••••" 
                 required 
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-mono"
+                className="w-full glass-input px-4 py-2.5 pr-10 text-sm font-mono"
               />
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
         )}
-        {authErr && <p className="text-xs text-rose-600 flex items-center gap-1.5 bg-rose-50 p-2.5 rounded-lg border border-rose-100"><AlertCircle className="w-4 h-4 shrink-0"/>{authErr}</p>}
-        {authOk && <p className="text-xs text-emerald-600 flex items-center gap-1.5 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100"><CheckCircle2 className="w-4 h-4 shrink-0"/>{authOk}</p>}
-        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed border-none shadow-lg shadow-teal-500/10 hover:shadow-teal-500/35">
+        {authErr && <p className="text-xs text-rose-400 flex items-center gap-1.5 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20"><AlertCircle className="w-4 h-4 shrink-0"/>{authErr}</p>}
+        {authOk && <p className="text-xs text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20"><CheckCircle2 className="w-4 h-4 shrink-0"/>{authOk}</p>}
+        <button type="submit" disabled={authBusy} className="w-full py-2.5 bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-600 hover:to-indigo-700 text-white font-bold rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed border-none shadow-lg shadow-teal-500/10">
           {authBusy ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -248,18 +248,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
         </button>
       </form>
-      <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500">
-        {authMode==='login' ? <p>নেই? <button onClick={()=>setAuthMode('signup')} className="text-teal-600 font-bold hover:underline">সাইন আপ</button></p> : <p><button onClick={()=>setAuthMode('login')} className="text-teal-600 font-bold hover:underline">লগইনে ফিরুন</button></p>}
+      <div className="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 font-medium">
+        {authMode==='login' ? <p>নেই? <button onClick={()=>setAuthMode('signup')} className="text-teal-400 hover:text-teal-300 font-bold hover:underline cursor-pointer">সাইন আপ</button></p> : <p><button onClick={()=>setAuthMode('login')} className="text-teal-400 hover:text-teal-300 font-bold hover:underline cursor-pointer">লগইনে ফিরুন</button></p>}
       </div>
     </div>
   );
 
   return (
-    <div className="space-y-6 text-slate-800">
+    <div className="space-y-6 text-slate-200">
       {/* Horizontal navigation tabs */}
-      <div className="flex border-b border-slate-200 overflow-x-auto no-scrollbar">
+      <div className="flex border-b border-white/10 overflow-x-auto no-scrollbar">
         {[{k:'overview',l:'ওভারভিউ',i:<Activity className="w-4 h-4"/>},{k:'pdf-list',l:'PDF আপলোড',i:<UploadCloud className="w-4 h-4"/>},{k:'ip-logs',l:'সার্চ লগ',i:<Globe className="w-4 h-4"/>}].map(t=>(
-          <button key={t.k} onClick={()=>setTab(t.k as any)} className={`px-5 py-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 whitespace-nowrap transition-all cursor-pointer ${tab===t.k?'border-teal-600 text-teal-600 bg-teal-50/10':'border-transparent text-slate-500 hover:text-slate-800'}`}>
+          <button key={t.k} onClick={()=>setTab(t.k as any)} className={`px-5 py-3 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 whitespace-nowrap transition-all cursor-pointer ${tab===t.k?'border-teal-500 text-teal-400 bg-teal-500/5':'border-transparent text-slate-400 hover:text-white'}`}>
             {t.i}{t.l}
           </button>
         ))}
@@ -270,7 +270,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              {label:'সিস্টেমের মোট ভোটার',val:`${toBangla(totalVotersInSystem)} জন`,icon:<Database className="w-5 h-5"/>,color:'blue',sub:'লোকাল ডাটাবেজ'},
+              {label:'সistemের মোট ভোটার',val:`${toBangla(totalVotersInSystem)} জন`,icon:<Database className="w-5 h-5"/>,color:'blue',sub:'লোকাল ডাটাবেজ'},
               {label:'আপলোডকৃত PDF',val:`${toBangla(uploadedPdfs.length)} টি`,icon:<FileText className="w-5 h-5"/>,color:'emerald',sub:'সিস্টেমে যুক্ত'},
               {label:'মোট অনুসন্ধান',val:`${toBangla(totalSearches)} বার`,icon:<Globe className="w-5 h-5"/>,color:'amber',sub:'ডাটাবেজে সংরক্ষিত'},
               {
@@ -289,16 +289,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 sub:'হার্টবিট ট্র্যাকিং'
               },
             ].map((c,i)=>(
-              <div key={i} className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-xs relative overflow-hidden hover:shadow-md transition-all">
+              <div key={i} className="glass-card rounded-xl p-6 relative overflow-hidden">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{c.label}</span>
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    c.color === 'blue' ? 'bg-teal-50 text-teal-600' :
-                    (c.color === 'emerald' || c.color === 'emerald-pulse') ? 'bg-emerald-50 text-emerald-600' :
-                    'bg-amber-50 text-amber-600'
+                    c.color === 'blue' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
+                    (c.color === 'emerald' || c.color === 'emerald-pulse') ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                    'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                   }`}>{c.icon}</div>
                 </div>
-                <h4 className="text-3xl font-black text-slate-900 mt-4">{pdfsLoading ? '...' : c.val}</h4>
+                <h4 className="text-3xl font-black text-white mt-4">{pdfsLoading ? '...' : c.val}</h4>
                 <p className="text-[11px] text-slate-400 mt-1">{c.sub}</p>
               </div>
             ))}
@@ -306,18 +306,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           {/* Area Summary Panels */}
           {uploadedPdfs.length > 0 && (
-            <div className="bg-white rounded-xl border border-slate-200/80 p-6">
-              <h3 className="font-bold text-slate-800 font-serif flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-teal-600"/>আপলোডকৃত এলাকার সারসংক্ষেপ</h3>
+            <div className="glass-card rounded-xl p-6">
+              <h3 className="font-bold text-white font-serif flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-teal-400"/>আপলোডকৃত এলাকার সারসংক্ষেপ</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {uploadedPdfs.map(p=>(
-                  <div key={p.id} className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs space-y-1">
-                    <p className="font-bold text-slate-800 truncate">{p.fileName}</p>
-                    <p className="text-slate-500">{p.district} › {p.upazila} › {p.unionName}</p>
-                    <p className="text-slate-500">ভোটার এলাকা: <span className="font-semibold text-slate-700">{p.voterArea}</span> ({p.voterAreaNo})</p>
-                    <p className="text-slate-500">সর্বমোট: {p.totalVoters} | {p.genderType}: {p.genderType==='মহিলা'?p.totalFemaleVoters:p.totalVoters}</p>
-                    <div className="flex gap-1 mt-1">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${p.genderType==='মহিলা'?'bg-pink-50 border-pink-100 text-pink-700':'bg-indigo-50 border-indigo-100 text-indigo-700'}`}>{p.genderType}</span>
-                      <span className="px-2 py-0.5 rounded bg-emerald-50 border-emerald-100 text-emerald-700 text-[10px] font-bold"><UserCheck className="w-3 h-3 inline mr-0.5"/>{p.voterCount} extract</span>
+                  <div key={p.id} className="bg-slate-950/40 border border-slate-800 rounded-lg p-3 text-xs space-y-1">
+                    <p className="font-bold text-slate-200 truncate">{p.fileName}</p>
+                    <p className="text-slate-400">{p.district} › {p.upazila} › {p.unionName}</p>
+                    <p className="text-slate-400">ভোটার এলাকা: <span className="font-semibold text-slate-300">{p.voterArea}</span> ({p.voterAreaNo})</p>
+                    <p className="text-slate-400">সর্বমোট: {p.totalVoters} | {p.genderType}: {p.genderType==='মহিলা'?p.totalFemaleVoters:p.totalVoters}</p>
+                    <div className="flex gap-1.5 mt-1.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${p.genderType==='মহিলা'?'bg-pink-500/10 border-pink-500/20 text-pink-400':'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'}`}>{p.genderType}</span>
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold"><UserCheck className="w-3.5 h-3.5 inline mr-0.5"/>{p.voterCount} extract</span>
                     </div>
                   </div>
                 ))}
@@ -326,15 +326,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* Setup Informational Strip */}
-          <div className="p-6 bg-white rounded-xl border border-slate-200/80 flex flex-col md:flex-row items-center gap-6 justify-between">
+          <div className="p-6 glass-card rounded-xl flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="space-y-2 max-w-2xl">
-              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><Unlock className="w-5 h-5 text-teal-600"/>Local Storage Mode — কোনো Supabase Setup লাগবে না</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">PDF আপলোড করলে সার্ভার স্বয়ংক্রিয়ভাবে ভোটারদের তথ্য extract করে local database-এ সংরক্ষণ করে। তারপর নাম, পিতার নাম, গ্রামের নাম দিয়ে তাৎক্ষণিক অনুসন্ধান করা যাবে।</p>
+              <h3 className="text-base font-bold text-white font-serif flex items-center gap-1.5"><Unlock className="w-5 h-5 text-teal-400"/>Local Storage Mode — কোনো Supabase Setup লাগবে না</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">PDF আপলোড করলে সার্ভার স্বয়ংক্রিয়ভাবে ভোটারদের তথ্য extract করে local database-এ সংরক্ষণ করে। তারপর নাম, পিতার নাম, গ্রামের নাম দিয়ে তাৎক্ষণিক অনুসন্ধান করা যাবে।</p>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shrink-0 text-center min-w-[180px]">
+            <div className="bg-slate-950/40 border border-slate-800 rounded-xl p-4 shrink-0 text-center min-w-[180px]">
               <span className="text-[10px] text-slate-400 font-bold uppercase font-mono">Storage</span>
-              <p className="text-lg font-black text-slate-800 font-serif mt-1">LOCAL JSON</p>
-              <span className="text-[10px] text-emerald-600 font-bold mt-1 inline-block px-2 py-0.5 bg-emerald-50 rounded border border-emerald-100">সক্রিয়</span>
+              <p className="text-lg font-black text-slate-200 font-serif mt-1">LOCAL JSON</p>
+              <span className="text-[10px] text-emerald-400 font-bold mt-1 inline-block px-2.5 py-0.5 bg-emerald-500/15 rounded border border-emerald-500/20">সক্রিয়</span>
             </div>
           </div>
         </div>
@@ -343,59 +343,59 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* PDF LIST TABLE */}
       {tab==='pdf-list' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card p-5 rounded-xl">
             <div>
-              <h2 className="text-base font-bold text-slate-800 font-serif flex items-center gap-2"><Database className="w-4 h-4 text-teal-600"/>ভোটার তালিকা PDF ({toBangla(uploadedPdfs.length)} টি)</h2>
+              <h2 className="text-base font-bold text-white font-serif flex items-center gap-2"><Database className="w-4 h-4 text-teal-400"/>ভোটার তালিকা PDF ({toBangla(uploadedPdfs.length)} টি)</h2>
               <p className="text-xs text-slate-400">PDF আপলোড করলে স্বয়ংক্রিয়ভাবে ভোটার তথ্য extract হবে</p>
             </div>
             <div className="flex gap-2">
               <button 
                 onClick={onRefreshPdfs} 
                 disabled={pdfsLoading}
-                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-white font-bold rounded-xl text-xs flex items-center gap-1.5 border border-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${pdfsLoading?'animate-spin':''}`}/>
+                <RefreshCw className={`w-3.5 h-3.5 ${pdfsLoading?'animate-spin text-teal-400':''}`}/>
                 {pdfsLoading ? 'রিফ্রেশ হচ্ছে...' : 'রিফ্রেশ'}
               </button>
-              <button onClick={()=>setModalOpen(true)} className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md cursor-pointer border-none">
+              <button onClick={()=>setModalOpen(true)} className="px-4 py-2 bg-gradient-to-r from-teal-500 to-indigo-650 hover:from-teal-650 hover:to-indigo-755 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none">
                 <Plus className="w-4 h-4"/>PDF আপলোড করুন
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div className="glass-card rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-slate-50 text-slate-600 uppercase border-b border-slate-100 font-bold font-serif">
+                  <tr className="bg-slate-950/80 text-slate-300 uppercase border-b border-slate-800 font-bold font-serif">
                     {['ফাইল নাম','জেলা','উপজেলা','ইউনিয়ন','ভোটার এলাকা','এলাকা নং','মোট ভোটার','Extract','ধরন','তারিখ','অ্যাকশন'].map(h=><th key={h} className="p-3">{h}</th>)}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-800/60">
                   {pdfsLoading ? (
-                    <tr><td colSpan={11} className="p-12 text-center text-slate-400"><RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2"/>লোড হচ্ছে...</td></tr>
+                    <tr><td colSpan={11} className="p-12 text-center text-slate-400"><RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-teal-400"/>লোড হচ্ছে...</td></tr>
                   ) : uploadedPdfs.length === 0 ? (
                     <tr><td colSpan={11} className="p-12 text-center text-slate-400">
-                      <UploadCloud className="w-10 h-10 mx-auto mb-3 text-slate-300"/>
+                      <UploadCloud className="w-10 h-10 mx-auto mb-3 text-slate-500 animate-bounce"/>
                       কোনো PDF নেই। উপরে "PDF আপলোড করুন" ক্লিক করুন।
                     </td></tr>
                   ) : uploadedPdfs.map(pdf=>(
-                    <tr key={pdf.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-3 max-w-[160px]"><div className="flex items-center gap-2"><FileText className="w-4 h-4 text-red-600 shrink-0"/><span className="font-semibold text-slate-800 truncate text-[11px]" title={pdf.fileName}>{pdf.fileName}</span></div></td>
-                      <td className="p-3 font-serif">{pdf.district}</td>
-                      <td className="p-3 font-serif">{pdf.upazila}</td>
-                      <td className="p-3 font-serif text-slate-600">{pdf.unionName||'-'}</td>
-                      <td className="p-3"><span className="px-2 py-0.5 rounded bg-teal-50 border border-teal-100/80 text-teal-700 font-bold">{pdf.voterArea||'-'}</span></td>
-                      <td className="p-3 font-mono text-slate-600">{pdf.voterAreaNo||'-'}</td>
-                      <td className="p-3 text-center font-bold">{pdf.totalVoters||'-'}</td>
-                      <td className="p-3 text-center"><span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold"><UserCheck className="w-3 h-3"/>{pdf.voterCount} জন</span></td>
-                      <td className="p-3 text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${pdf.genderType==='মহিলা'?'bg-pink-50 border-pink-100 text-pink-700':'bg-indigo-50 border-indigo-100 text-indigo-700'}`}>{pdf.genderType}</span></td>
-                      <td className="p-3 text-[10px] font-mono text-slate-500">{pdf.publicationDate||'-'}</td>
+                    <tr key={pdf.id} className="hover:bg-slate-900/40 transition-colors">
+                      <td className="p-3 max-w-[160px]"><div className="flex items-center gap-2"><FileText className="w-4 h-4 text-rose-500 shrink-0"/><span className="font-semibold text-slate-200 truncate text-[11px]" title={pdf.fileName}>{pdf.fileName}</span></div></td>
+                      <td className="p-3 font-serif text-slate-300">{pdf.district}</td>
+                      <td className="p-3 font-serif text-slate-300">{pdf.upazila}</td>
+                      <td className="p-3 font-serif text-slate-400">{pdf.unionName||'-'}</td>
+                      <td className="p-3"><span className="px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20 text-teal-400 font-bold">{pdf.voterArea||'-'}</span></td>
+                      <td className="p-3 font-mono text-slate-400">{pdf.voterAreaNo||'-'}</td>
+                      <td className="p-3 text-center font-bold text-slate-200">{pdf.totalVoters||'-'}</td>
+                      <td className="p-3 text-center"><span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold"><UserCheck className="w-3.5 h-3.5"/>{pdf.voterCount} জন</span></td>
+                      <td className="p-3 text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${pdf.genderType==='মহিলা'?'bg-pink-500/10 border-pink-500/20 text-pink-400':'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'}`}>{pdf.genderType}</span></td>
+                      <td className="p-3 text-[10px] font-mono text-slate-400">{pdf.publicationDate||'-'}</td>
                       <td className="p-3 text-center">
                         <button 
                           onClick={()=>handleDeletePdf(pdf)} 
                           disabled={deletingId === pdf.id}
-                          className="p-1 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg flex items-center gap-1 mx-auto font-bold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1 px-2.5 text-xs text-rose-400 bg-rose-500/10 hover:bg-rose-600 border border-rose-500/20 hover:text-white rounded-lg flex items-center gap-1 mx-auto font-bold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {deletingId === pdf.id ? (
                             <>
@@ -417,8 +417,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-start gap-2.5 bg-teal-50 border border-teal-200 rounded-xl p-4 text-xs text-teal-700">
-            <Info className="w-4 h-4 shrink-0 mt-0.5"/>
+          <div className="flex items-start gap-2.5 bg-teal-500/10 border border-teal-500/20 rounded-xl p-4 text-xs text-teal-400">
+            <Info className="w-4 h-4 shrink-0 mt-0.5 text-teal-400"/>
             <p><strong>কিভাবে কাজ করে:</strong> আপনার ভোটার তালিকার PDF আপলোড করুন → backend স্বয়ংক্রিয়ভাবে সকল ভোটারের নাম, পিতা, মাতা, ভোটার নং, পেশা, জন্মতারিখ extract করবে → পাবলিক পোর্টালে search করলে সঙ্গে সঙ্গে ফলাফল আসবে → Verify বাটনে ক্লিক করলে আসল PDF-এর সেই পাতায় ভোটারের তথ্য highlighted দেখাবে।</p>
           </div>
         </div>
@@ -427,38 +427,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* SEARCH LOGS */}
       {tab==='ip-logs' && (
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-xl border border-slate-200/80 flex items-center justify-between">
-            <div><h2 className="text-base font-bold text-slate-800 font-serif">সার্চ লগ</h2><p className="text-xs text-slate-400">ডাটাবেজে সংরক্ষিত অনুসন্ধান কার্যক্রম</p></div>
-            <span className="text-xs font-semibold px-2.5 py-1 text-slate-600 bg-slate-100 rounded-lg border border-slate-200">সিস্টেম ট্র্যাকিং</span>
+          <div className="glass-card p-5 rounded-xl flex items-center justify-between">
+            <div><h2 className="text-base font-bold text-white font-serif">সার্চ লগ</h2><p className="text-xs text-slate-400">ডাটাবেজে সংরক্ষিত অনুসন্ধান কার্যক্রম</p></div>
+            <span className="text-xs font-semibold px-2.5 py-1 text-slate-300 bg-slate-950/50 rounded-lg border border-slate-800">সিস্টেম ট্র্যাকিং</span>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div className="glass-card rounded-xl shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead><tr className="bg-slate-50 text-slate-600 uppercase border-b border-slate-100 font-bold font-serif">
+                <thead><tr className="bg-slate-950/80 text-slate-300 uppercase border-b border-slate-800 font-bold font-serif">
                   {['সময়','IP','পদ্ধতি','কোয়েরি','লেটেন্সি','স্ট্যাটাস'].map(h=><th key={h} className="p-4">{h}</th>)}
                 </tr></thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-800/60">
                   {searchLogs.length===0 ? <tr><td colSpan={6} className="p-12 text-center text-slate-400">এখনো কোনো অনুসন্ধান হয়নি।</td></tr> : searchLogs.slice(0,50).map(log=>(
-                    <tr key={log.id} className="hover:bg-slate-50/50">
-                      <td className="p-4 font-mono text-slate-500">{log.dateTime}</td>
-                      <td className="p-4"><code className="bg-slate-100 text-slate-800 font-mono px-2 py-0.5 rounded">{log.ipAddress}</code></td>
-                      <td className="p-4"><span className="font-mono text-[10px] font-bold bg-teal-50 border border-teal-100 px-1.5 py-0.5 text-teal-700 rounded">{log.method}</span></td>
-                      <td className="p-4 font-serif font-semibold truncate max-w-xs">{log.query}</td>
+                    <tr key={log.id} className="hover:bg-slate-900/40">
+                      <td className="p-4 font-mono text-slate-400">{log.dateTime}</td>
+                      <td className="p-4"><code className="bg-slate-950 text-slate-300 font-mono px-2 py-0.5 rounded border border-white/5">{log.ipAddress}</code></td>
+                      <td className="p-4"><span className="font-mono text-[10px] font-bold bg-teal-500/10 border border-teal-500/20 px-1.5 py-0.5 text-teal-400 rounded">{log.method}</span></td>
+                      <td className="p-4 font-serif font-semibold text-slate-200 truncate max-w-xs">{log.query}</td>
                       <td className="p-4 font-mono text-slate-400">{log.responseTime}</td>
                       <td className="p-4 text-center">
-                        {log.status==='Success'?<span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><Check className="w-3 h-3"/>FOUND</span>:<span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200"><XCircle className="w-3 h-3"/>EMPTY</span>}
+                        {log.status==='Success'?<span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><Check className="w-3 h-3"/>FOUND</span>:<span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20"><XCircle className="w-3 h-3"/>EMPTY</span>}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <p>সাম্প্রতিক <strong className="font-mono">{searchLogs.length}</strong> টি সার্চ (মোট: <strong className="font-mono">{toBangla(totalSearches)}</strong>)</p>
+            <div className="p-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+              <p>সাম্প্রতিক <strong className="font-mono text-slate-200">{searchLogs.length}</strong> টি সার্চ (মোট: <strong className="font-mono text-slate-200">{toBangla(totalSearches)}</strong>)</p>
               <div className="flex items-center gap-2">
-                <button className="p-2 border border-slate-200 rounded-lg bg-white text-slate-400" disabled><ChevronLeft className="w-3.5 h-3.5"/></button>
-                <button className="px-2.5 py-1 border border-teal-600 rounded-lg bg-teal-600 text-white font-bold font-mono">১</button>
-                <button className="p-2 border border-slate-200 rounded-lg bg-white text-slate-500" disabled><ChevronRight className="w-3.5 h-3.5"/></button>
+                <button className="p-2 border border-slate-800 rounded-lg bg-slate-950/80 text-slate-500" disabled><ChevronLeft className="w-3.5 h-3.5"/></button>
+                <button className="px-2.5 py-1 border border-teal-500 rounded-lg bg-teal-650 text-white font-bold font-mono">১</button>
+                <button className="p-2 border border-slate-800 rounded-lg bg-slate-950/80 text-slate-500" disabled><ChevronRight className="w-3.5 h-3.5"/></button>
               </div>
             </div>
           </div>
@@ -467,31 +467,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* UPLOAD MODAL */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5">
-              <h3 className="text-base font-bold text-slate-900 font-serif flex items-center gap-1.5"><UploadCloud className="w-5 h-5 text-teal-600"/>ভোটার তালিকা PDF আপলোড</h3>
-              <button onClick={()=>{setModalOpen(false);setSelectedFile(null);setUploadErr('');setUploadMsg('');}} className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer"><X className="w-5 h-5"/></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md">
+          <div className="w-full max-w-md bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden text-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-800 p-5">
+              <h3 className="text-base font-bold text-white font-serif flex items-center gap-1.5"><UploadCloud className="w-5 h-5 text-teal-400"/>ভোটার তালিকা PDF আপলোড</h3>
+              <button onClick={()=>{setModalOpen(false);setSelectedFile(null);setUploadErr('');setUploadMsg('');}} className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg cursor-pointer"><X className="w-5 h-5"/></button>
             </div>
             <form onSubmit={handleUpload} className="p-5 space-y-4">
-              <div onClick={()=>fileRef.current?.click()} className="border-2 border-dashed border-slate-300 hover:border-teal-500 bg-slate-50 hover:bg-slate-100 rounded-xl p-6 text-center cursor-pointer transition-colors">
+              <div onClick={()=>fileRef.current?.click()} className="border-2 border-dashed border-slate-800 hover:border-teal-500 bg-slate-900/40 hover:bg-slate-900/80 rounded-xl p-6 text-center cursor-pointer transition-all duration-300">
                 <input type="file" ref={fileRef} accept=".pdf" className="hidden" onChange={e=>{ if(e.target.files?.[0]) setSelectedFile(e.target.files[0]); }}/>
                 {selectedFile ? (
-                  <div className="space-y-1">
-                    <FileCheck className="w-8 h-8 text-emerald-600 mx-auto"/>
-                    <p className="text-sm font-bold text-slate-800 break-all">{selectedFile.name}</p>
-                    <p className="text-xs text-slate-500">{(selectedFile.size/1024/1024).toFixed(2)} MB</p>
+                  <div className="space-y-1.5">
+                    <FileCheck className="w-8 h-8 text-emerald-400 mx-auto"/>
+                    <p className="text-sm font-bold text-slate-200 break-all">{selectedFile.name}</p>
+                    <p className="text-xs text-slate-400">{(selectedFile.size/1024/1024).toFixed(2)} MB</p>
                   </div>
                 ) : (
-                  <div className="text-slate-500 space-y-2">
-                    <UploadCloud className="w-10 h-10 text-teal-600 mx-auto animate-bounce"/>
-                    <p className="text-sm font-semibold">ক্লিক করে PDF সিলেক্ট করুন</p>
-                    <p className="text-xs">.pdf • সর্বোচ্চ ৫০ MB</p>
+                  <div className="text-slate-400 space-y-2.5">
+                    <UploadCloud className="w-10 h-10 text-teal-400 mx-auto animate-bounce"/>
+                    <p className="text-sm font-semibold text-slate-300">ক্লিক করে PDF সিলেক্ট করুন</p>
+                    <p className="text-xs text-slate-500">.pdf • সর্বোচ্চ ৫০ MB</p>
                   </div>
                 )}
               </div>
 
-              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-700">
+              <div className="bg-teal-500/10 border border-teal-500/20 rounded-lg p-3 text-xs text-teal-400">
                 <strong>স্বয়ংক্রিয় extract হবে:</strong> নির্বাচন কমিশনের ভোটার তালিকা PDF আপলোড করুন। সার্ভার নিজেই সকল ভোটারের নাম, পিতা, মাতা, ভোটার নম্বর, পেশা, জন্মতারিখ বের করে নেবে।
               </div>
 

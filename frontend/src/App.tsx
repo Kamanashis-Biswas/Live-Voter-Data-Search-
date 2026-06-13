@@ -236,7 +236,7 @@ export default function App() {
    * 
    * @param {SearchFilters} filters - Query constraints populated by the search form.
    */
-  const handleSearch = async (filters: SearchFilters) => {
+  const handleSearch = async (filters: SearchFilters): Promise<boolean> => {
     setSearching(true);
     const queryParams = new URLSearchParams();
     
@@ -258,7 +258,7 @@ export default function App() {
         setFilteredVoters([]);
         setSearchPerformed(true);
         setSearching(false);
-        return;
+        return false;
       }
       const data = await response.json();
       let results = data.results || [];
@@ -368,10 +368,17 @@ export default function App() {
 
       setSearchLogs(prev => [newLog, ...prev]);
 
+      if (mappedResults.length > 0) {
+        showToast(`অনুসন্ধান সফল হয়েছে! ${toBangla(mappedResults.length)} টি তথ্য পাওয়া গেছে।`, 'success');
+        return true;
+      }
+      return false;
+
     } catch (err) {
       console.error('Fetch error:', err);
       setFilteredVoters([]);
       setSearchPerformed(true);
+      return false;
     } finally {
       setSearching(false);
     }
@@ -436,17 +443,20 @@ export default function App() {
   return (
     <div 
       id="voter-app-root" 
-      className="min-h-screen font-sans text-slate-900 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-900 leading-normal relative overflow-hidden bg-slate-900 bg-fixed"
+      className="min-h-screen font-sans text-slate-100 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-100 leading-normal relative overflow-hidden bg-slate-950 bg-fixed"
       style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)), url(${bgShapes})`,
+        backgroundImage: `linear-gradient(rgba(10, 15, 30, 0.65), rgba(10, 15, 30, 0.85)), url(${bgShapes})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
     >
+      {/* Ambient animated glows */}
+      <div className="absolute top-[10%] left-[5%] w-[40vw] h-[40vw] bg-teal-500/10 rounded-full blur-[140px] pointer-events-none animate-float-slow z-0"></div>
+      <div className="absolute bottom-[20%] right-[5%] w-[45vw] h-[45vw] bg-indigo-500/8 rounded-full blur-[160px] pointer-events-none animate-float-delayed z-0"></div>
 
       {/* Top Premium Navigation Bar */}
-      <nav id="voter-main-header" className="h-14 backdrop-blur-md bg-slate-900/80 border-b border-white/10 flex items-center justify-between px-6 shadow-lg z-10 select-none">
+      <nav id="voter-main-header" className="h-16 backdrop-blur-lg bg-slate-950/80 border-b border-white/10 flex items-center justify-between px-6 shadow-2xl z-20 select-none sticky top-0">
         <div className="flex items-center gap-3">
           <div className="bg-white/90 rounded-full p-1.5 flex items-center justify-center shadow-md">
             <svg className="w-5 h-5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -496,7 +506,7 @@ export default function App() {
                   <span className="w-3 h-3 rounded-full bg-teal-500 animate-pulse"></span>
                   অ্যাডমিন ভোটার কন্ট্রোল ড্যাশবোর্ড (Registry Admin Panel)
                 </h1>
-                <p className="text-sm text-slate-350 mt-1">লোকাল ডাটাবেস ও আপলোডকৃত ভোটার তালিকার সিস্টেম অ্যাক্টিভিটি বিশ্লেষণ</p>
+                <p className="text-sm text-slate-300 mt-1">লোকাল ডাটাবেস ও আপলোডকৃত ভোটার তালিকার সিস্টেম অ্যাক্টিভিটি বিশ্লেষণ</p>
               </div>
 
               <div className="flex gap-2.5">
@@ -544,7 +554,7 @@ export default function App() {
             {sidebarOpen && (
               <div
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-45 transition-opacity duration-300"
+                className="lg:hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-45 transition-opacity duration-300"
               />
             )}
 
@@ -552,17 +562,17 @@ export default function App() {
                 Combines persistent grid col alignment on large views (`lg:relative`) with smooth 
                 transform sliding transitions (`-translate-x-full` ➔ `translate-x-0`) on mobile viewports. */}
             <aside className={`
-              fixed top-0 left-0 h-full w-72 backdrop-blur-md bg-white/75 shadow-2xl z-50 p-4 border-r border-white/20 flex flex-col gap-4 overflow-y-auto transition-transform duration-300 ease-in-out transform
+              fixed top-0 left-0 h-full w-72 backdrop-blur-xl bg-slate-900/60 shadow-2xl z-50 p-4 border-r border-white/10 flex flex-col gap-4 overflow-y-auto transition-transform duration-300 ease-in-out transform
               ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
               lg:relative lg:translate-x-0 lg:w-64 lg:h-auto lg:shadow-none lg:bg-transparent lg:border-none lg:p-0 lg:z-auto lg:flex
             `}>
 
               {/* Close Button Header visible only in mobile viewports */}
-              <div className="backdrop-blur-md bg-white/50 rounded-xl shadow-xs p-3.5 border border-white/20 lg:hidden flex justify-between items-center shrink-0">
-                <span className="text-xs font-bold text-slate-800">পরিসংখ্যান ও তথ্য</span>
+              <div className="backdrop-blur-md bg-slate-950/60 rounded-xl shadow-xs p-3.5 border border-white/10 lg:hidden flex justify-between items-center shrink-0">
+                <span className="text-xs font-bold text-slate-200">পরিসংখ্যান ও তথ্য</span>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-1 hover:bg-slate-100 active:bg-slate-200 rounded-lg text-slate-500 hover:text-slate-700 cursor-pointer transition-colors"
+                  className="p-1 hover:bg-slate-800 active:bg-slate-700 rounded-lg text-slate-400 hover:text-white cursor-pointer transition-colors"
                   title="বন্ধ করুন"
                 >
                   <X className="w-4.5 h-4.5" />
@@ -570,49 +580,49 @@ export default function App() {
               </div>
 
               {/* Analytics widgets */}
-              <div className="backdrop-blur-md bg-white/75 rounded-2xl shadow-lg p-4 border border-white/30 hover:shadow-teal-500/5 transition-all duration-300">
-                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">অনুসন্ধান পরিসংখ্যান</h3>
+              <div className="glass-card rounded-2xl p-4">
+                <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">অনুসন্ধান পরিসংখ্যান</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600 font-medium">মোট অনুসন্ধান</span>
-                    <span className="text-sm font-bold font-mono text-slate-800">{searchCount}</span>
+                    <span className="text-xs text-slate-300 font-medium">মোট অনুসন্ধান</span>
+                    <span className="text-xs font-bold font-mono text-slate-100">{searchCount}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600 font-medium">আজকের তথ্য</span>
-                    <span className="text-sm font-extrabold text-teal-600 font-mono">{todaySearchCount}</span>
+                    <span className="text-xs text-slate-300 font-medium">আজকের তথ্য</span>
+                    <span className="text-xs font-extrabold text-teal-400 font-mono">{todaySearchCount}</span>
                   </div>
-                  <div className="h-1.5 w-full bg-slate-200/50 rounded-full mt-2 overflow-hidden">
-                    <div className="h-full bg-teal-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (todaySearchCount / 150) * 100)}%` }}></div>
+                  <div className="h-1.5 w-full bg-slate-950/40 border border-white/5 rounded-full mt-2 overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (todaySearchCount / 150) * 100)}%` }}></div>
                   </div>
                 </div>
               </div>
 
-              <div className="backdrop-blur-md bg-white/75 rounded-2xl shadow-lg p-4 border border-white/30 hover:shadow-teal-500/5 transition-all duration-300">
-                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">ডাটাবেজ সারসংক্ষেপ</h3>
+              <div className="glass-card rounded-2xl p-4">
+                <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">ডাটাবেজ সারসংক্ষেপ</h3>
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-600 font-medium">মোট PDF আপলোড</span>
-                    <span className="font-bold text-slate-800 font-mono">{uploadedPdfs.length}</span>
+                    <span className="text-slate-300 font-medium">মোট PDF আপলোড</span>
+                    <span className="font-bold text-slate-100 font-mono">{uploadedPdfs.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-600 font-medium">মোট ভোটার (সিস্টেমে)</span>
-                    <span className="font-extrabold text-teal-600 font-mono">{totalVotersInSystem.toLocaleString()}</span>
+                    <span className="text-slate-300 font-medium">মোট ভোটার (সিস্টেমে)</span>
+                    <span className="font-extrabold text-teal-400 font-mono">{totalVotersInSystem.toLocaleString()}</span>
                   </div>
-                  <div className="w-full bg-slate-200/50 h-1 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500" style={{ width: uploadedPdfs.length > 0 ? '100%' : '0%' }}></div>
+                  <div className="w-full bg-slate-950/40 border border-white/5 h-1.5 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: uploadedPdfs.length > 0 ? '100%' : '0%' }}></div>
                   </div>
                 </div>
               </div>
 
-              <div className="backdrop-blur-md bg-white/75 rounded-2xl shadow-lg p-4 border border-white/30 hover:shadow-teal-500/5 transition-all duration-300 flex-1 min-h-[180px]">
-                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">সাম্প্রতিক অ্যাকশন</h3>
-                <div className="space-y-3">
+              <div className="glass-card rounded-2xl p-4 flex-1 min-h-[180px]">
+                <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">সাম্প্রতিক অ্যাকশন</h3>
+                <div className="space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
                   {recentActions.length === 0 ? (
                     <p className="text-xs text-slate-400 font-medium">কোনো অ্যাকশন নেই। ভোটার অনুসন্ধান করুন।</p>
                   ) : (
                     recentActions.map((action) => (
-                      <div key={action.id} className={`border-l-2 pl-3 py-1 text-xs ${action.type === 'red' ? 'border-rose-500' : 'border-teal-500'}`}>
-                        <p className="font-semibold text-slate-700 leading-tight">{action.text}</p>
+                      <div key={action.id} className={`border-l-2 pl-3 py-1 text-xs ${action.type === 'red' ? 'border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.1)]' : 'border-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.1)]'}`}>
+                        <p className="font-semibold text-slate-200 leading-tight">{action.text}</p>
                         <p className="text-[10px] text-slate-400 font-mono mt-0.5">{action.time}</p>
                       </div>
                     ))
@@ -629,15 +639,15 @@ export default function App() {
               <div className="lg:hidden flex items-center shrink-0">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="backdrop-blur-md bg-white/70 text-slate-800 border border-white/30 shadow-lg px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/80 active:bg-white/90 transition-all cursor-pointer"
+                  className="backdrop-blur-md bg-slate-900/60 text-slate-200 border border-white/10 shadow-lg px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-slate-800/80 active:bg-slate-800/90 transition-all cursor-pointer"
                 >
-                  <Menu className="w-4.5 h-4.5 text-teal-600 animate-pulse" />
+                  <Menu className="w-4.5 h-4.5 text-teal-400 animate-pulse" />
                   পরিসংখ্যান ও তথ্য ড্যাশবোর্ড
                 </button>
               </div>
 
               {/* Status Header Banner */}
-              <div className={`backdrop-blur-md bg-gradient-to-r ${serverOnline ? 'from-slate-900/80 via-teal-950/80 to-indigo-950/80 border border-white/10' : 'from-slate-900/80 via-rose-950/80 to-indigo-950/80 border border-rose-500/20'} text-white rounded-2xl p-5 shadow-2xl relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500`}>
+              <div className={`backdrop-blur-md bg-gradient-to-r ${serverOnline ? 'from-slate-950/80 via-teal-950/20 to-slate-950/80 border border-white/[0.08]' : 'from-slate-950/80 via-rose-950/20 to-slate-950/80 border border-rose-500/20'} text-white rounded-2xl p-5 shadow-2xl relative overflow-hidden shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-500`}>
                 <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
                 <div className="z-10">
                   <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-widest font-mono ${serverOnline ? 'bg-teal-500/20 border border-teal-500/30 text-teal-200' : 'bg-rose-500/20 border border-rose-500/30 text-rose-200'}`}>
@@ -646,13 +656,13 @@ export default function App() {
                   <h3 className="text-lg font-bold mt-1.5 leading-tight">
                     {serverOnline ? 'ডিজিটাল লাইভ ভোটার অনুসন্ধান পোর্টাল' : 'ডাটাবেস সার্ভার অফলাইন'}
                   </h3>
-                  <p className="text-xs text-teal-100/90 leading-relaxed max-w-xl mt-1">
+                  <p className="text-xs text-slate-300 leading-relaxed max-w-xl mt-1.5">
                     {serverOnline 
                       ? 'নির্বাচন কমিশনের ভোটার তালিকা PDF ফাইল থেকে স্বয়ংক্রিয়ভাবে ভোটারদের নাম, পিতা, মাতা, গ্রাম এবং ভোটার নম্বর অনুসন্ধান ও যাচাই করার অনলাইন প্ল্যাটফর্ম।'
                       : 'সার্ভার অফলাইন বা ক্র্যাশ করেছে! অনুগ্রহ করে ব্যাকএন্ড সার্ভার চালু করুন (npm run dev)।'}
                   </p>
                 </div>
-                <div className="shrink-0 flex items-center gap-3 text-xs bg-white/10 px-3 py-2 rounded-lg border border-white/10 font-mono">
+                <div className="shrink-0 flex items-center gap-3 text-xs bg-slate-950/60 px-3 py-2 rounded-lg border border-white/10 font-mono">
                   <span className={`w-1.5 h-1.5 rounded-full ${serverOnline ? 'bg-emerald-400 animate-ping' : 'bg-rose-500 animate-pulse'}`}></span>
                   <span>DATABASE: {!serverOnline ? 'OFFLINE' : (totalVotersInSystem > 0 ? `${totalVotersInSystem} RECORDS` : 'EMPTY — UPLOAD PDF')}</span>
                 </div>
@@ -687,8 +697,8 @@ export default function App() {
             {currentView === 'search' ? '🔒 এডমিন কন্ট্রোল লগইন' : '🔍 পাবলিক ভোটার পোর্টাল'}
           </button>
 
-          <span className="hover:text-teal-450 cursor-pointer">গোপনীয়তা নীতি</span>
-          <span className="hover:text-teal-450 cursor-pointer">যোগাযোগ</span>
+          <span className="hover:text-teal-300 cursor-pointer">গোপনীয়তা নীতি</span>
+          <span className="hover:text-teal-300 cursor-pointer">যোগাযোগ</span>
           <span className="text-slate-500 hidden sm:inline">
             © ২০২৬ ডিজিটাল ভোটার ম্যানেজমেন্ট সিস্টেম | তৈরীকৃত ও রক্ষণাবেক্ষণে: <button onClick={() => setShowDevModal(true)} className="text-teal-400 hover:text-teal-300 hover:underline font-bold transition-all cursor-pointer bg-transparent border-none p-0 inline">Kamanashis Biswas</button>
           </span>

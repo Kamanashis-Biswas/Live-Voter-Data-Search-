@@ -214,14 +214,14 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-3 bg-slate-900/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-3 bg-slate-950/80 backdrop-blur-md"
     >
       <motion.div 
         initial={{ scale: 0.95, y: 15, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.95, y: 15, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-        className="bg-white w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-5xl shadow-2xl border-0 sm:border border-slate-200 overflow-hidden flex flex-col rounded-none sm:rounded-2xl"
+        className="bg-slate-900/95 backdrop-blur-xl w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-5xl shadow-2xl border-0 sm:border border-slate-800 overflow-hidden flex flex-col rounded-none sm:rounded-2xl text-slate-100"
       >
         
         {/* Header */}
@@ -249,35 +249,35 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         </div>
 
         {/* Voter Details Bar */}
-        <div className="bg-amber-50/80 backdrop-blur-xs border-b border-amber-200/50 px-4 py-2 sm:px-5 sm:py-2.5 grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-1.5 text-[11px] sm:text-xs text-slate-700">
-          <div><span className="text-amber-700 font-bold">নাম:</span> <span className="font-bold text-slate-900">{voter.nameBn}</span></div>
-          <div><span className="text-amber-700 font-bold">পিতা:</span> <span className="font-medium text-slate-800">{voter.fatherName}</span></div>
-          <div><span className="text-amber-700 font-bold">মাতা:</span> <span className="font-medium text-slate-800">{voter.motherName}</span></div>
-          <div><span className="text-amber-700 font-bold">ভোটার নং:</span> <span className="font-mono font-bold text-slate-900">{voter.voterNo}</span></div>
+        <div className="bg-slate-950/60 backdrop-blur-md border-b border-slate-800 px-4 py-2.5 sm:px-5 sm:py-3 grid grid-cols-2 sm:flex sm:flex-wrap gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-300">
+          <div><span className="text-teal-400 font-bold">নাম:</span> <span className="font-bold text-white">{voter.nameBn}</span></div>
+          <div><span className="text-teal-400 font-bold">পিতা:</span> <span className="font-medium text-slate-200">{voter.fatherName}</span></div>
+          <div><span className="text-teal-400 font-bold">মাতা:</span> <span className="font-medium text-slate-200">{voter.motherName}</span></div>
+          <div><span className="text-teal-400 font-bold">ভোটার নং:</span> <span className="font-mono font-bold text-emerald-400">{voter.voterNo}</span></div>
         </div>
 
         {/* PDF Canvas Area Container */}
-        <div className="relative flex-1 min-h-0 bg-slate-200 flex flex-col">
+        <div className="relative flex-1 min-h-0 bg-slate-950 flex flex-col border-b border-slate-800">
           {/* Scrollable Canvas Box */}
           <div 
-            className="flex-1 overflow-auto flex items-start justify-start sm:justify-center p-2 sm:p-4 touch-auto overscroll-contain"
+            className="flex-1 overflow-auto flex items-start justify-start sm:justify-center p-2 sm:p-4 touch-auto overscroll-contain custom-scrollbar"
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
             {loading && (
-              <div className="flex flex-col items-center justify-center m-auto text-slate-500 py-12">
-                <Loader2 className="w-10 h-10 animate-spin mb-3 text-blue-600"/>
+              <div className="flex flex-col items-center justify-center m-auto text-slate-400 py-12">
+                <Loader2 className="w-10 h-10 animate-spin mb-3 text-teal-400"/>
                 <p className="text-sm font-semibold">PDF লোড হচ্ছে...</p>
               </div>
             )}
             {error && (
-              <div className="flex flex-col items-center justify-center m-auto text-rose-600 text-center max-w-sm py-12 px-4">
-                <XOctagon className="w-10 h-10 mb-3"/>
+              <div className="flex flex-col items-center justify-center m-auto text-rose-500 text-center max-w-sm py-12 px-4">
+                <XOctagon className="w-10 h-10 mb-3 text-rose-500"/>
                 <p className="text-sm font-semibold">{error}</p>
-                <p className="text-xs text-slate-500 mt-2">Backend server चालू আছে কিনা নিশ্চিত করুন।</p>
+                <p className="text-xs text-slate-400 mt-2">Backend server চালু আছে কিনা নিশ্চিত করুন।</p>
               </div>
             )}
             {!loading && !error && (
-              <div className="relative shadow-2xl border border-slate-300 rounded-lg overflow-hidden m-auto">
+              <div className="relative shadow-[0_0_30px_rgba(0,0,0,0.6)] border border-slate-800 rounded-lg overflow-hidden m-auto">
                 <canvas ref={canvasRef} className="block bg-white"/>
               </div>
             )}
@@ -308,27 +308,27 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         </div>
 
         {/* Page Navigation Footer */}
-        <div className="bg-slate-50 border-t border-slate-200 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+        <div className="bg-slate-900 border-t border-slate-800 p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
 
           {/* Pagination Controls */}
           <div className="flex items-center justify-between w-full sm:w-auto gap-2">
             <button
               onClick={()=>setCurrentPage(p=>Math.max(1,p-1))}
               disabled={currentPage<=1||loading}
-              className="px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-xl bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 text-xs font-bold border border-slate-800 rounded-xl bg-slate-950/80 text-slate-300 hover:bg-slate-800 disabled:opacity-30 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5"/>
               <span>আগের <span className="hidden sm:inline">পৃষ্ঠা</span></span>
             </button>
             
-            <span className="text-xs text-slate-600 font-mono font-semibold px-2 py-1 bg-slate-100 rounded-lg border border-slate-200/50">
+            <span className="text-xs text-slate-300 font-mono font-semibold px-2.5 py-1 bg-slate-950/50 rounded-lg border border-slate-800">
               পৃষ্ঠা <strong>{currentPage}</strong> / {totalPages}
             </span>
             
             <button
               onClick={()=>setCurrentPage(p=>Math.min(totalPages,p+1))}
               disabled={currentPage>=totalPages||loading}
-              className="px-2.5 py-1.5 text-xs font-bold border border-slate-200 rounded-xl bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 text-xs font-bold border border-slate-800 rounded-xl bg-slate-950/80 text-slate-300 hover:bg-slate-800 disabled:opacity-30 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <span>পরের <span className="hidden sm:inline">পৃষ্ঠা</span></span>
               <ChevronRightIcon className="w-3.5 h-3.5"/>
@@ -767,7 +767,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
-                className={`backdrop-blur-md bg-white/75 rounded-2xl border ${borderClass} shadow-lg hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col`}
+                className={`glass-card rounded-2xl border ${borderClass} hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col`}
               >
                 {/* Card Top Title Bar */}
                 <div className="bg-slate-900/90 text-white px-4 py-3.5 flex items-center justify-between border-b border-white/10 shrink-0 select-none">
@@ -848,7 +848,7 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                 </div>
 
                 {/* Actions buttons footer (Address block removed, clean footer layout) */}
-                <div className="p-4 bg-white/40 border-t border-white/20 flex gap-2 shrink-0 mt-auto backdrop-blur-xs">
+                <div className="p-4 bg-slate-950/40 border-t border-white/5 flex gap-2 shrink-0 mt-auto backdrop-blur-md">
                   {voter.pdfUploadId && (
                     <button
                       onClick={() => setPdfViewVoter(voter)}
