@@ -833,6 +833,16 @@ export const VoterResultCard: React.FC<Props> = ({ voters, searchPerformed, uplo
                           <p className="truncate" title={voter.occupation}><span className="text-emerald-300/80">পেশা:</span> {voter.occupation}</p>
                         )}
                       </div>
+
+                      {/* Font/Spelling & Voter Number Help Disclaimers */}
+                      <div className="text-[7.5px] text-emerald-200/70 space-y-1 pt-1.5 border-t border-emerald-800/50 leading-tight">
+                        <p className="text-amber-300/95 font-medium">
+                          * ফন্ট বা বানান ভেঙে গেলে নিচে <span className="font-bold underline">‘ভেরিফাই করুন’</span>-এ গিয়ে মূল PDF চেক করুন।
+                        </p>
+                        <p>
+                          * ভোটার ও ক্রমিক নম্বর মূল সরকারি ভোটার তালিকা (পিডিএফ) থেকে সংগৃহীত।
+                        </p>
+                      </div>
                     </div>
                   </div>
 
