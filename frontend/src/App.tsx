@@ -4,6 +4,7 @@ import { VoterSearchForm } from './components/VoterSearchForm';
 import { VoterResultCard } from './components/VoterResultCard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { DeveloperModal } from './components/DeveloperModal';
+import { DocsModal } from './components/DocsModal';
 import { LoadingScreen } from './components/LoadingScreen';
 import { AnimatePresence } from 'framer-motion';
 import { API_BASE } from './config';
@@ -66,7 +67,14 @@ export default function App() {
   const [searching, setSearching] = useState<boolean>(false);
   const [serverOnline, setServerOnline] = useState<boolean>(true);
   const [showDevModal, setShowDevModal] = useState<boolean>(false);
+  const [showDocsModal, setShowDocsModal] = useState<boolean>(false);
+  const [docsModalTab, setDocsModalTab] = useState<'guide' | 'terms' | 'privacy'>('guide');
   const [onlineUsers, setOnlineUsers] = useState<number>(1);
+
+  const handleOpenDocs = (tab: 'guide' | 'terms' | 'privacy') => {
+    setDocsModalTab(tab);
+    setShowDocsModal(true);
+  };
 
   // Generate or retrieve session ID for heartbeat tracking
   const [sessionId] = useState(() => {
@@ -530,7 +538,7 @@ export default function App() {
 
       <div 
         id="voter-app-root" 
-        className="min-h-screen font-sans text-slate-100 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-100 leading-normal relative overflow-hidden bg-slate-950 bg-fixed"
+        className="min-h-screen font-sans text-slate-100 flex flex-col justify-between selection:bg-teal-500/25 selection:text-teal-100 leading-normal relative bg-slate-950 bg-fixed"
       style={{
         backgroundImage: `linear-gradient(rgba(10, 15, 30, 0.65), rgba(10, 15, 30, 0.85)), url(${bgShapes})`,
         backgroundSize: 'cover',
@@ -580,6 +588,14 @@ export default function App() {
           )}
         </div>
       </nav>
+
+      {/* Font Alert Marquee Banner */}
+      <div className="bg-amber-500/10 border-b border-amber-500/20 py-2 px-4 text-xs font-semibold text-amber-300 z-20 select-none overflow-hidden shrink-0 backdrop-blur-md flex items-center gap-3 sticky top-16">
+        <span className="shrink-0 bg-amber-500/25 border border-amber-500/35 px-2.5 py-0.5 rounded-lg text-[10px] uppercase font-bold animate-pulse tracking-wide">⚠️ বিজ্ঞপ্তি</span>
+        <marquee behavior="scroll" direction="left" scrollamount="4" className="cursor-default flex-1">
+          ভোটার তথ্য অনুসন্ধানের ক্ষেত্রে পিডিএফ এক্সট্রাকশন ও কনভার্ট করার সীমাবদ্ধতার কারণে কিছু ক্ষেত্রে বিজয়ী (Bijoy) বা ইউনিকোড (Unicode) ফন্ট ভেঙে নামের বানানে বাড়তি স্পেস বা সমস্যা দেখা যেতে পারে (যেমন: তৈয়ব আলী ➔ 'তৈয়ব  আলী' বা তৈ য়ব)। এইরকম ক্ষেত্রে নামের সঠিক আংশিক অংশ (যেমন: সম্পূর্ণ নাম না দিয়ে শুধু 'তৈয়ব' বা 'ছিদ্দিক') দিয়ে অনুসন্ধান করার জন্য অনুরোধ করা হলো।
+        </marquee>
+      </div>
 
       {/* Main Content Layout Container */}
       <main className="flex-1 max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 z-10">
@@ -772,28 +788,54 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer id="voter-main-footer" className="backdrop-blur-md bg-slate-900/85 text-slate-400 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between px-6 py-4 sm:h-12 text-[10px] select-none gap-3 z-10">
-        <div>সিস্টেম ভার্সন: ৫.০.০ (Real Data)</div>
+      <footer id="voter-main-footer" className="backdrop-blur-md bg-slate-950/90 text-slate-400 border-t border-white/5 py-6 sm:py-4 px-6 text-xs select-none z-10">
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          
+          {/* System Version & Copyright */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-slate-500 text-center sm:text-left">
+            <span>সিস্টেম ভার্সন: ৫.০.০ (Real Data)</span>
+            <span className="hidden sm:inline text-slate-700">|</span>
+            <span>© ২০২৬ ডিজিটাল ভোটার ম্যানেজমেন্ট সিস্টেম</span>
+          </div>
 
-        <div className="flex gap-4 items-center flex-wrap justify-center">
-          <button
-            onClick={() => handleViewChange(currentView === 'search' ? 'dashboard' : 'search')}
-            className="text-teal-400 hover:text-teal-300 font-bold flex items-center gap-1.5 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-teal-500/20 hover:border-teal-500/40 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
-          >
-            <Lock className="w-3 h-3" />
-            {currentView === 'search' ? '🔒 এডমিন কন্ট্রোল লগইন' : '🔍 পাবলিক ভোটার পোর্টাল'}
-          </button>
+          {/* Navigation Links and Login Button */}
+          <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] sm:text-xs font-semibold">
+            <button
+              onClick={() => handleViewChange(currentView === 'search' ? 'dashboard' : 'search')}
+              className="text-teal-400 hover:text-teal-300 font-bold flex items-center gap-1.5 bg-slate-900/80 hover:bg-slate-800/80 px-3.5 py-2 rounded-xl border border-teal-500/20 hover:border-teal-500/40 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shadow-md"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              {currentView === 'search' ? '🔒 এডমিন কন্ট্রোল লগইন' : '🔍 পাবলিক ভোটার পোর্টাল'}
+            </button>
 
-          <span className="hover:text-teal-300 cursor-pointer">গোপনীয়তা নীতি</span>
-          <span className="hover:text-teal-300 cursor-pointer">যোগাযোগ</span>
-          <span className="text-slate-500 hidden sm:inline">
-            © ২০২৬ ডিজিটাল ভোটার ম্যানেজমেন্ট সিস্টেম | তৈরীকৃত ও রক্ষণাবেক্ষণে: <button onClick={() => setShowDevModal(true)} className="text-teal-400 hover:text-teal-300 hover:underline font-bold transition-all cursor-pointer bg-transparent border-none p-0 inline">Kamanashis Biswas</button>
-          </span>
+            <span onClick={() => handleOpenDocs('guide')} className="hover:text-teal-300 cursor-pointer transition-colors">ইউজার গাইড</span>
+            <span onClick={() => handleOpenDocs('terms')} className="hover:text-teal-300 cursor-pointer transition-colors">শর্তাবলী</span>
+            <span onClick={() => handleOpenDocs('privacy')} className="hover:text-teal-300 cursor-pointer transition-colors">গোপনীয়তা নীতি</span>
+          </div>
+
+          {/* Developer Credits - Visible on Mobile and Desktop */}
+          <div className="text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1.5 bg-slate-900/40 px-3.5 py-1.5 rounded-xl border border-white/5 shadow-inner">
+            <span>তৈরীকৃত ও রক্ষণাবেক্ষণে:</span>
+            <button 
+              onClick={() => setShowDevModal(true)} 
+              className="text-teal-400 hover:text-teal-300 hover:underline font-bold transition-all cursor-pointer bg-transparent border-none p-0 inline font-serif"
+            >
+              Kamanashis Biswas
+            </button>
+          </div>
+
         </div>
       </footer>
 
       {/* Developer Profile Modal */}
       <DeveloperModal isOpen={showDevModal} onClose={() => setShowDevModal(false)} />
+
+      {/* Document Help Center Modal */}
+      <DocsModal 
+        isOpen={showDocsModal} 
+        onClose={() => setShowDocsModal(false)} 
+        defaultTab={docsModalTab} 
+      />
 
       {/* Premium custom glassmorphic portal Toast notifications */}
       {toast && (

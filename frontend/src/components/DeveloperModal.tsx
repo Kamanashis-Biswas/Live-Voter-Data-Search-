@@ -58,17 +58,17 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md select-none animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 overflow-y-auto custom-scrollbar flex items-start justify-center p-4 sm:p-6 md:p-10 bg-slate-950/85 backdrop-blur-md select-none animate-in fade-in duration-300">
       
       {/* Glow effects in background */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Modal Container */}
-      <div className="bg-slate-900/90 border border-slate-800 text-white rounded-3xl overflow-hidden shadow-2xl relative max-w-2xl w-full mx-auto max-h-[90vh] flex flex-col transform transition-all duration-500 scale-100 animate-in zoom-in-95 slide-in-from-bottom-8 duration-300">
+      <div className="bg-slate-900/95 border border-slate-800/80 text-white rounded-3xl overflow-hidden shadow-2xl relative max-w-2xl w-full mx-auto my-auto transform transition-all duration-500 scale-100 animate-in zoom-in-95 slide-in-from-bottom-8 duration-300">
         
         {/* Banner / Header */}
-        <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 p-6 sm:p-8 relative shrink-0">
+        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/90 border-b border-slate-800/60 p-6 sm:p-8 relative">
           
           {/* Close Button */}
           <button 
@@ -111,12 +111,12 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
           </div>
 
           {/* Quick Metrics Bar inside Header */}
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-6 pt-4 border-t border-white/10 text-xs">
-            <span className="px-3 py-1 bg-white/15 rounded-full font-bold flex items-center gap-1">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mt-5 pt-4 border-t border-white/10 text-[10px] sm:text-xs">
+            <span className="px-3 py-1 bg-white/5 rounded-full font-bold flex items-center gap-1 border border-white/10">
               <Award className="w-3.5 h-3.5 text-amber-300" />
               3+ Years Experience
             </span>
-            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-bold flex items-center gap-1.5 animate-pulse-slow">
+            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-full font-bold flex items-center gap-1.5 animate-pulse-slow">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               Available for Projects
             </span>
@@ -125,32 +125,43 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Bio Banner / Headline */}
-        <div className="bg-slate-950 border-b border-slate-800/80 px-6 sm:px-8 py-3 text-center sm:text-left shrink-0">
+        <div className="bg-slate-950/80 border-b border-slate-800/80 px-4 sm:px-8 py-3 text-center sm:text-left">
           <p className="text-[11px] sm:text-xs text-slate-300 tracking-wide font-medium italic">
             🚀 MERN Stack Developer • Modern Web Solutions • React & Node.js Expert
           </p>
         </div>
 
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 custom-scrollbar">
+        {/* Content Body */}
+        <div className="p-5 sm:p-8 space-y-6">
           
+          {/* About Me Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+              <span className="w-1.5 h-3 bg-indigo-500 rounded-xs"></span>
+              <h3 className="font-bold text-xs tracking-widest text-slate-400 uppercase">About Me</h3>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              I am a highly motivated and detail-oriented Full Stack Developer specializing in the MERN Stack. With a passion for building scalable web architectures, clean user interfaces, and robust APIs, I strive to create web solutions that offer top-tier performance and premium user experience.
+            </p>
+          </div>
+
           {/* Tech Stack Header */}
-          <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
-            <span className="w-2 h-4 bg-indigo-500 rounded-sm"></span>
-            <h3 className="font-bold text-sm tracking-widest text-slate-400 uppercase">PROFESSIONAL TECH STACK</h3>
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+            <span className="w-1.5 h-3 bg-indigo-500 rounded-xs"></span>
+            <h3 className="font-bold text-xs tracking-widest text-slate-400 uppercase">PROFESSIONAL TECH STACK</h3>
           </div>
 
           {/* Grid of Skill Categories */}
-          <div className="grid grid-cols-1 gap-5">
+          <div className="grid grid-cols-1 gap-4">
             {Object.values(skills).map((category, idx) => (
               <div 
                 key={idx} 
-                className="bg-slate-950/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col sm:flex-row items-start gap-4 hover:border-slate-700/80 hover:bg-slate-950/60 transition-all duration-300 group"
+                className="bg-slate-950/30 border border-slate-800/50 hover:border-slate-700/60 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center gap-4 hover:bg-slate-950/50 transition-all duration-300 group"
               >
                 
                 {/* Category Icon & Title */}
-                <div className="flex items-center sm:flex-col sm:items-start shrink-0 gap-3 sm:gap-1.5 sm:w-44">
-                  <div className="p-2 bg-slate-900 border border-slate-800 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center gap-3 shrink-0 md:w-48">
+                  <div className="p-2 bg-slate-900 border border-slate-800 rounded-xl group-hover:scale-110 group-hover:border-slate-700/50 transition-all duration-300">
                     {category.icon}
                   </div>
                   <h4 className="font-bold text-xs sm:text-sm text-slate-200 tracking-tight">
@@ -159,11 +170,11 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
                 </div>
 
                 {/* Skill Badges */}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 flex-1">
                   {category.items.map((item, key) => (
                     <span 
                       key={key} 
-                      className={`px-2.5 py-1 text-[10px] sm:text-xs font-bold rounded-lg border font-mono transition-transform hover:scale-105 duration-200 ${category.badgeColor}`}
+                      className={`px-2.5 py-1 text-[10px] sm:text-xs font-semibold rounded-lg border transition-all duration-200 hover:brightness-110 hover:scale-105 ${category.badgeColor}`}
                     >
                       {item}
                     </span>
@@ -177,7 +188,7 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Modal Footer (Action Panel) */}
-        <div className="bg-slate-950 border-t border-slate-800 px-6 sm:px-8 py-5 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-slate-950/80 border-t border-slate-800/80 px-5 sm:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
           
           <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
             <span>Built with</span>
@@ -185,26 +196,28 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({ isOpen, onClose 
             <span>by Kamanashis Biswas</span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <a 
-              href="mailto:kamanashis.iict.kuet@gmail.com" 
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <Mail className="w-4 h-4 text-cyan-400" />
-              Email Me
-            </a>
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <Github className="w-4 h-4 text-indigo-400" />
-              GitHub
-            </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full md:w-auto">
+            <div className="flex gap-2.5 w-full sm:w-auto">
+              <a 
+                href="mailto:kamanashis.iict.kuet@gmail.com" 
+                className="flex-1 sm:flex-initial px-4 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer"
+              >
+                <Mail className="w-3.5 h-3.5 text-cyan-400" />
+                Email Me
+              </a>
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex-1 sm:flex-initial px-4 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer"
+              >
+                <Github className="w-3.5 h-3.5 text-indigo-400" />
+                GitHub
+              </a>
+            </div>
             <button 
               onClick={onClose}
-              className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-700 hover:to-cyan-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-950 transition-all cursor-pointer shrink-0"
+              className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-700 hover:to-cyan-600 text-white rounded-xl text-[11px] sm:text-xs font-bold shadow-md shadow-indigo-950 transition-all duration-300 cursor-pointer"
             >
               Close Profile
             </button>

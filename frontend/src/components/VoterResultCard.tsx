@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { VoterRecord, UploadedPdf } from '../types';
 import * as pdfjs from 'pdfjs-dist';
 import { API_BASE } from '../config';
@@ -209,7 +210,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose, totalPages]);
 
-  return (
+  return createPortal(
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -260,7 +261,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
         <div className="relative flex-1 min-h-0 bg-slate-950 flex flex-col border-b border-slate-800">
           {/* Scrollable Canvas Box */}
           <div 
-            className="flex-1 overflow-auto flex items-start justify-start sm:justify-center p-2 sm:p-4 touch-auto overscroll-contain custom-scrollbar"
+            className="flex-1 overflow-auto flex items-start justify-start sm:justify-center p-2 sm:p-4 touch-auto overscroll-contain pdf-scrollbar"
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
             {loading && (
@@ -277,8 +278,8 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
               </div>
             )}
             {!loading && !error && (
-              <div className="relative shadow-[0_0_30px_rgba(0,0,0,0.6)] border border-slate-800 rounded-lg overflow-hidden m-auto">
-                <canvas ref={canvasRef} className="block bg-white"/>
+              <div className="relative shadow-[0_0_30px_rgba(0,0,0,0.6)] border border-slate-800 rounded-lg overflow-hidden shrink-0 my-auto mx-0 sm:mx-auto">
+                <canvas ref={canvasRef} className="block bg-white max-w-none"/>
               </div>
             )}
           </div>
@@ -357,7 +358,8 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ voter, onClose }) => {
           </div>
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 };
 
