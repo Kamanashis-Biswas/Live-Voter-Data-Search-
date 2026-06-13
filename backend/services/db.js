@@ -48,7 +48,7 @@ const mapVoterFromDb = (db) => ({
   bloodGroup: db.blood_group,
   photoUrl: db.photo_url,
   occupation: db.occupation,
-  serialNo: db.serial_no ? Number(db.serial_no) : null,
+  serialNo: db.serial_no || null,
   unionName: db.union_name,
   wardNo: db.ward_no,
   voterArea: db.voter_area,
@@ -85,6 +85,7 @@ const mapPdfToDb = (p) => ({
 const mapPdfFromDb = (db) => ({
   id: db.id,
   fileName: db.file_name,
+  safeFileName: `${db.id}.pdf`,
   fileSize: db.file_size,
   district: db.district,
   upazila: db.upazila,
