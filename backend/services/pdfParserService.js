@@ -348,7 +348,7 @@ function extractCoverPageData(text) {
     // ── District ──
     if ((line.includes('জেলা') || line.includes('জেলা:'))) {
       const m = line.match(/জেলা[:\s।]+(.+)/u);
-      if (m && !meta.district) meta.district = m[1].trim().replace(/[\u0964\u0965]/g, '').split(/\s{2,}/)[0].trim();
+      if (m && !meta.district) meta.district = m[1].trim().replace(/[\u0964\u0965]/g, '').split(/\t|\s{2,}/)[0].trim();
       // If label only (no value after colon), take next line
       if (!meta.district && nextLine && !nextLine.includes(':')) {
         meta.district = nextLine.trim();
@@ -359,7 +359,7 @@ function extractCoverPageData(text) {
     if (line.includes('উপজেলা') || line.includes('থানা')) {
       const m = line.match(/(?:উপজেলা|থানা)[/\s]*(?:থানা)?[:\s।]+(.+)/u);
       if (m && !meta.upazila) {
-        meta.upazila = m[1].trim().split(/\s{2,}/)[0].trim();
+        meta.upazila = m[1].trim().split(/\t|\s{2,}/)[0].trim();
       }
       // If label only (no value after colon), take next line
       if (!meta.upazila && nextLine && !nextLine.includes(':') && !nextLine.includes('ইউনিয়ন')) {
@@ -371,7 +371,7 @@ function extractCoverPageData(text) {
     if (line.includes('ইউনিয়ন') || line.includes('ওয়ার্ড/') || line.includes('ওয়াডে')) {
       const m = line.match(/(?:ইউনিয়ন|ওয়ার্ড|ওয়াডে)[^:]*[:\s।]+(.+)/u);
       if (m && !meta.unionName) {
-        meta.unionName = m[1].trim().split(/\s{2,}/)[0].trim();
+        meta.unionName = m[1].trim().split(/\t|\s{2,}/)[0].trim();
       }
       // If label only, take next non-label line
       if (!meta.unionName) {
@@ -409,7 +409,7 @@ function extractCoverPageData(text) {
     // ── Voter Area Name ──
     if (line.includes('ভোটার এলাকা') && !line.includes('নম্বর') && !line.includes('কোড')) {
       const m = line.match(/ভোটার এলাকা(?:র নাম)?[:\s।]*(.+)/u);
-      if (m && !meta.voterArea) meta.voterArea = m[1].trim().split(/\s{2,}/)[0].trim();
+      if (m && !meta.voterArea) meta.voterArea = m[1].trim().split(/\t|\s{2,}/)[0].trim();
       if (!meta.voterArea && nextLine && !nextLine.includes(':')) {
         meta.voterArea = nextLine.trim();
       }
@@ -454,7 +454,20 @@ function extractCoverPageData(text) {
     }
     if ((line.includes('ডাকঘর') || line.includes('ডাকঃ')) && !meta.voterArea) {
       const m = line.match(/ডাক(?:ঘর)?[:\s।]*(.+)/u);
-      if (m) meta.voterArea = m[1].trim().split(/\s{2,}/)[0].trim();
+      if (m) meta.voterArea = m[1].trim().split(/\t|\s{2,}/)[0].trim();
+    }
+  }
+
+  // Clean up upazila if it contains trailing garbage (like other columns on the same line)
+  if (meta.upazila && meta.district) {
+    const { getUpazilas } = require('../utils/districtValidator');
+    const upazilas = getUpazilas(meta.district);
+    if (upazilas && upazilas.length > 0) {
+      // Find if any upazila name is a substring of the parsed upazila field
+      const found = upazilas.find(u => meta.upazila.includes(u));
+      if (found) {
+        meta.upazila = found;
+      }
     }
   }
 

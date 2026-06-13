@@ -206,8 +206,10 @@ function detectEncoding(str) {
  * @returns {string} Stripped, clean string.
  */
 function stripGarbage(str) {
-  // Keep: Bengali (U+0980-U+09FF), dandas (U+0964-U+0965), ASCII digits, space, slash, dot, dash, comma, parens, colon, semicolon
-  return str.replace(/[^\u0980-\u09FF\u0964-\u0965\u0030-\u0039\u0020\u002F\u002E\u002D\u002C\u0028\u0029\u003A\u003B]/g, '');
+  // Replace non-breaking spaces with standard spaces to prevent adjacent words from merging
+  const normalized = str.replace(/\u00A0/g, ' ');
+  // Keep: Bengali (U+0980-U+09FF), dandas (U+0964-U+0965), ASCII digits, space, tab (\u0009), slash, dot, dash, comma, parens, colon, semicolon
+  return normalized.replace(/[^\u0980-\u09FF\u0964-\u0965\u0030-\u0039\u0020\u0009\u002F\u002E\u002D\u002C\u0028\u0029\u003A\u003B]/g, '');
 }
 
 /**
